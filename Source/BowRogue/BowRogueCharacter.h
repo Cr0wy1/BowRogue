@@ -6,7 +6,13 @@
 #include "GameFramework/Character.h"
 #include "BowRogueCharacter.generated.h"
 
+
+
 class UInputComponent;
+class AWeapon;
+class UCrosshairTraceComponent;
+
+
 
 UCLASS(config=Game)
 class ABowRogueCharacter : public ACharacter
@@ -21,21 +27,29 @@ public:
 protected:
 
 	UCharacterMovementComponent * movementComp = nullptr;
+	AWeapon* weapon = nullptr;
 
-	/** Pawn mesh: 1st person view (arms; seen only by self) */
+	//COMPONENTS
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-		class USkeletalMeshComponent* Mesh1P;
+	class USkeletalMeshComponent* Mesh1P;
 
-	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCameraComponent* FirstPersonCameraComponent;
+	class UCameraComponent* FirstPersonCameraComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Arm Actor")
-		UChildActorComponent* armActorComp;
+	UChildActorComponent* armActorComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Arm Actor")
+	UChildActorComponent* weaponActorComp;
 
 	virtual void BeginPlay();
 
 public:
+	//COMPONENTS
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CrosshairTrace")
+	UCrosshairTraceComponent* crossTraceComp;
+
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;

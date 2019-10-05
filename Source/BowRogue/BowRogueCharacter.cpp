@@ -8,6 +8,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Weapon.h"
+#include "CrosshairTraceComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -40,6 +42,9 @@ ABowRogueCharacter::ABowRogueCharacter()
 
 	armActorComp = CreateDefaultSubobject<UChildActorComponent>("Arm Actor");
 	armActorComp->SetupAttachment(Mesh1P, FName("arm_socket"));
+
+	weaponActorComp = CreateDefaultSubobject<UChildActorComponent>("Weapon Actor");
+	weaponActorComp->SetupAttachment(armActorComp);
 	
 
 	//Movement
@@ -48,6 +53,10 @@ ABowRogueCharacter::ABowRogueCharacter()
 	movementComp->GravityScale = 3.0f;
 	movementComp->MaxFlySpeed = 2000.0f;
 	movementComp->BrakingDecelerationFlying = 2000.0f;
+
+
+	//Crosshair Trace
+	crossTraceComp = CreateDefaultSubobject<UCrosshairTraceComponent>("CrosshairTrace");
 }
 
 void ABowRogueCharacter::BeginPlay()
@@ -57,6 +66,7 @@ void ABowRogueCharacter::BeginPlay()
 
 	Mesh1P->SetHiddenInGame(false, true);
 	
+	weapon = Cast<AWeapon>(weaponActorComp->GetChildActor() );
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -88,7 +98,12 @@ void ABowRogueCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 }
 
 void ABowRogueCharacter::OnFire(){
-
+	
+	if (weapon) {
+		
+		weapon->SetFocus(crossTraceComp->GetHitResult().Location);
+		weapon->Fire();
+	}
 
 }
 
