@@ -48,16 +48,15 @@ bool UCrosshairTraceComponent::CrosshairLineTrace(FHitResult &OUT_hitresult, FVe
 
 	GetWorld()->LineTraceSingleByChannel(OUT_hitresult, startLocation, endLocation, ECollisionChannel::ECC_GameTraceChannel2, traceParams);
 
-	if (OUT_hitresult.GetActor()) {
-		//DrawDebugLine(GetWorld(), startLocation, hitResult.ImpactPoint, FColor::Red, false, -1.0f, 0, 1.0f);
-
-		//FVector blockCenter = FVector(WorldToBlockLocation(OUT_hitresult.ImpactPoint + (OUT_Direction * 25))) * 100;
-		//DrawDebugBox(GetWorld(), blockCenter, FVector(50, 50, 50), FColor::Purple, false, -1, 0, 3);
+	if (!OUT_hitresult.GetActor()) {
+		OUT_hitresult.Location = endLocation;
 	}
 
-	DrawDebugSphere(GetWorld(), OUT_hitresult.ImpactPoint, 50, 10, FColor::Red);
-
-
+	if (bDrawDebugPoint) {
+		DrawDebugPoint(GetWorld(), OUT_hitresult.ImpactPoint, 10, FColor::Red);
+		//DrawDebugSphere(GetWorld(), OUT_hitresult.ImpactPoint, 50, 10, FColor::Red);
+	}
+	
 	return true;
 }
 

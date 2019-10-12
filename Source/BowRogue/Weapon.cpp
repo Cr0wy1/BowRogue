@@ -34,7 +34,7 @@ void AWeapon::Tick(float DeltaTime)
 
 }
 
-void AWeapon::Fire(){
+void AWeapon::Fire(const FVector &targetLoc){
 
 	if (projectileBP) {
 
@@ -48,9 +48,10 @@ void AWeapon::Fire(){
 			projectileSpawnRot = GetActorRotation();
 		}
 
+		FRotator lookAtRot = UKismetMathLibrary::FindLookAtRotation(projectileSpawnLoc, targetLoc);
+
 		UE_LOG(LogTemp, Warning, TEXT("Projectile spawned: %s"), *projectileSpawnLoc.ToString());
-		AProjectile* spawnedProjectile = GetWorld()->SpawnActor<AProjectile>(projectileBP, projectileSpawnLoc, projectileSpawnRot);
-		spawnedProjectile->SetActorScale3D(FVector(2.0f));
+		AProjectile* spawnedProjectile = GetWorld()->SpawnActor<AProjectile>(projectileBP, projectileSpawnLoc, lookAtRot);
 	}
 
 	

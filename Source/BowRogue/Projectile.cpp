@@ -27,8 +27,16 @@ AProjectile::AProjectile(){
 	projectileMovement->bRotationFollowsVelocity = true;
 	projectileMovement->bShouldBounce = true;
 
-	// Die after 3 seconds by default
-	InitialLifeSpan = 20.0f;
+	if (bInitIsDummy) {
+		InitialLifeSpan = 0.5f;
+		
+		SetDummy();
+	}
+	else {
+		// Die after 3 seconds by default
+		InitialLifeSpan = 20.0f;
+	}
+
 }
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -40,4 +48,11 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 
 		//Destroy();
 	}
+}
+
+
+void AProjectile::SetDummy() {
+	collisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	projectileMovement->SetAutoActivate(false);
+
 }

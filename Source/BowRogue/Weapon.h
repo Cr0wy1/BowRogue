@@ -43,7 +43,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	
-	virtual void Fire();
+	virtual void Fire(const FVector &targetLoc);
 
 	void SetFocus(const FVector &targetLoc);
 };

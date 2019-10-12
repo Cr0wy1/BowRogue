@@ -57,6 +57,7 @@ ABowRogueCharacter::ABowRogueCharacter()
 
 	//Crosshair Trace
 	crossTraceComp = CreateDefaultSubobject<UCrosshairTraceComponent>("CrosshairTrace");
+	crosshairResult = crossTraceComp->GetCrosshairResultPtr();
 }
 
 void ABowRogueCharacter::BeginPlay()
@@ -101,8 +102,7 @@ void ABowRogueCharacter::OnFire(){
 	
 	if (weapon) {
 		
-		weapon->SetFocus(crossTraceComp->GetHitResult().Location);
-		weapon->Fire();
+		weapon->Fire(crosshairResult->hitResult.Location);
 	}
 
 }
@@ -112,7 +112,7 @@ void ABowRogueCharacter::MoveForward(float Value)
 {
 	if (Value != 0.0f)
 	{
-		// add movement in that direction
+		// add movement in that direction 
 		AddMovementInput(GetActorForwardVector(), Value);
 	}
 }

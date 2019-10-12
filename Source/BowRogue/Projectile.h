@@ -21,7 +21,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 		class UProjectileMovementComponent* projectileMovement;
 
+	//Disable Movement and Collision, only for cosmetics
+	void SetDummy();
+
 public:
+
+	//UPROPERTIES
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	bool bInitIsDummy = false;
+
 	AProjectile();
 
 	/** called when projectile hits something */

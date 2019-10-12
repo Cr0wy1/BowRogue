@@ -58,7 +58,10 @@ protected:
 		bool bIgnoreOwner = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
-		float traceLength = 1000.0f;
+		float traceLength = 10000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
+		bool bDrawDebugPoint = true;
 
 	// Called when the game starts
 	virtual void BeginPlay() override;

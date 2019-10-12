@@ -11,6 +11,7 @@
 class UInputComponent;
 class AWeapon;
 class UCrosshairTraceComponent;
+struct FCrosshairResult;
 
 
 
@@ -45,6 +46,9 @@ protected:
 	virtual void BeginPlay();
 
 public:
+
+	const FCrosshairResult* crosshairResult = nullptr;
+
 	//COMPONENTS
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CrosshairTrace")
 	UCrosshairTraceComponent* crossTraceComp;

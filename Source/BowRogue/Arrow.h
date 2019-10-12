@@ -16,6 +16,9 @@ class BOWROGUE_API AArrow : public AProjectile
 	
 protected:
 
+
+
+	//COMPONENTS
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Arrow")
 	UStaticMeshComponent * headMeshComp;
 
@@ -28,4 +31,7 @@ protected:
 public:
 
 	AArrow();
+
+	
+
 };
