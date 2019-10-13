@@ -32,20 +32,26 @@ void ABowRogueCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// Bind fire event
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABowRogueCharacter::OnFire);
+	PlayerInputComponent->BindAction("Primary", IE_Pressed, this, &ABowRogueCharacter::PrimaryPressed);
+	PlayerInputComponent->BindAction("Primary", IE_Released, this, &ABowRogueCharacter::PrimaryReleased);
 
 	//Interaction
 	PlayerInputComponent->BindAction("Interaction", IE_Pressed, this, &ABowRogueCharacter::OnInteraction);
 
 }
 
-void ABowRogueCharacter::OnFire(){
+void ABowRogueCharacter::PrimaryPressed(){
 	
 	if (weapon) {
-		
-		weapon->Fire(crosshairResult->hitResult.Location); 
+		weapon->StartShooting(crosshairResult);
 	}
 
+}
+
+void ABowRogueCharacter::PrimaryReleased(){
+	if (weapon) {
+		weapon->StopShooting();
+	}
 }
 
 void ABowRogueCharacter::OnInteraction(){

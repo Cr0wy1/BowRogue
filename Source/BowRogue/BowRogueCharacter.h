@@ -41,7 +41,8 @@ protected:
 protected:
 	
 	/** Fires a projectile. */
-	void OnFire();
+	void PrimaryPressed();
+	void PrimaryReleased();
 	void OnInteraction();
 
 

@@ -6,6 +6,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Projectile.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "CrosshairTraceComponent.h"
 
 // Sets default values
 AWeapon::AWeapon()
@@ -18,7 +19,7 @@ AWeapon::AWeapon()
 
 	
 	
-}
+} 
 
 // Called when the game starts or when spawned
 void AWeapon::BeginPlay(){
@@ -28,18 +29,31 @@ void AWeapon::BeginPlay(){
 }
 
 // Called every frame
-void AWeapon::Tick(float DeltaTime)
-{
+void AWeapon::Tick(float DeltaTime){
 	Super::Tick(DeltaTime);
 
+	if (bIsShooting && crossResult) {
+		cShootingDuration = GetWorld()->GetTimeSeconds() - startShootingTime;
+
+		if (properties.shootingType != EShootingType::CHARGE) {
+			Fire(crossResult->hitResult.ImpactPoint);
+		}
+		
+		//TODO Maybe refactor this block
+		if (properties.shootingType == EShootingType::SINGLE) {
+			StopShooting();
+		}
+	}
 }
 
-void AWeapon::Fire(const FVector &targetLoc){
+void AWeapon::Fire(const FVector targetLoc){
+
+	//check shot delay time
+	if (GetWorld()->GetTimeSeconds() < (lastShotTime + properties.shotDelay)) return;
 
 	if (projectileBP) {
 
 		if (skeletalMeshComp->DoesSocketExist("projectile")) {
-			//projectileSpawnLoc = skeletalMeshComp->GetSocketLocation("projectile");
 			skeletalMeshComp->GetSocketWorldLocationAndRotation("projectile", projectileSpawnLoc, projectileSpawnRot);
 		}
 		else {
@@ -57,10 +71,33 @@ void AWeapon::Fire(const FVector &targetLoc){
 
 		AProjectile* spawnedProjectile = GetWorld()->SpawnActor<AProjectile>(projectileBP, projectileSpawnLoc, lookAtRot, projectileSpawnParams);
 		
+		//Set shot time
+		lastShotTime = GetWorld()->GetTimeSeconds();
 	}
 
-	
+}
 
+void AWeapon::StartShooting(const struct FCrosshairResult* _crossResult){
+	crossResult = _crossResult;
+	startShootingTime = GetWorld()->GetTimeSeconds();
+	bIsShooting = true;
+
+	OnStartShooting();
+}
+
+void AWeapon::StopShooting(){
+	if (bIsShooting) {
+		if (properties.shootingType == EShootingType::CHARGE && crossResult) {
+			Fire(crossResult->hitResult.ImpactPoint);
+		}
+		UE_LOG(LogTemp, Warning, TEXT("ShootingDuration: %f"), cShootingDuration);
+
+		cShootingDuration = 0.0f;
+		stopShootingTime = GetWorld()->GetTimeSeconds();
+		bIsShooting = false;
+
+		OnStopShooting();
+	}
 }
 
 void AWeapon::SetFocus(const FVector & targetLoc){
