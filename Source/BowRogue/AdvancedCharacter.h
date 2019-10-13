@@ -23,14 +23,20 @@ public:
 	const FCrosshairResult* crosshairResult = nullptr;
 
 	//UPROPERTIES
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera) 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float walkSpeed = 600.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float sprintSpeed = 1000.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera") 
 	float BaseTurnRate; /** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	float BaseLookUpRate; /** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 
 	//COMPONENTS
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* fpCameraComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CrosshairTrace")
@@ -41,10 +47,37 @@ public:
 
 protected:
 
+	bool bIsSprinting = false;
+
 	UCharacterMovementComponent * movementComp = nullptr;
+
+	//COMPONENTS
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	class USkeletalMeshComponent* meshFP;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void ActivateSprint();
+	void DeactivateSprint();
+
+	/** Handles moving forward/backward */
+	void MoveForward(float Val);
+
+	/** Handles stafing movement, left and right */
+	void MoveRight(float Val);
+
+	/**
+	* Called via input to turn at a given rate.
+	* @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
+	*/
+	void TurnAtRate(float Rate);
+
+	/**
+	* Called via input to turn look up/down at a given rate.
+	* @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
+	*/
+	void LookUpAtRate(float Rate);
 
 public:	
 	// Called every frame
@@ -53,4 +86,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	
+	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return meshFP; }
+	FORCEINLINE class UCameraComponent* GetFPCameraComp() const { return fpCameraComp; }
+	FORCEINLINE bool IsSprinting() const { return bIsSprinting; }
 };

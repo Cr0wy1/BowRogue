@@ -1,81 +1,42 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "BowRogueCharacter.h"
-#include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
-#include "GameFramework/InputSettings.h"
-#include "Kismet/GameplayStatics.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Weapon.h"
 #include "Pickup.h"
 #include "CrosshairTraceComponent.h"
 
-DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
-
-//////////////////////////////////////////////////////////////////////////
-// ABowRogueCharacter 
 
 ABowRogueCharacter::ABowRogueCharacter(){
 
-	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
-	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
-	Mesh1P->SetOnlyOwnerSee(true);
-	Mesh1P->SetupAttachment(fpCameraComp);
-	Mesh1P->bCastDynamicShadow = false;
-	Mesh1P->CastShadow = false; 
-	Mesh1P->RelativeRotation = FRotator(1.9f, -19.19f, 5.2f);
-	Mesh1P->RelativeLocation = FVector(-0.5f, -4.4f, -155.7f);
-
 	armActorComp = CreateDefaultSubobject<UChildActorComponent>("Arm Actor");
-	armActorComp->SetupAttachment(Mesh1P, FName("arm_socket"));
+	armActorComp->SetupAttachment(meshFP, FName("arm_socket"));
 
 	weaponActorComp = CreateDefaultSubobject<UChildActorComponent>("Weapon Actor");
 	weaponActorComp->SetupAttachment(armActorComp);
 	
-
 }
 
-void ABowRogueCharacter::BeginPlay()
-{
-	// Call the base class  
+void ABowRogueCharacter::BeginPlay(){
 	Super::BeginPlay();
 
-	Mesh1P->SetHiddenInGame(false, true);
-	
 	weapon = Cast<AWeapon>(weaponActorComp->GetChildActor() );
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Input
 
-void ABowRogueCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
-{
-	// set up gameplay key bindings
-	check(PlayerInputComponent);
+void ABowRogueCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent){
 
-	// Bind jump events
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABowRogueCharacter::OnFire);
 
 	//Interaction
 	PlayerInputComponent->BindAction("Interaction", IE_Pressed, this, &ABowRogueCharacter::OnInteraction);
-	
 
-	// Bind movement events
-	PlayerInputComponent->BindAxis("MoveForward", this, &ABowRogueCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ABowRogueCharacter::MoveRight);
-
-	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
-	// "turn" handles devices that provide an absolute delta, such as a mouse.
-	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &ABowRogueCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &ABowRogueCharacter::LookUpAtRate);
 }
 
 void ABowRogueCharacter::OnFire(){
@@ -96,36 +57,8 @@ void ABowRogueCharacter::OnInteraction(){
 		}
 	}
 	
+	
 }
 
 
-void ABowRogueCharacter::MoveForward(float Value)
-{
-	if (Value != 0.0f)
-	{
-		// add movement in that direction 
-		AddMovementInput(GetActorForwardVector(), Value);
-	}
-}
-
-void ABowRogueCharacter::MoveRight(float Value)
-{
-	if (Value != 0.0f)
-	{
-		// add movement in that direction
-		AddMovementInput(GetActorRightVector(), Value);
-	}
-}
-
-void ABowRogueCharacter::TurnAtRate(float Rate)
-{
-	// calculate delta for this frame from the rate information
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-}
-
-void ABowRogueCharacter::LookUpAtRate(float Rate)
-{
-	// calculate delta for this frame from the rate information
-	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-}
 

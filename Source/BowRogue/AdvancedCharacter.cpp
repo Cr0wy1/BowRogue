@@ -3,11 +3,17 @@
 
 #include "AdvancedCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "Components/InputComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CrosshairTraceComponent.h"
 #include "Components/CapsuleComponent.h"
 
-// Sets default values
+DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
+
+//////////////////////////////////////////////////////////////////////////
+// AAdvancedCharacter 
+
 AAdvancedCharacter::AAdvancedCharacter(){
 
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -26,6 +32,15 @@ AAdvancedCharacter::AAdvancedCharacter(){
 	fpCameraComp->RelativeLocation = FVector(0.0f, 0.0f, 64.f); // Position the camera
 	fpCameraComp->bUsePawnControlRotation = true;
 
+	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
+	meshFP = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
+	meshFP->SetOnlyOwnerSee(true);
+	meshFP->SetupAttachment(fpCameraComp);
+	meshFP->bCastDynamicShadow = false;
+	meshFP->CastShadow = false;
+	meshFP->RelativeRotation = FRotator(1.9f, -19.19f, 5.2f);
+	meshFP->RelativeLocation = FVector(-0.5f, -4.4f, -155.7f);
+
 	//Movement
 	movementComp = GetCharacterMovement();
 	movementComp->JumpZVelocity = 860.0f;
@@ -39,24 +54,79 @@ AAdvancedCharacter::AAdvancedCharacter(){
 }
 
 // Called when the game starts or when spawned
-void AAdvancedCharacter::BeginPlay()
-{
+void AAdvancedCharacter::BeginPlay(){
 	Super::BeginPlay();
 	
-	
+	meshFP->SetHiddenInGame(false, true);
 }
 
+
 // Called every frame
-void AAdvancedCharacter::Tick(float DeltaTime)
-{
+void AAdvancedCharacter::Tick(float DeltaTime){
 	Super::Tick(DeltaTime);
 
 }
 
 // Called to bind functionality to input
-void AAdvancedCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+void AAdvancedCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent){
 
+	// set up gameplay key bindings
+	check(PlayerInputComponent);
+
+	// Bind sprint events
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AAdvancedCharacter::ActivateSprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AAdvancedCharacter::DeactivateSprint);
+
+	// Bind jump events
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	// Bind movement events
+	PlayerInputComponent->BindAxis("MoveForward", this, &AAdvancedCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AAdvancedCharacter::MoveRight);
+
+	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
+	// "turn" handles devices that provide an absolute delta, such as a mouse.
+	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
+	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("TurnRate", this, &AAdvancedCharacter::TurnAtRate);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUpRate", this, &AAdvancedCharacter::LookUpAtRate);
 }
+
+void AAdvancedCharacter::ActivateSprint() {
+	movementComp->MaxWalkSpeed = sprintSpeed;
+	bIsSprinting = true;
+}
+
+void AAdvancedCharacter::DeactivateSprint() {
+	movementComp->MaxWalkSpeed = walkSpeed;
+	bIsSprinting = false;
+}
+
+void AAdvancedCharacter::MoveForward(float Value){
+	if (Value != 0.0f){
+		// add movement in that direction 
+		AddMovementInput(GetActorForwardVector(), Value);
+	}
+	
+}
+
+void AAdvancedCharacter::MoveRight(float Value){
+	if (Value != 0.0f){
+		// add movement in that direction
+		AddMovementInput(GetActorRightVector(), Value);
+	}
+}
+
+void AAdvancedCharacter::TurnAtRate(float Rate){
+	// calculate delta for this frame from the rate information
+	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AAdvancedCharacter::LookUpAtRate(float Rate){
+	// calculate delta for this frame from the rate information
+	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
 
