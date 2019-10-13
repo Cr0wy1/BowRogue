@@ -16,7 +16,7 @@ AWeapon::AWeapon()
 	skeletalMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMesh");
 	SetRootComponent(skeletalMeshComp);
 
-
+	
 	
 }
 
@@ -51,7 +51,12 @@ void AWeapon::Fire(const FVector &targetLoc){
 		FRotator lookAtRot = UKismetMathLibrary::FindLookAtRotation(projectileSpawnLoc, targetLoc);
 
 		UE_LOG(LogTemp, Warning, TEXT("Projectile spawned: %s"), *projectileSpawnLoc.ToString());
-		AProjectile* spawnedProjectile = GetWorld()->SpawnActor<AProjectile>(projectileBP, projectileSpawnLoc, lookAtRot);
+
+		FActorSpawnParameters projectileSpawnParams;
+		projectileSpawnParams.Owner = this;
+
+		AProjectile* spawnedProjectile = GetWorld()->SpawnActor<AProjectile>(projectileBP, projectileSpawnLoc, lookAtRot, projectileSpawnParams);
+		
 	}
 
 	

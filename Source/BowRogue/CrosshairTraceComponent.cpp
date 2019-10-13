@@ -45,8 +45,9 @@ bool UCrosshairTraceComponent::CrosshairLineTrace(FHitResult &OUT_hitresult, FVe
 	playerController->DeprojectScreenPositionToWorld(viewX * 0.5f, viewY * 0.5f, startLocation, OUT_Direction);
 
 	endLocation = OUT_Direction * traceLength + startLocation;
-
-	GetWorld()->LineTraceSingleByChannel(OUT_hitresult, startLocation, endLocation, ECollisionChannel::ECC_GameTraceChannel2, traceParams);
+	
+	//ECC_GameTraceChannel4 = PlayerCrosshair
+	GetWorld()->LineTraceSingleByChannel(OUT_hitresult, startLocation, endLocation, ECollisionChannel::ECC_GameTraceChannel4, traceParams);
 
 	if (!OUT_hitresult.GetActor()) {
 		OUT_hitresult.Location = endLocation;

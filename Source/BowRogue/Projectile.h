@@ -13,9 +13,14 @@ class BOWROGUE_API AProjectile : public AActor
 
 
 protected:
-		/** Sphere collision component */
-		UPROPERTY(VisibleDefaultsOnly, Category = "Projectile")
-		class USphereComponent* collisionComp;
+
+	//UProperties
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	float hitImpulse = 100.0f;
+
+	//COMPONENTS
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Projectile")
+	UStaticMeshComponent * collisionMeshComp;
 
 	/** Projectile movement component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
@@ -32,12 +37,14 @@ public:
 
 	AProjectile();
 
+	virtual void OnConstruction(const FTransform& Transform) override;
+
 	/** called when projectile hits something */
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	/** Returns CollisionComp subobject **/
-	FORCEINLINE class USphereComponent* GetCollisionComp() const { return collisionComp; }
+	FORCEINLINE class UStaticMeshComponent* GetCollisionMeshComp() const { return collisionMeshComp; }
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return projectileMovement; }
 

@@ -27,6 +27,8 @@ protected:
 	FVector projectileSpawnLoc;
 	FRotator projectileSpawnRot;
 
+	
+
 	//COMPONENTS
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
 	USkeletalMeshComponent* skeletalMeshComp;

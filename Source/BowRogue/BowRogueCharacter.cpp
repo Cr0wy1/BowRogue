@@ -2,13 +2,13 @@
 
 #include "BowRogueCharacter.h"
 #include "Camera/CameraComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/InputSettings.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Weapon.h"
+#include "Pickup.h"
 #include "CrosshairTraceComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
@@ -16,27 +16,14 @@ DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 //////////////////////////////////////////////////////////////////////////
 // ABowRogueCharacter 
 
-ABowRogueCharacter::ABowRogueCharacter()
-{
-	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(30.f, 96.0f);
-
-	// set our turn rates for input
-	BaseTurnRate = 45.f;
-	BaseLookUpRate = 45.f;
-
-	// Create a CameraComponent	
-	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
-	FirstPersonCameraComponent->RelativeLocation = FVector(0.0f, 0.0f, 64.f); // Position the camera
-	FirstPersonCameraComponent->bUsePawnControlRotation = true;
+ABowRogueCharacter::ABowRogueCharacter(){
 
 	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
 	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
 	Mesh1P->SetOnlyOwnerSee(true);
-	Mesh1P->SetupAttachment(FirstPersonCameraComponent);
+	Mesh1P->SetupAttachment(fpCameraComp);
 	Mesh1P->bCastDynamicShadow = false;
-	Mesh1P->CastShadow = false;
+	Mesh1P->CastShadow = false; 
 	Mesh1P->RelativeRotation = FRotator(1.9f, -19.19f, 5.2f);
 	Mesh1P->RelativeLocation = FVector(-0.5f, -4.4f, -155.7f);
 
@@ -47,17 +34,6 @@ ABowRogueCharacter::ABowRogueCharacter()
 	weaponActorComp->SetupAttachment(armActorComp);
 	
 
-	//Movement
-	movementComp = GetCharacterMovement();
-	movementComp->JumpZVelocity = 860.0f;
-	movementComp->GravityScale = 3.0f;
-	movementComp->MaxFlySpeed = 2000.0f;
-	movementComp->BrakingDecelerationFlying = 2000.0f;
-
-
-	//Crosshair Trace
-	crossTraceComp = CreateDefaultSubobject<UCrosshairTraceComponent>("CrosshairTrace");
-	crosshairResult = crossTraceComp->GetCrosshairResultPtr();
 }
 
 void ABowRogueCharacter::BeginPlay()
@@ -85,6 +61,10 @@ void ABowRogueCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABowRogueCharacter::OnFire);
 
+	//Interaction
+	PlayerInputComponent->BindAction("Interaction", IE_Pressed, this, &ABowRogueCharacter::OnInteraction);
+	
+
 	// Bind movement events
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABowRogueCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABowRogueCharacter::MoveRight);
@@ -102,9 +82,20 @@ void ABowRogueCharacter::OnFire(){
 	
 	if (weapon) {
 		
-		weapon->Fire(crosshairResult->hitResult.Location);
+		weapon->Fire(crosshairResult->hitResult.Location); 
 	}
 
+}
+
+void ABowRogueCharacter::OnInteraction(){
+	if (crosshairResult->IsActorHit()) {
+		APickup* pickup = crosshairResult->GetHitActor<APickup>();
+
+		if (pickup) {
+
+		}
+	}
+	
 }
 
 

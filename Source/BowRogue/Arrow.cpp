@@ -9,14 +9,13 @@
 AArrow::AArrow() {
 
 	bodyMeshComp = CreateDefaultSubobject<UStaticMeshComponent>("Body Mesh");
-	bodyMeshComp->SetupAttachment(collisionComp);
-
-	headMeshComp = CreateDefaultSubobject<UStaticMeshComponent>("Head Mesh");
-	headMeshComp->SetupAttachment(bodyMeshComp, "head");
+	bodyMeshComp->SetupAttachment(collisionMeshComp, "body");
 
 	fletchingMeshComp = CreateDefaultSubobject<UStaticMeshComponent>("Fletching Mesh");
 	fletchingMeshComp->SetupAttachment(bodyMeshComp, "fletching");
 
 	projectileMovement->bShouldBounce = false;
+	hitImpulse = 100.0f;
 }
+ 
 

@@ -22,5 +22,5 @@ ABow::ABow() {
 void ABow::BeginPlay(){
 	Super::BeginPlay();
 
-	drawArrowActor->AttachToComponent(skeletalMeshComp, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "projectile");
+	drawArrowActor->AttachToComponent(skeletalMeshComp, FAttachmentTransformRules::KeepRelativeTransform, "projectile");
 }

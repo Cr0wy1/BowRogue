@@ -2,57 +2,68 @@
 
 #include "Projectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 AProjectile::AProjectile(){
 
 	// Use a sphere as a simple collision representation
-	collisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
-	collisionComp->InitSphereRadius(5.0f);
-	collisionComp->BodyInstance.SetCollisionProfileName("Projectile");
-	collisionComp->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);		// set up a notification for when this component hits something blocking
-
-																						// Players can't walk on it
-	collisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
-	collisionComp->CanCharacterStepUpOn = ECB_No;
+	collisionMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Collision Mesh"));
+	collisionMeshComp->BodyInstance.SetCollisionProfileName("Projectile");
+	collisionMeshComp->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
+																		
+	collisionMeshComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
+	collisionMeshComp->CanCharacterStepUpOn = ECB_No;
 
 	// Set as root component
-	RootComponent = collisionComp;
+	RootComponent = collisionMeshComp;
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	projectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
-	projectileMovement->UpdatedComponent = collisionComp;
+	projectileMovement->UpdatedComponent = collisionMeshComp;
 	projectileMovement->InitialSpeed = 3000.f;
 	projectileMovement->MaxSpeed = 3000.f;
 	projectileMovement->bRotationFollowsVelocity = true;
 	projectileMovement->bShouldBounce = true;
+	
+}
 
+void AProjectile::OnConstruction(const FTransform & Transform){
 	if (bInitIsDummy) {
-		InitialLifeSpan = 0.5f;
-		
+		InitialLifeSpan = 0.0f;
+
 		SetDummy();
 	}
 	else {
 		// Die after 3 seconds by default
 		InitialLifeSpan = 20.0f;
 	}
-
 }
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	if (OtherActor) {
+		UE_LOG(LogTemp, Warning, TEXT("Hittet Actor: %s"), *OtherActor->GetName());
+	}
+	
 	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
-	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics()){
+
+		FDamageEvent damageEvent;
+		OtherActor->TakeDamage(10.0f, damageEvent, nullptr, nullptr);
+		
+
+		OtherComp->AddImpulseAtLocation(GetVelocity() * hitImpulse, GetActorLocation());
+		SetActorLocation(GetActorLocation() + (GetActorForwardVector() * 20));
+		AttachToActor(OtherActor, FAttachmentTransformRules::KeepWorldTransform);
+
 
 		//Destroy();
-	}
+	} 
 }
 
 
 void AProjectile::SetDummy() {
-	collisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	collisionMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	projectileMovement->SetAutoActivate(false);
 
 }
