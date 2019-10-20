@@ -64,7 +64,7 @@ void AWeapon::Fire(const FVector targetLoc){
 
 		FRotator lookAtRot = UKismetMathLibrary::FindLookAtRotation(projectileSpawnLoc, targetLoc);
 
-		UE_LOG(LogTemp, Warning, TEXT("Projectile spawned: %s"), *projectileSpawnLoc.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("Projectile spawned: %s"), *projectileSpawnLoc.ToString());
 
 		FActorSpawnParameters projectileSpawnParams;
 		projectileSpawnParams.Owner = this;
@@ -90,7 +90,7 @@ void AWeapon::StopShooting(){
 		if (properties.shootingType == EShootingType::CHARGE && crossResult) {
 			Fire(crossResult->hitResult.ImpactPoint);
 		}
-		UE_LOG(LogTemp, Warning, TEXT("ShootingDuration: %f"), cShootingDuration);
+		//UE_LOG(LogTemp, Warning, TEXT("ShootingDuration: %f"), cShootingDuration);
 
 		cShootingDuration = 0.0f;
 		stopShootingTime = GetWorld()->GetTimeSeconds();

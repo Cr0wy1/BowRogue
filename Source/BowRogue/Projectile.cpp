@@ -3,8 +3,12 @@
 #include "Projectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "DrawDebugHelpers.h"
 
 AProjectile::AProjectile(){
+
+	sceneRootComp = CreateDefaultSubobject<USceneComponent>(TEXT("Scene Root"));
+	SetRootComponent(sceneRootComp);
 
 	// Use a sphere as a simple collision representation
 	collisionMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Collision Mesh"));
@@ -13,9 +17,8 @@ AProjectile::AProjectile(){
 																		
 	collisionMeshComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
 	collisionMeshComp->CanCharacterStepUpOn = ECB_No;
-
-	// Set as root component
-	RootComponent = collisionMeshComp;
+	collisionMeshComp->SetupAttachment(sceneRootComp);
+	
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	projectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
@@ -39,27 +42,43 @@ void AProjectile::OnConstruction(const FTransform & Transform){
 	}
 }
 
-void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
-	if (OtherActor) {
-		UE_LOG(LogTemp, Warning, TEXT("Hittet Actor: %s"), *OtherActor->GetName());
+void AProjectile::BeginPlay(){
+	Super::BeginPlay();
+
+	if (bDrawDebug) {
+		FVector startLoc = GetActorLocation();
+		FVector endLoc = startLoc + (GetActorForwardVector() * 100.0f);
+		DrawDebugPoint(GetWorld(), startLoc, 10.0f, FColor::Green, true, 20);
+		DrawDebugDirectionalArrow(GetWorld(), startLoc, endLoc, 100.0f, FColor::Blue, true, 20.0f, 0, 1.0f);
 	}
-	
-	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics()){
+}
+
+void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit){
+
+	if (OtherActor && OtherActor != this) {
+		UE_LOG(LogTemp, Warning, TEXT("Hittet Actor: %s"), *OtherActor->GetName());
 
 		FDamageEvent damageEvent;
 		OtherActor->TakeDamage(10.0f, damageEvent, nullptr, nullptr);
-		
 
-		OtherComp->AddImpulseAtLocation(GetVelocity() * hitImpulse, GetActorLocation());
-		SetActorLocation(GetActorLocation() + (GetActorForwardVector() * 20));
-		AttachToActor(OtherActor, FAttachmentTransformRules::KeepWorldTransform);
+		// Only add impulse and destroy projectile if we hit a physics
+		if (OtherComp && OtherComp->IsSimulatingPhysics()) {
 
+			OtherComp->AddImpulseAtLocation(GetVelocity() * hitImpulse, GetActorLocation());
+			SetActorLocation(GetActorLocation() + (GetActorForwardVector() * 20));
+			AttachToActor(OtherActor, FAttachmentTransformRules::KeepWorldTransform);
 
-		//Destroy();
-	} 
+			//Destroy();
+		}
+	}
+
+	//draw debug impact point
+	if (bDrawDebug) {
+		DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 5, FColor::Blue, true, 20);
+	}
 }
+
+
 
 
 void AProjectile::SetDummy() {

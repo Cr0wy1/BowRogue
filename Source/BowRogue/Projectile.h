@@ -16,15 +16,24 @@ protected:
 
 	//UProperties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	bool bDrawDebug = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	float hitImpulse = 100.0f;
 
 	//COMPONENTS
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Projectile")
+	USceneComponent * sceneRootComp;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Projectile")
 	UStaticMeshComponent * collisionMeshComp;
 
 	/** Projectile movement component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 		class UProjectileMovementComponent* projectileMovement;
+
+
+	virtual void BeginPlay() override;
 
 	//Disable Movement and Collision, only for cosmetics
 	void SetDummy();
