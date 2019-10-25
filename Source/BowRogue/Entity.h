@@ -4,7 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GameStructs.h"
 #include "Entity.generated.h"
+
+
+
+class AEntitySpawner;
+
+
 
 UCLASS()
 class BOWROGUE_API AEntity : public ACharacter
@@ -16,6 +23,8 @@ public:
 	AEntity();
 
 protected:
+
+	AEntitySpawner * spawner = nullptr;
 
 	//COMPONENTS
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attribute")
@@ -33,4 +42,11 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
+	void SetSpawner(AEntitySpawner* _spawner);
+
+	//spawn the entity and return it, return nullptr if spawner is nullptr
+	static AEntity* Spawn(TSubclassOf<AEntity> templateClass, const FVector &Location, AEntitySpawner* spawner);
+
+	//spawn the entity and return it, return nullptr if spawner is nullptr
+	static AEntity* Spawn(const FEntitySpawnParams &params, AEntitySpawner* spawner);
 };

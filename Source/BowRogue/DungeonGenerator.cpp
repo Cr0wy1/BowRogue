@@ -4,6 +4,7 @@
 #include "DungeonGenerator.h"
 #include "DungeonRoom.h"
 #include "Engine/World.h"
+#include "RoomConnector.h"
 
 // Sets default values
 ADungeonGenerator::ADungeonGenerator()
@@ -81,11 +82,23 @@ bool ADungeonGenerator::SpawnRoom(const FIntVector &gridPos){
 			spawnLoc.Z = 0;
 
 			int32 iRandRoomBP = FMath::Rand() % dungeonRoomBPs.Num();
-			GetWorld()->SpawnActor<ADungeonRoom>(dungeonRoomBPs[iRandRoomBP], spawnLoc, FRotator::ZeroRotator);
+			ADungeonRoom* spawnedRoom = ADungeonRoom::Construct(this, dungeonRoomBPs[iRandRoomBP], spawnLoc, gridPos);
+
+			spawnedRooms.Add(gridPos, spawnedRoom); 
 
 			++roomsPlaced;
 			return true;
 		}
+	}
+
+	return false;
+}
+
+bool ADungeonGenerator::SpawnRoomConnectors(const FIntVector & gridPos){
+
+	ADungeonRoom** findRoom = spawnedRooms.Find(gridPos);
+	if (findRoom) {
+
 	}
 
 	return false;

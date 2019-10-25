@@ -8,6 +8,11 @@
 
 
 
+class ADungeonRoom;
+class ARoomConnector;
+
+
+
 UENUM()
 enum class EGridRoomType : uint8 {
 
@@ -30,6 +35,8 @@ public:
 protected:
 
 	TArray<TArray<EGridRoomType>> roomGrid;
+	TMap<FIntVector, ADungeonRoom*> spawnedRooms;
+
 	int32 roomsPlaced = 0;
 
 	TArray<FIntVector> vecDirs = { FIntVector(1, 0, 0), FIntVector(0, 1, 0), FIntVector(-1, 0, 0), FIntVector(0, -1, 0) };
@@ -50,6 +57,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dungeon")
 	TArray<TSubclassOf<class ADungeonRoom>> dungeonRoomBPs;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dungeon")
+	TSubclassOf<class ARoomConnector> roomConnectorBP;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -58,6 +68,9 @@ protected:
 
 	//returns true if room spawned
 	bool SpawnRoom(const FIntVector &gridPos);
+
+	//returns true if connector spawned
+	bool SpawnRoomConnectors(const FIntVector &gridPos);
 
 public:	
 	// Called every frame

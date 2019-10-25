@@ -4,6 +4,8 @@
 #include "Entity.h"
 #include "EntityController.h"
 #include "AttributeComponent.h"
+#include "EntitySpawner.h"
+#include "Engine/World.h"
 
 // Sets default values
 AEntity::AEntity(){
@@ -25,6 +27,10 @@ void AEntity::BeginPlay(){
 void AEntity::OnDeath(){
 	UE_LOG(LogTemp, Warning, TEXT("i am Death"));
 
+	if (spawner) {
+		spawner->RemovedSpawnedEntity(this);
+	}
+
 	Destroy();
 }
 
@@ -41,5 +47,30 @@ float AEntity::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, 
 	attributeComp->ApplyDamage(DamageAmount);
 
 	return DamageAmount;
+}
+
+void AEntity::SetSpawner(AEntitySpawner * _spawner){
+	spawner = _spawner;
+	if (spawner) {
+		spawner->AddSpawnedEntity(this);
+	}
+}
+
+AEntity * AEntity::Spawn(TSubclassOf<AEntity> templateClass, const FVector & Location, AEntitySpawner * spawner){
+	return Spawn(FEntitySpawnParams(templateClass, Location), spawner);
+}
+
+AEntity * AEntity::Spawn(const FEntitySpawnParams & params, AEntitySpawner * spawner){
+	if (spawner) {
+		AEntity* spawnedEntity = spawner->GetWorld()->SpawnActor<AEntity>(params.templateClass, params.location, params.rotation);
+		if (spawnedEntity) {
+			spawnedEntity->SetSpawner(spawner);
+		}
+		
+	
+		return spawnedEntity;
+	}
+	
+	return nullptr;
 }
 
