@@ -11,6 +11,58 @@
 class AEntity;
 
 
+UENUM()
+enum class EGridDir : uint8 {
+	FRONT,
+	RIGHT,
+	BACK,
+	LEFT,
+};
+
+
+USTRUCT()
+struct BOWROGUE_API FGridDir {
+	GENERATED_BODY()
+
+protected:
+	FIntVector vec;
+	EGridDir type;
+
+public:
+	FGridDir();
+	FGridDir(EGridDir griddir);
+
+	FGridDir RotateLeft();
+	FGridDir RotateRight();
+	FGridDir Flip();
+
+	void SetDir(EGridDir griddir);
+
+	FORCEINLINE FIntVector GetVec() const { return vec; }
+	FORCEINLINE EGridDir GetType() const { return type; }
+
+	bool operator==(const FGridDir &other) const;
+
+	//Statics
+	static FIntVector FRONT_VEC;
+	static FIntVector RIGHT_VEC;
+	static FIntVector BACK_VEC;
+	static FIntVector LEFT_VEC;
+	static FGridDir FRONT;
+	static FGridDir RIGHT;
+	static FGridDir BACK;
+	static FGridDir LEFT;
+
+	static TArray<FGridDir> DIRS;
+
+	FORCEINLINE static FGridDir GetRandDir() { return DIRS[FMath::Rand() % DIRS.Num()]; }
+};
+
+//For using this struct in TMap as key
+FORCEINLINE uint32 GetTypeHash(const FGridDir& gridir) {
+	return FCrc::MemCrc_DEPRECATED(&gridir, sizeof(FGridDir));
+}
+
 USTRUCT(BlueprintType)
 struct BOWROGUE_API FEntitySpawnParams {
 	GENERATED_BODY()

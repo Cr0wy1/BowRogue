@@ -39,8 +39,6 @@ protected:
 
 	int32 roomsPlaced = 0;
 
-	TArray<FIntVector> vecDirs = { FIntVector(1, 0, 0), FIntVector(0, 1, 0), FIntVector(-1, 0, 0), FIntVector(0, -1, 0) };
-
 	//UPROPERTIES
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dungeon")
 	int32 seed = 1;
@@ -52,13 +50,13 @@ protected:
 	float roomSize = 2000.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dungeon")
-	float roomMargin = 100.0f;
+	float roomMargin = 600.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dungeon")
-	TArray<TSubclassOf<class ADungeonRoom>> dungeonRoomBPs;
+	TArray<TSubclassOf<ADungeonRoom>> dungeonRoomBPs;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dungeon")
-	TSubclassOf<class ARoomConnector> roomConnectorBP;
+	TSubclassOf<ARoomConnector> roomConnectorBP;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -66,11 +64,11 @@ protected:
 	void StartRoomGeneration();
 	void PathMaker(FIntVector startPos, FIntVector dir, int32 length, float accuracy = 1.0f);
 
-	//returns true if room spawned
-	bool SpawnRoom(const FIntVector &gridPos);
+	//returns room if room spawned, else return nullptr
+	ADungeonRoom* SpawnRoom(const FIntVector &gridPos);
 
 	//returns true if connector spawned
-	bool SpawnRoomConnectors(const FIntVector &gridPos);
+	bool CheckConnectors(ADungeonRoom* cRoom, const FIntVector &gridPos);
 
 public:	
 	// Called every frame
@@ -80,8 +78,5 @@ public:
 
 	//return a random rotation vector +90 or -90 rot
 	FIntVector GetRandRotDirVector(const FIntVector &vec) const;
-
-	//returns a random Vector(up, bottom, right or left)
-	FIntVector GetRandGridDirVector() const;
 
 };

@@ -20,14 +20,12 @@ ADungeonRoom::ADungeonRoom()
 void ADungeonRoom::BeginPlay(){
 	Super::BeginPlay();
 	
-	spawner = AEntitySpawner::Construct(this, GetActorLocation());
-	if (spawner) {
-		spawner->OnAllEntitiesRemoved.AddDynamic(this, &ADungeonRoom::OnAllEntitiesKilled);
-		spawner->SpawnEntities(spawnPattern);
-	}
+
 }
 
 void ADungeonRoom::OnAllEntitiesKilled(){
+	bIsClear = true;
+	bIsOpen = true;
 	OnRoomClear.Broadcast();
 	UE_LOG(LogTemp, Warning, TEXT("Room cleared!"));
 
@@ -36,6 +34,11 @@ void ADungeonRoom::OnAllEntitiesKilled(){
 void ADungeonRoom::Init(ADungeonGenerator * _dungeonGenerator, FIntVector _gridLoc){
 	dungeonGenerator = _dungeonGenerator;
 	gridLoc = _gridLoc;
+
+	if (!bCanSpawnEntities) {
+		bIsClear = true;
+		bIsOpen = true;
+	}
 }
 
 // Called every frame
@@ -52,5 +55,21 @@ ADungeonRoom * ADungeonRoom::Construct(ADungeonGenerator * dungeonGenerator, TSu
 		return spawnedRoom;
 	}
 	return nullptr;
+}
+
+void ADungeonRoom::AddConnector(const FGridDir & dir, ARoomConnector * connector){
+	connectors.Add(dir, connector);
+}
+
+void ADungeonRoom::PrepareEnter(){
+	spawner = AEntitySpawner::Construct(this, GetActorLocation());
+	if (spawner) {
+		spawner->OnAllEntitiesRemoved.AddDynamic(this, &ADungeonRoom::OnAllEntitiesKilled);
+		spawner->SpawnEntities(spawnPattern);
+	}
+}
+
+void ADungeonRoom::SetOpen(bool isOpen){
+	bIsOpen = isOpen;
 }
 

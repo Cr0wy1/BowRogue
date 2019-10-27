@@ -16,16 +16,25 @@ class ADungeonGenerator;
 class ARoomConnector;
 
 
+
 UCLASS()
 class BOWROGUE_API ADungeonRoom : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
+
+	bool bCanSpawnEntities = true;
+	
+
 	// Sets default values for this actor's properties
 	ADungeonRoom();
 
 protected:
+
+	bool bIsClear = false;
+	bool bIsOpen = false;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
 	FSpawnPattern spawnPattern;
@@ -35,7 +44,7 @@ protected:
 
 	class AEntitySpawner* spawner = nullptr;
 
-	
+	TMap<FGridDir, ARoomConnector*> connectors;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -54,6 +63,14 @@ public:
 	//return spawned Room, returns nullptr if dungeonGenerator is nullptr
 	static ADungeonRoom* Construct(ADungeonGenerator * dungeonGenerator, TSubclassOf<ADungeonRoom> classBP, FVector location, FIntVector gridLoc);
 
+	void AddConnector(const FGridDir &dir, ARoomConnector* connector);
+
+	void PrepareEnter();
+
+	void SetOpen(bool isOpen);
+
 	FORCEINLINE FIntVector GetGridLoc() const { return gridLoc; }
 	FORCEINLINE ADungeonGenerator* GetDungeonGenerator() const { return dungeonGenerator; }
+	FORCEINLINE bool IsClear() const { return bIsClear; }
+	FORCEINLINE bool IsOpen() const { return bIsOpen; }
 };

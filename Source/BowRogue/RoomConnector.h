@@ -9,6 +9,7 @@
 
 
 class ADungeonRoom;
+class ADungeonDoor;
 
 
 
@@ -21,33 +22,38 @@ public:
 	// Sets default values for this actor's properties
 	ARoomConnector();
 
-protected:
-
 	ADungeonRoom * roomA = nullptr;
 	ADungeonRoom * roomB = nullptr;
 
+	ADungeonDoor * doorA = nullptr;
+	ADungeonDoor * doorB = nullptr;
+
+protected:
+
+	bool bIsTriggerActive = true;
+
 	//UPROPERTIES
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	UStaticMesh* doorA = nullptr;
+	UStaticMesh* doorAMesh = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	UStaticMesh* doorB = nullptr;
+	UStaticMesh* doorBMesh = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	UStaticMesh* floor = nullptr;
+	UStaticMesh* floorMesh = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	UStaticMesh* wall = nullptr;
+	UStaticMesh* wallMesh = nullptr;
 
 	//COMPONENTS
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Trigger")
 	class UBoxComponent* triggerBoxComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "mesh")
-	UStaticMeshComponent* meshDoorA;
+	UChildActorComponent* doorAActorComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "mesh")
-	UStaticMeshComponent* meshDoorB;
+	UChildActorComponent* doorBActorComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "mesh")
 	UStaticMeshComponent* meshFloor;
@@ -63,6 +69,17 @@ protected:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void Init(ADungeonRoom * _roomA, ADungeonRoom * _roomB);
+
+	UFUNCTION()
+	void OnTriggerOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnRoomAClear();
+
+	UFUNCTION()
+	void OnRoomBClear();
 
 public:	
 	// Called every frame

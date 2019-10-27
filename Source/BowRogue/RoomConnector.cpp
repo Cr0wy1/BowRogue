@@ -3,6 +3,7 @@
 
 #include "RoomConnector.h"
 #include "DungeonRoom.h"
+#include "DungeonDoor.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 
@@ -12,19 +13,19 @@ ARoomConnector::ARoomConnector()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	triggerBoxComp = CreateDefaultSubobject<UBoxComponent>("Trigger");
-	//triggerBoxComp->OnComponentBeginOverlap.AddDynamic(this, )
-
 	meshFloor = CreateDefaultSubobject<UStaticMeshComponent>("Floor Mesh");
 	RootComponent = meshFloor;
 
-	meshDoorA = CreateDefaultSubobject<UStaticMeshComponent>("DoorA Mesh");
-	meshDoorA->SetRelativeLocationAndRotation(FVector(100, 0, 0), FRotator());
-	meshDoorA->SetupAttachment(meshFloor);
+	triggerBoxComp = CreateDefaultSubobject<UBoxComponent>("Trigger");
+	triggerBoxComp->SetupAttachment(meshFloor);
 
-	meshDoorB = CreateDefaultSubobject<UStaticMeshComponent>("DoorB Mesh");
-	meshDoorB->SetRelativeLocationAndRotation(FVector(-100, 0, 0), FRotator());
-	meshDoorB->SetupAttachment(meshFloor);
+	doorAActorComp = CreateDefaultSubobject<UChildActorComponent>("DoorA Actor");
+	doorAActorComp->SetRelativeLocationAndRotation(FVector(-150, 0, 0), FRotator());
+	doorAActorComp->SetupAttachment(meshFloor);
+	
+	doorBActorComp = CreateDefaultSubobject<UChildActorComponent>("DoorB Actor");
+	doorBActorComp->SetRelativeLocationAndRotation(FVector(150, 0, 0), FRotator());
+	doorBActorComp->SetupAttachment(meshFloor);
 
 	meshWallA = CreateDefaultSubobject<UStaticMeshComponent>("WallA Mesh");
 	meshWallA->SetRelativeLocationAndRotation(FVector(0, 100, 0), FRotator(0, -90, 0));
@@ -44,6 +45,62 @@ void ARoomConnector::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	triggerBoxComp->OnComponentBeginOverlap.AddDynamic(this, &ARoomConnector::OnTriggerOverlapBegin);
+
+	doorA = Cast<ADungeonDoor>(doorAActorComp->GetChildActor());
+	doorB = Cast<ADungeonDoor>(doorBActorComp->GetChildActor());
+
+	UE_LOG(LogTemp, Warning, TEXT("Connector %s BeginPlay"), *GetName());
+
+}
+
+void ARoomConnector::Init(ADungeonRoom * _roomA, ADungeonRoom * _roomB){
+	roomA = _roomA;
+	roomB = _roomB;
+
+	if (!roomA->bCanSpawnEntities) {
+		doorA->OpenDoor();
+	}
+
+	if (!roomB->bCanSpawnEntities) {
+		doorB->OpenDoor();
+	}
+}
+
+void ARoomConnector::OnTriggerOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult){
+	
+	if (!bIsTriggerActive) return;
+
+	UE_LOG(LogTemp, Warning, TEXT("Overlap!"));
+
+	if (doorA->IsOpen() && !doorB->IsOpen()) {
+		doorA->CloseDoor();
+		roomB->PrepareEnter();
+		doorB->OpenDoor();
+	}
+	else if(!doorA->IsOpen() && doorB->IsOpen()){
+		doorB->CloseDoor();
+		roomA->PrepareEnter();
+		doorA->OpenDoor();
+	}
+
+	bIsTriggerActive = false;
+}
+
+void ARoomConnector::OnRoomAClear(){
+	doorA->OpenDoor();
+
+	if (roomB->IsOpen()) {
+		doorB->OpenDoor();
+	}
+}
+
+void ARoomConnector::OnRoomBClear(){
+	doorB->OpenDoor();
+
+	if (roomA->IsOpen()) {
+		doorA->OpenDoor();
+	}
 }
 
 // Called every frame
@@ -55,12 +112,32 @@ void ARoomConnector::Tick(float DeltaTime)
 
 ARoomConnector * ARoomConnector::Construct(TSubclassOf<ARoomConnector> tempalteBP, ADungeonRoom * roomA, ADungeonRoom * roomB){
 
+
+	ARoomConnector* spawnedConnector = nullptr;
+	UE_LOG(LogTemp, Warning, TEXT("spawn roomConnector"));
 	if (roomA && roomB) {
-		//FVector spawnPos = roomA->GetActorLocation() 
+		
+		FRotator spawnRot = FRotator::ZeroRotator;
+		
+		FIntVector dir = roomB->GetGridLoc() - roomA->GetGridLoc();
+		if (dir.X == 0) {
+			spawnRot.Yaw = 90.0f * dir.Y;
+		}
+		else {
+			if (dir.X < 0) {
+				spawnRot.Yaw = 180.0f;
+			}
+		}
+
+		FVector spawnPos = (roomA->GetActorLocation() + roomB->GetActorLocation()) / 2.0f;
+		spawnedConnector = roomA->GetWorld()->SpawnActor<ARoomConnector>(tempalteBP, spawnPos, spawnRot);
+		spawnedConnector->Init(roomA, roomB);
+
+		//UE_LOG(LogTemp, Warning, TEXT("Connector %s after BeginPlay"), *spawnedConnector->GetName());
+		roomA->OnRoomClear.AddDynamic(spawnedConnector, &ARoomConnector::OnRoomAClear);
+		roomB->OnRoomClear.AddDynamic(spawnedConnector, &ARoomConnector::OnRoomBClear);
 	}
 
-	//roomA->GetWorld()->SpawnActor<ARoomConnector>(tempalteBP, );
-
-	return nullptr;
+	return spawnedConnector;
 }
 

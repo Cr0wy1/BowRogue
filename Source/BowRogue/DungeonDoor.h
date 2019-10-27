@@ -17,18 +17,34 @@ public:
 
 protected:
 
+	bool bIsOpen = false;
+
 	//COMPONENTS
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Door")
-	class UStaticMeshComponent* mesh;
+	class UStaticMeshComponent* meshFrame;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Door")
+	class UStaticMeshComponent* meshGate;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+	UFUNCTION(BlueprintImplementableEvent, Category = "Door")
+	void OnOpenDoor();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Door")
+	void OnCloseDoor();
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION()
+	void OpenDoor();
+
+	UFUNCTION()
+	void CloseDoor();
+
+	FORCEINLINE bool IsOpen()const { return bIsOpen; }
 
 };

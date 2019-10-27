@@ -5,6 +5,7 @@
 #include "DungeonRoom.h"
 #include "Engine/World.h"
 #include "RoomConnector.h"
+#include "GameStructs.h"
 
 // Sets default values
 ADungeonGenerator::ADungeonGenerator()
@@ -36,11 +37,13 @@ void ADungeonGenerator::StartRoomGeneration(){
 	
 	FIntVector cGridPos = FIntVector(roomGridRadius, roomGridRadius, 0);
 	
-	SpawnRoom(cGridPos);
+	ADungeonRoom*spawnRoom = SpawnRoom(cGridPos);
+	spawnRoom->bCanSpawnEntities = false;
+	spawnRoom->SetOpen(true);
 
 	for (int32 i = 0; i < 4; i++){
 		
-		FIntVector randVDir = vecDirs[i];
+		FIntVector randVDir = FGridDir::GetRandDir().GetVec();
 		int32 randLength = FMath::Rand() % roomGridRadius;
 
 		PathMaker(cGridPos, randVDir, randLength, 0.7f);
@@ -71,7 +74,7 @@ void ADungeonGenerator::PathMaker(FIntVector startPos, FIntVector dir, int32 len
 	}
 }
 
-bool ADungeonGenerator::SpawnRoom(const FIntVector &gridPos){
+ADungeonRoom* ADungeonGenerator::SpawnRoom(const FIntVector &gridPos){
 	if (roomGrid.IsValidIndex(gridPos.X) && roomGrid[0].IsValidIndex(gridPos.Y)) {
 		if (roomGrid[gridPos.X][gridPos.Y] == EGridRoomType::EMPTY) {
 			roomGrid[gridPos.X][gridPos.Y] = EGridRoomType::ROOM;
@@ -85,20 +88,37 @@ bool ADungeonGenerator::SpawnRoom(const FIntVector &gridPos){
 			ADungeonRoom* spawnedRoom = ADungeonRoom::Construct(this, dungeonRoomBPs[iRandRoomBP], spawnLoc, gridPos);
 
 			spawnedRooms.Add(gridPos, spawnedRoom); 
+			CheckConnectors(spawnedRoom, gridPos);
 
 			++roomsPlaced;
-			return true;
+			return spawnedRoom;
 		}
 	}
 
-	return false;
+	return nullptr;
 }
 
-bool ADungeonGenerator::SpawnRoomConnectors(const FIntVector & gridPos){
+bool ADungeonGenerator::CheckConnectors(ADungeonRoom* cRoom, const FIntVector & gridPos){
+	UE_LOG(LogTemp, Warning, TEXT("checkGrid %s"), *gridPos.ToString());
 
-	ADungeonRoom** findRoom = spawnedRooms.Find(gridPos);
-	if (findRoom) {
+	ADungeonRoom** frontRoom = spawnedRooms.Find(gridPos + FGridDir::FRONT_VEC);
+	if (frontRoom) {
+		ARoomConnector::Construct(roomConnectorBP, cRoom, *frontRoom);
+	}
 
+	ADungeonRoom** rightRoom = spawnedRooms.Find(gridPos + FGridDir::RIGHT_VEC);
+	if (rightRoom) {
+		ARoomConnector::Construct(roomConnectorBP, cRoom, *rightRoom);
+	}
+
+	ADungeonRoom** backRoom = spawnedRooms.Find(gridPos + FGridDir::BACK_VEC);
+	if (backRoom) {
+		ARoomConnector::Construct(roomConnectorBP, cRoom, *backRoom);
+	}
+
+	ADungeonRoom** leftRoom = spawnedRooms.Find(gridPos + FGridDir::LEFT_VEC);
+	if (leftRoom) {
+		ARoomConnector::Construct(roomConnectorBP, cRoom, *leftRoom);
 	}
 
 	return false;
@@ -117,6 +137,7 @@ void ADungeonGenerator::SetSeed(int32 seed){
 
 FIntVector ADungeonGenerator::GetRandRotDirVector(const FIntVector & vec) const{
 	FIntVector result;
+	result.Z = 0;
 	
 	bool randBool = FMath::RandBool();
 
@@ -130,10 +151,5 @@ FIntVector ADungeonGenerator::GetRandRotDirVector(const FIntVector & vec) const{
 	}
 
 	return result;
-}
-
-FIntVector ADungeonGenerator::GetRandGridDirVector() const{
-
-	return vecDirs[FMath::Rand() % vecDirs.Num()];
 }
 
