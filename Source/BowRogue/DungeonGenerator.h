@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameStructs.h"
 #include "DungeonGenerator.generated.h"
 
 
@@ -11,16 +12,6 @@
 class ADungeonRoom;
 class ARoomConnector;
 
-
-
-UENUM()
-enum class EGridRoomType : uint8 {
-
-	EMPTY, //Room can be placed
-	DUMMY, //Room without door connection
-	ROOM //Room with door connection
-
-};
 
 
 UCLASS()
@@ -34,7 +25,12 @@ public:
 
 protected:
 
-	TArray<TArray<EGridRoomType>> roomGrid;
+	class UAdvancedGameInstance * gameInstance = nullptr;
+
+	int32 longestPath = 0;
+	FIntVector longestGridLoc;
+
+	TArray<TArray<FGridRoom>> roomGrid;
 	TMap<FIntVector, ADungeonRoom*> spawnedRooms;
 
 	int32 roomsPlaced = 0;
@@ -62,13 +58,18 @@ protected:
 	virtual void BeginPlay() override;
 
 	void StartRoomGeneration();
-	void PathMaker(FIntVector startPos, FIntVector dir, int32 length, float accuracy = 1.0f);
+	void PathMaker(FIntVector startPos, FIntVector dir, int32 length, int32 pathDistance, float accuracy = 1.0f);
+
+	//returns true if room is succesfully setted
+	bool SetGridRoom(const FIntVector &gridPos, int32 pathDistance, EGridRoomType gridtype = EGridRoomType::ROOM, ERoomType roomtype = ERoomType::FIGHT, bool bSpawnEntities = true);
 
 	//returns room if room spawned, else return nullptr
-	ADungeonRoom* SpawnRoom(const FIntVector &gridPos);
+	ADungeonRoom* SpawnRooms();
 
 	//returns true if connector spawned
 	bool CheckConnectors(ADungeonRoom* cRoom, const FIntVector &gridPos);
+
+	void LogGrid();
 
 public:	
 	// Called every frame
@@ -79,4 +80,6 @@ public:
 	//return a random rotation vector +90 or -90 rot
 	FIntVector GetRandRotDirVector(const FIntVector &vec) const;
 
+	FORCEINLINE const TArray<TArray<FGridRoom>>* GetGridPtr() const { return &roomGrid; }
+	FORCEINLINE class UStructureAsset* GetStructureAsset() const;
 };

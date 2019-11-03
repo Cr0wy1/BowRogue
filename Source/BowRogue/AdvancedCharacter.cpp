@@ -31,7 +31,7 @@ AAdvancedCharacter::AAdvancedCharacter(){
 	fpCameraComp->SetupAttachment(GetCapsuleComponent());
 	fpCameraComp->RelativeLocation = FVector(0.0f, 0.0f, 64.f); // Position the camera
 	fpCameraComp->bUsePawnControlRotation = true;
-
+	
 	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
 	meshFP = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
 	meshFP->SetOnlyOwnerSee(true);

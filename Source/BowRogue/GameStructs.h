@@ -11,6 +11,18 @@
 class AEntity;
 
 
+
+UENUM()
+enum class EGridRoomType : uint8 {
+
+	EMPTY, //Room can be placed
+	DUMMY, //Room without door connection
+	ROOM //Room with door connection
+
+};
+
+
+
 UENUM()
 enum class EGridDir : uint8 {
 	FRONT,
@@ -18,6 +30,19 @@ enum class EGridDir : uint8 {
 	BACK,
 	LEFT,
 };
+
+
+
+UENUM()
+enum class ERoomType : uint8 {
+	EMPTY,
+	FIGHT,
+	SPAWN,
+	RIDDLE,
+	TREASURE,
+	BOSS,
+};
+
 
 
 USTRUCT()
@@ -95,6 +120,26 @@ struct BOWROGUE_API FSpawnPattern {
 	const FEntitySpawnParams& operator[](int32 index) const {
 		return spawns[index];
 	}
+};
+
+
+//DungeonRoom
+USTRUCT(BlueprintType)
+struct BOWROGUE_API FDungeonRoomParams {
+	GENERATED_BODY()
+
+	bool bSpawnEntities = true;
+	EGridRoomType gridtype = EGridRoomType::EMPTY;
+	ERoomType roomtype = ERoomType::FIGHT;
+};
+
+
+
+USTRUCT()
+struct BOWROGUE_API FGridRoom : public FDungeonRoomParams {
+	GENERATED_BODY()
+
+		int32 pathDistance = 0;
 };
 /**
  * 

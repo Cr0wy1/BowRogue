@@ -7,6 +7,8 @@
 #include "Engine/World.h"
 #include "EntitySpawner.h"
 #include "RoomConnector.h"
+#include "Kismet/GameplayStatics.h"
+#include "StructureAsset.h"
 
 // Sets default values
 ADungeonRoom::ADungeonRoom()
@@ -27,15 +29,17 @@ void ADungeonRoom::OnAllEntitiesKilled(){
 	bIsClear = true;
 	bIsOpen = true;
 	OnRoomClear.Broadcast();
-	UE_LOG(LogTemp, Warning, TEXT("Room cleared!"));
+	//UE_LOG(LogTemp, Warning, TEXT("Room cleared!"));
 
 }
 
-void ADungeonRoom::Init(ADungeonGenerator * _dungeonGenerator, FIntVector _gridLoc){
+void ADungeonRoom::Init(ADungeonGenerator * _dungeonGenerator, FIntVector _gridLoc, const FDungeonRoomParams &_params){
 	dungeonGenerator = _dungeonGenerator;
 	gridLoc = _gridLoc;
+	params = _params;
 
-	if (!bCanSpawnEntities) {
+	if (!params.bSpawnEntities) {
+
 		bIsClear = true;
 		bIsOpen = true;
 	}
@@ -48,10 +52,25 @@ void ADungeonRoom::Tick(float DeltaTime)
 
 }
 
-ADungeonRoom * ADungeonRoom::Construct(ADungeonGenerator * dungeonGenerator, TSubclassOf<ADungeonRoom> classBP, FVector location, FIntVector gridLoc){
+ADungeonRoom * ADungeonRoom::Construct(ADungeonGenerator * dungeonGenerator, TSubclassOf<ADungeonRoom> classBP, FVector location, FIntVector gridLoc, const FDungeonRoomParams &params){
 	if (dungeonGenerator) {
-		ADungeonRoom* spawnedRoom = dungeonGenerator->GetWorld()->SpawnActor<ADungeonRoom>(classBP, location, FRotator::ZeroRotator);
-		spawnedRoom->Init(dungeonGenerator, gridLoc);
+		FTransform spawnTrans;
+		spawnTrans.SetLocation(location);
+		spawnTrans.SetRotation(FQuat::Identity);
+
+		UStructureAsset* structureAsset = dungeonGenerator->GetStructureAsset();
+		if (structureAsset && structureAsset->bossPortal_BP) {
+			if (params.roomtype == ERoomType::BOSS) {
+				dungeonGenerator->GetWorld()->SpawnActor<AActor>(structureAsset->bossPortal_BP, location, FRotator::ZeroRotator);
+			}
+		}
+
+		ADungeonRoom* spawnedRoom = dungeonGenerator->GetWorld()->SpawnActorDeferred<ADungeonRoom>(classBP, spawnTrans, dungeonGenerator);
+		//ADungeonRoom* spawnedRoom = dungeonGenerator->GetWorld()->SpawnActor<ADungeonRoom>(classBP, location, FRotator::ZeroRotator);
+		spawnedRoom->Init(dungeonGenerator, gridLoc, params);
+
+		UGameplayStatics::FinishSpawningActor(spawnedRoom, spawnTrans);
+
 		return spawnedRoom;
 	}
 	return nullptr;

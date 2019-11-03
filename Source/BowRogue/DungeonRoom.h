@@ -24,9 +24,6 @@ class BOWROGUE_API ADungeonRoom : public AActor
 	
 public:	
 
-	bool bCanSpawnEntities = true;
-	
-
 	// Sets default values for this actor's properties
 	ADungeonRoom();
 
@@ -35,6 +32,7 @@ protected:
 	bool bIsClear = false;
 	bool bIsOpen = false;
 	
+	FDungeonRoomParams params;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
 	FSpawnPattern spawnPattern;
@@ -56,12 +54,12 @@ public:
 
 	FOnRoomClear OnRoomClear;
 
-	void Init(ADungeonGenerator * _dungeonGenerator, FIntVector _gridLoc);
+	void Init(ADungeonGenerator * _dungeonGenerator, FIntVector _gridLoc, const FDungeonRoomParams &_params);
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	//return spawned Room, returns nullptr if dungeonGenerator is nullptr
-	static ADungeonRoom* Construct(ADungeonGenerator * dungeonGenerator, TSubclassOf<ADungeonRoom> classBP, FVector location, FIntVector gridLoc);
+	static ADungeonRoom* Construct(ADungeonGenerator * dungeonGenerator, TSubclassOf<ADungeonRoom> classBP, FVector location, FIntVector gridLoc, const FDungeonRoomParams &params = FDungeonRoomParams());
 
 	void AddConnector(const FGridDir &dir, ARoomConnector* connector);
 

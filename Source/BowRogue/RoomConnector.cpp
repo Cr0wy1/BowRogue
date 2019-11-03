@@ -20,11 +20,11 @@ ARoomConnector::ARoomConnector()
 	triggerBoxComp->SetupAttachment(meshFloor);
 
 	doorAActorComp = CreateDefaultSubobject<UChildActorComponent>("DoorA Actor");
-	doorAActorComp->SetRelativeLocationAndRotation(FVector(-150, 0, 0), FRotator());
+	doorAActorComp->SetRelativeLocationAndRotation(FVector(-150, 0, 0), FRotator::ZeroRotator);
 	doorAActorComp->SetupAttachment(meshFloor);
 	
 	doorBActorComp = CreateDefaultSubobject<UChildActorComponent>("DoorB Actor");
-	doorBActorComp->SetRelativeLocationAndRotation(FVector(150, 0, 0), FRotator());
+	doorBActorComp->SetRelativeLocationAndRotation(FVector(150, 0, 0), FRotator::ZeroRotator);
 	doorBActorComp->SetupAttachment(meshFloor);
 
 	meshWallA = CreateDefaultSubobject<UStaticMeshComponent>("WallA Mesh");
@@ -36,7 +36,7 @@ ARoomConnector::ARoomConnector()
 	meshWallB->SetupAttachment(meshFloor);
 
 	meshRoof = CreateDefaultSubobject<UStaticMeshComponent>("Roof Mesh");
-	meshRoof->SetRelativeLocationAndRotation(FVector(0, -0, 200), FRotator());
+	meshRoof->SetRelativeLocationAndRotation(FVector(0, -0, 200), FRotator::ZeroRotator);
 	meshRoof->SetupAttachment(meshFloor);
 }
 
@@ -58,11 +58,11 @@ void ARoomConnector::Init(ADungeonRoom * _roomA, ADungeonRoom * _roomB){
 	roomA = _roomA;
 	roomB = _roomB;
 
-	if (!roomA->bCanSpawnEntities) {
+	if (roomA->IsOpen()) {
 		doorA->OpenDoor();
 	}
 
-	if (!roomB->bCanSpawnEntities) {
+	if (roomB->IsOpen()) {
 		doorB->OpenDoor();
 	}
 }
