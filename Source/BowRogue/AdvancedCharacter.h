@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GameStructs.h"
 #include "AdvancedCharacter.generated.h"
 
 
@@ -58,6 +59,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void OnPickupTake(FItemData* itemData);
+
+	void OnInteraction();
 	void ActivateSprint();
 	void DeactivateSprint();
 
@@ -87,6 +91,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	
+	FORCEINLINE class UCrosshairTraceComponent* GetCrosshairTraceComp() const { return crossTraceComp; }
 	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return meshFP; }
 	FORCEINLINE class UCameraComponent* GetFPCameraComp() const { return fpCameraComp; }
 	FORCEINLINE bool IsSprinting() const { return bIsSprinting; }

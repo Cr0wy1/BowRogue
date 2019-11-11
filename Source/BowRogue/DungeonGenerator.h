@@ -80,6 +80,7 @@ public:
 	//return a random rotation vector +90 or -90 rot
 	FIntVector GetRandRotDirVector(const FIntVector &vec) const;
 
+	FORCEINLINE class UAdvancedGameInstance* GetAdvGameInstance() const { return gameInstance; }
 	FORCEINLINE const TArray<TArray<FGridRoom>>* GetGridPtr() const { return &roomGrid; }
 	FORCEINLINE class UStructureAsset* GetStructureAsset() const;
 };

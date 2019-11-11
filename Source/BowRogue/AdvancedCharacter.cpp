@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CrosshairTraceComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Pickup.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -60,6 +61,10 @@ void AAdvancedCharacter::BeginPlay(){
 	meshFP->SetHiddenInGame(false, true);
 }
 
+void AAdvancedCharacter::OnPickupTake(FItemData * itemData){
+
+}
+
 
 // Called every frame
 void AAdvancedCharacter::Tick(float DeltaTime){
@@ -81,6 +86,9 @@ void AAdvancedCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
+	//Interaction
+	PlayerInputComponent->BindAction("Interaction", IE_Pressed, this, &AAdvancedCharacter::OnInteraction);
+
 	// Bind movement events
 	PlayerInputComponent->BindAxis("MoveForward", this, &AAdvancedCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAdvancedCharacter::MoveRight);
@@ -93,6 +101,19 @@ void AAdvancedCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AAdvancedCharacter::LookUpAtRate);
 }
+
+void AAdvancedCharacter::OnInteraction() {
+	if (crosshairResult->IsActorHit()) {
+		APickup* pickup = crosshairResult->GetHitActor<APickup>();
+
+		if (pickup) {
+			OnPickupTake(pickup->GetItemData());
+			pickup->Take(this);
+			
+		}
+	}
+}
+
 
 void AAdvancedCharacter::ActivateSprint() {
 	movementComp->MaxWalkSpeed = sprintSpeed;

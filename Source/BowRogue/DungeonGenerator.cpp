@@ -19,6 +19,7 @@ ADungeonGenerator::ADungeonGenerator()
 void ADungeonGenerator::BeginPlay(){
 	Super::BeginPlay();
 
+
 	gameInstance = GetGameInstance<UAdvancedGameInstance>();
 	
 	if (gameInstance) {

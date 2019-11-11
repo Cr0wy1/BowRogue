@@ -9,6 +9,8 @@
 #include "RoomConnector.h"
 #include "Kismet/GameplayStatics.h"
 #include "StructureAsset.h"
+#include "Pickup.h"
+#include "AdvancedGameInstance.h"
 
 // Sets default values
 ADungeonRoom::ADungeonRoom()
@@ -34,6 +36,7 @@ void ADungeonRoom::OnAllEntitiesKilled(){
 }
 
 void ADungeonRoom::Init(ADungeonGenerator * _dungeonGenerator, FIntVector _gridLoc, const FDungeonRoomParams &_params){
+	
 	dungeonGenerator = _dungeonGenerator;
 	gridLoc = _gridLoc;
 	params = _params;
@@ -43,6 +46,10 @@ void ADungeonRoom::Init(ADungeonGenerator * _dungeonGenerator, FIntVector _gridL
 		bIsClear = true;
 		bIsOpen = true;
 	}
+
+	FItemData* itemData = FItemData::FromId(dungeonGenerator->GetAdvGameInstance()->GetItemDataTable(), "0");
+	APickup::Construct(this, GetActorLocation() + FVector(0, 0, 300), itemData);
+	
 }
 
 // Called every frame
@@ -53,6 +60,7 @@ void ADungeonRoom::Tick(float DeltaTime)
 }
 
 ADungeonRoom * ADungeonRoom::Construct(ADungeonGenerator * dungeonGenerator, TSubclassOf<ADungeonRoom> classBP, FVector location, FIntVector gridLoc, const FDungeonRoomParams &params){
+	
 	if (dungeonGenerator) {
 		FTransform spawnTrans;
 		spawnTrans.SetLocation(location);
@@ -70,6 +78,7 @@ ADungeonRoom * ADungeonRoom::Construct(ADungeonGenerator * dungeonGenerator, TSu
 		spawnedRoom->Init(dungeonGenerator, gridLoc, params);
 
 		UGameplayStatics::FinishSpawningActor(spawnedRoom, spawnTrans);
+
 
 		return spawnedRoom;
 	}

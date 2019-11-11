@@ -40,12 +40,11 @@ protected:
 
 protected:
 	
+	virtual void OnPickupTake(FItemData* itemData) override;
+
 	/** Fires a projectile. */
 	void PrimaryPressed();
 	void PrimaryReleased();
-	void OnInteraction();
-
-
 
 protected:
 	// APawn interface

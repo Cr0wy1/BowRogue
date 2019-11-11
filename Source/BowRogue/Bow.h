@@ -46,4 +46,6 @@ protected:
 public:
 
 	ABow();
+
+	
 };

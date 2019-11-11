@@ -8,6 +8,11 @@
 
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHitNewActor, AActor*, actor);
+
+
+
+
 USTRUCT(BlueprintType)
 struct BOWROGUE_API FCrosshairResult {
 	GENERATED_BODY()
@@ -43,12 +48,18 @@ class BOWROGUE_API UCrosshairTraceComponent : public UActorComponent
 
 public:
 
+	//Delegates
+	FOnHitNewActor OnHitNewActor;
+
 	FCrosshairResult crosshairResult;
 
 	// Sets default values for this component's properties
 	UCrosshairTraceComponent();
 
 protected:
+
+	//Store latest hitted Actor for OnHitNewActor delegate
+	AActor * latestHittedActor = nullptr;
 
 	APlayerController * playerController = nullptr;
 	FCollisionQueryParams traceParams;

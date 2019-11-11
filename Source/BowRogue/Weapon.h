@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameStructs.h"
 #include "Weapon.generated.h"
 
 
@@ -95,6 +96,8 @@ public:
 	virtual void StopShooting();
 
 	void SetFocus(const FVector &targetLoc);
+
+	virtual void AttachItem(FItemData * itemData);
 
 	FORCEINLINE float GetCurrentShootingDuration() const { return cShootingDuration; }
 };

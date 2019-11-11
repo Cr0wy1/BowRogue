@@ -4,6 +4,8 @@
 #include "Pickup.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
+#include "AdvancedCharacter.h"
+#include "Engine/World.h"
 
 // Sets default values
 APickup::APickup()
@@ -25,7 +27,7 @@ void APickup::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if(bAdjustMeshToSphere) {
+	if(bAdjustMeshToSphere && meshComp->GetStaticMesh() ) {
 		AdjustMeshToSphere(bAdjustBorderSpace);
 	}
 	
@@ -39,8 +41,42 @@ void APickup::Tick(float DeltaTime)
 
 }
 
-void APickup::Take()
-{
+void APickup::Take(AAdvancedCharacter* character){
+	UE_LOG(LogTemp, Warning, TEXT("Pick up taken"));
+
+	Destroy();
+}
+
+void APickup::SetItem(FItemData * _itemData){
+	if (_itemData && _itemData->mesh) {
+		itemData = _itemData;
+		meshComp->SetStaticMesh(itemData->mesh);
+		if (bAdjustMeshToSphere) {
+			AdjustMeshToSphere(bAdjustBorderSpace);
+		}
+	}
+}
+
+APickup * APickup::Construct(AActor* constructor, const FVector & location, FItemData * itemData){
+	
+	if (!constructor) {
+		UE_LOG(LogTemp, Warning, TEXT("APickup::Construct: owner is nullptr"));
+		return nullptr;
+	}
+
+	if (!itemData) {
+		UE_LOG(LogTemp, Warning, TEXT("APickup::Construct: itemData is nullptr"));
+		return nullptr;
+	}
+
+
+	APickup* pickup = constructor->GetWorld()->SpawnActor<APickup>(location, FRotator::ZeroRotator);
+	pickup->SetItem(itemData);
+	return pickup;
+}
+
+APickup * APickup::Construct(AActor * constructor, const FVector & location, UDataTable* dataTable, FName rowName){
+	return Construct(constructor, location, FItemData::FromId(dataTable, rowName));
 }
 
 void APickup::AdjustMeshToSphere(float borderSpace) {

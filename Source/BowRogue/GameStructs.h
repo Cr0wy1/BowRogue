@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Engine/DataTable.h"
 #include "GameStructs.generated.h"
 
 
@@ -43,6 +44,13 @@ enum class ERoomType : uint8 {
 	BOSS,
 };
 
+
+
+UENUM()
+enum class EItemType : uint8 {
+	PASSIVE,
+	ACTIVE,
+};
 
 
 USTRUCT()
@@ -141,6 +149,35 @@ struct BOWROGUE_API FGridRoom : public FDungeonRoomParams {
 
 		int32 pathDistance = 0;
 };
+
+
+
+
+
+USTRUCT(BlueprintType)
+struct BOWROGUE_API FItemData : public FTableRowBase {
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 id = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EItemType type = EItemType::PASSIVE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* mesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class AItem> itemBP;
+
+	static FItemData* FromId(UDataTable* datatable, FName id);
+};	
 /**
  * 
  */

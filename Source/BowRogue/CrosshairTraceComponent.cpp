@@ -49,7 +49,15 @@ bool UCrosshairTraceComponent::CrosshairLineTrace(FHitResult &OUT_hitresult, FVe
 	//ECC_GameTraceChannel4 = PlayerCrosshair
 	GetWorld()->LineTraceSingleByChannel(OUT_hitresult, startLocation, endLocation, ECollisionChannel::ECC_GameTraceChannel4, traceParams);
 
-	if (!OUT_hitresult.GetActor()) {
+	AActor* hittedActor = OUT_hitresult.GetActor();
+	if (hittedActor) {
+		if (latestHittedActor != hittedActor) {
+			OnHitNewActor.Broadcast(hittedActor);
+			latestHittedActor = hittedActor;
+			
+		}
+	}
+	else {
 		OUT_hitresult.Location = endLocation;
 	}
 

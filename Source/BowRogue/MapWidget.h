@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "AdvancedWidget.h"
 #include "GameStructs.h"
 #include "MapWidget.generated.h"
 
@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class BOWROGUE_API UMapWidget : public UUserWidget
+class BOWROGUE_API UMapWidget : public UAdvancedWidget
 {
 	GENERATED_BODY()
 	

@@ -3,6 +3,8 @@
 
 #include "GameStructs.h"
 #include "Entity.h"
+#include "Item.h"
+#include "Engine/StaticMesh.h"
 
 //Init statics 
 FIntVector FGridDir::FRONT_VEC = FIntVector(1, 0, 0);
@@ -95,5 +97,10 @@ bool FGridDir::operator==(const FGridDir & other) const{
 	return type == other.type;
 }
 
+//FItemData
+FItemData * FItemData::FromId(UDataTable* datatable, FName id){
 
+	FItemData* itemData = datatable->FindRow<FItemData>(id, FString());
 
+	return itemData;
+}

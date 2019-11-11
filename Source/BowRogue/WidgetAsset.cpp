@@ -3,3 +3,4 @@
 
 #include "WidgetAsset.h"
 #include "MapWidget.h"
+#include "PlayerHUDWidget.h"

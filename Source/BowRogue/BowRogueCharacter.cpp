@@ -35,9 +35,10 @@ void ABowRogueCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAction("Primary", IE_Pressed, this, &ABowRogueCharacter::PrimaryPressed);
 	PlayerInputComponent->BindAction("Primary", IE_Released, this, &ABowRogueCharacter::PrimaryReleased);
 
-	//Interaction
-	PlayerInputComponent->BindAction("Interaction", IE_Pressed, this, &ABowRogueCharacter::OnInteraction);
+}
 
+void ABowRogueCharacter::OnPickupTake(FItemData * itemData){
+	weapon->AttachItem(itemData);
 }
 
 void ABowRogueCharacter::PrimaryPressed(){
@@ -53,18 +54,5 @@ void ABowRogueCharacter::PrimaryReleased(){
 		weapon->StopShooting();
 	}
 }
-
-void ABowRogueCharacter::OnInteraction(){
-	if (crosshairResult->IsActorHit()) {
-		APickup* pickup = crosshairResult->GetHitActor<APickup>();
-
-		if (pickup) {
-
-		}
-	}
-	
-	
-}
-
 
 

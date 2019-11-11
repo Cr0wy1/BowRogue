@@ -16,16 +16,25 @@ class BOWROGUE_API AAdvancedPlayerController : public APlayerController
 	
 protected:
 
+	class AAdvancedCharacter* character = nullptr;
 	class UAdvancedGameInstance * gameInstance = nullptr;
 
 	//Widgets
 	class UMapWidget* mapWidget = nullptr;
+	class UPlayerHUDWidget* playerHUDWidget = nullptr;
 
 	virtual void BeginPlay() override;
 
 	virtual void SetupInputComponent() override;
 
+
+
 	//Key Events
 	void OnPressedMap();
 	void OnReleaseMap();
+
+public:
+
+	UFUNCTION()
+		void OnCrosshairHitNewActor(AActor* actor);
 };

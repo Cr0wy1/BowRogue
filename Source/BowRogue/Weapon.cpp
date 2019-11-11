@@ -7,6 +7,9 @@
 #include "Projectile.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "CrosshairTraceComponent.h"
+#include "Item.h"
+#include "Components/StaticMeshComponent.h"
+#include "Engine/StaticMesh.h"
 
 // Sets default values
 AWeapon::AWeapon()
@@ -103,5 +106,35 @@ void AWeapon::StopShooting(){
 void AWeapon::SetFocus(const FVector & targetLoc){
 	FRotator lookAtRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), targetLoc);
 	SetActorRotation(lookAtRot);
+}
+
+
+void AWeapon::AttachItem(FItemData * itemData) {
+	if (!itemData) {
+		UE_LOG(LogTemp, Warning, TEXT("AWeapon::AttachItem: itemdata is nullptr"));
+		return;
+	}
+
+	if (itemData->itemBP) {
+
+	}
+	else if (itemData->mesh) {
+		//UE_LOG(LogTemp, Warning, TEXT("mesh: %s"), itemData->mesh->Get);
+
+		if (skeletalMeshComp->DoesSocketExist("slot_01")) {
+			
+			//UStaticMeshComponent* newMesh = FObjectInitializer::CreateDefaultSubobject<UStaticMeshComponent>(this, *itemData->name.ToString());
+			UStaticMeshComponent* newMesh = NewObject<UStaticMeshComponent>(this, "test");
+			newMesh->RegisterComponent();
+
+			if (newMesh) {
+				newMesh->SetStaticMesh(itemData->mesh);
+				//newMesh->SetupAttachment(skeletalMeshComp, "slot_01");
+				newMesh->AttachToComponent(skeletalMeshComp, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "slot_01");
+			}
+
+		}
+
+	}
 }
 

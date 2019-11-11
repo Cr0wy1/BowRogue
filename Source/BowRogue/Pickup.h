@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameStructs.h"
 #include "Pickup.generated.h"
 
 
@@ -22,6 +23,8 @@ public:
 	APickup();
 
 protected:
+
+	FItemData * itemData = nullptr;
 
 	//COMPONENTS
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup")
@@ -46,6 +49,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	
-	virtual void Take();
+	virtual void Take(class AAdvancedCharacter* character);
+
+	void SetItem(FItemData * _itemData);
+
+	static APickup* Construct(AActor* constructor, const FVector& location, FItemData * itemData);
+
+	UFUNCTION(BlueprintCallable)
+	static APickup* Construct(AActor* constructor, const FVector& location, class UDataTable* dataTable, FName rowName);
+
+	FORCEINLINE FItemData * GetItemData() const { return itemData; }
 };
