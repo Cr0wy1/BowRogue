@@ -9,6 +9,7 @@
 #include "CrosshairTraceComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Pickup.h"
+#include "AttributeComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -52,6 +53,9 @@ AAdvancedCharacter::AAdvancedCharacter(){
 	//Crosshair Trace
 	crossTraceComp = CreateDefaultSubobject<UCrosshairTraceComponent>("CrosshairTrace");
 	crosshairResult = crossTraceComp->GetCrosshairResultPtr();
+
+	//Attributes
+	attrComp = CreateDefaultSubobject<UAttributeComponent>("Attributes");
 }
 
 // Called when the game starts or when spawned
@@ -118,6 +122,8 @@ void AAdvancedCharacter::OnInteraction() {
 void AAdvancedCharacter::ActivateSprint() {
 	movementComp->MaxWalkSpeed = sprintSpeed;
 	bIsSprinting = true;
+
+	attrComp->ApplyDamage(1.0f);
 }
 
 void AAdvancedCharacter::DeactivateSprint() {

@@ -43,6 +43,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CrosshairTrace")
 	UCrosshairTraceComponent* crossTraceComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
+	class UAttributeComponent* attrComp;
+
 	// Sets default values for this character's properties
 	AAdvancedCharacter();
 
@@ -94,5 +97,6 @@ public:
 	FORCEINLINE class UCrosshairTraceComponent* GetCrosshairTraceComp() const { return crossTraceComp; }
 	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return meshFP; }
 	FORCEINLINE class UCameraComponent* GetFPCameraComp() const { return fpCameraComp; }
+	FORCEINLINE class UAttributeComponent* GetAttrComp() const { return attrComp; }
 	FORCEINLINE bool IsSprinting() const { return bIsSprinting; }
 };

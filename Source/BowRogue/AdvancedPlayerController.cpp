@@ -32,6 +32,9 @@ void AAdvancedPlayerController::BeginPlay() {
 	}
 	
 	playerHUDWidget = CreateAddViewport<UPlayerHUDWidget>(this, widgetAsset_A->playerHUDWidget_BP);
+	if (playerHUDWidget && character) {
+		playerHUDWidget->Init(character->GetAttrComp());
+	}
 }
 
 void AAdvancedPlayerController::SetupInputComponent(){

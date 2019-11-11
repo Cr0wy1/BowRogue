@@ -2,6 +2,7 @@
 
 
 #include "AttributeComponent.h"
+#include "Engine/World.h"
 
 // Sets default values for this component's properties
 UAttributeComponent::UAttributeComponent()
@@ -10,7 +11,7 @@ UAttributeComponent::UAttributeComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+	stamina = FAttribute();
 }
 
 
@@ -25,15 +26,22 @@ void UAttributeComponent::BeginPlay()
 
 
 // Called every frame
-void UAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
+void UAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction){
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	
+
+	if (stamina.regAmount > 0.0f) {
+		if (stamina.lastRegTime + stamina.regSpeed < GetWorld()->GetTimeSeconds()) {
+			stamina += stamina.regAmount;
+			stamina.lastRegTime = GetWorld()->GetTimeSeconds();
+		}
+	}
 }
 
 void UAttributeComponent::ApplyDamage(float amount){
 	health -= amount;
+	OnHealthUpdate.Broadcast(health, amount);
 	if (health <= 0.0f) {
 		OnDeath.Broadcast();
 	}
