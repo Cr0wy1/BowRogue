@@ -55,7 +55,7 @@ AAdvancedCharacter::AAdvancedCharacter(){
 	crosshairResult = crossTraceComp->GetCrosshairResultPtr();
 
 	//Attributes
-	attrComp = CreateDefaultSubobject<UAttributeComponent>("Attributes");
+	attrComp = CreateDefaultSubobject<UAttributeComponent>("Attribute Comp");
 }
 
 // Called when the game starts or when spawned
@@ -123,7 +123,7 @@ void AAdvancedCharacter::ActivateSprint() {
 	movementComp->MaxWalkSpeed = sprintSpeed;
 	bIsSprinting = true;
 
-	attrComp->ApplyDamage(1.0f);
+	//attrComp->ApplyDamage(1.0f);
 }
 
 void AAdvancedCharacter::DeactivateSprint() {

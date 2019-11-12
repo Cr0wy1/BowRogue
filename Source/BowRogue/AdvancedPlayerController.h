@@ -30,6 +30,7 @@ protected:
 
 
 	//Key Events
+	UFUNCTION()
 	void OnPressedMap();
 	void OnReleaseMap();
 

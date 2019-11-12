@@ -10,6 +10,7 @@
 #include "MapWidget.h"
 #include "DungeonGenerator.h"
 #include "PlayerHUDWidget.h"
+#include "AttributeComponent.h"
 
 void AAdvancedPlayerController::BeginPlay() {
 	Super::BeginPlay();
@@ -32,8 +33,12 @@ void AAdvancedPlayerController::BeginPlay() {
 	}
 	
 	playerHUDWidget = CreateAddViewport<UPlayerHUDWidget>(this, widgetAsset_A->playerHUDWidget_BP);
-	if (playerHUDWidget && character) {
+	if (playerHUDWidget && character && character->GetAttrComp()) {
+		UE_LOG(LogTemp, Warning, TEXT("AddDynamicDelegate"));
+
 		playerHUDWidget->Init(character->GetAttrComp());
+		//character->GetAttrComp()->OnAttrChange.AddDynamic(playerHUDWidget, &UPlayerHUDWidget::OnStaminaUpdate);
+		//character->GetAttrComp()->OnAttrChange.AddDynamic(this, &AAdvancedPlayerController::OnPressedMap);
 	}
 }
 
@@ -47,7 +52,7 @@ void AAdvancedPlayerController::SetupInputComponent(){
 }
 
 void AAdvancedPlayerController::OnCrosshairHitNewActor(AActor * actor){
-	UE_LOG(LogTemp, Warning, TEXT("Hit New Actor: %s"), *actor->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("Hit New Actor: %s"), *actor->GetName());
 	if (!playerHUDWidget) return;
 
 	APickup* pickup = Cast<APickup>(actor);

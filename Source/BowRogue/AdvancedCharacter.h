@@ -10,6 +10,7 @@
 
 
 class UCrosshairTraceComponent;
+class UAttributeComponent;
 struct FCrosshairResult;
 
 
@@ -44,7 +45,7 @@ public:
 	UCrosshairTraceComponent* crossTraceComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
-	class UAttributeComponent* attrComp;
+	UAttributeComponent* attrComp;
 
 	// Sets default values for this character's properties
 	AAdvancedCharacter();

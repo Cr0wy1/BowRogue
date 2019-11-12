@@ -11,7 +11,7 @@ UAttributeComponent::UAttributeComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	stamina = FAttribute();
+	//stamina = FAttribute();
 }
 
 
@@ -29,19 +29,24 @@ void UAttributeComponent::BeginPlay()
 void UAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction){
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	
+	//UE_LOG(LogTemp, Warning, TEXT("UAttributeComponent: tick"));
 
-	if (stamina.regAmount > 0.0f) {
-		if (stamina.lastRegTime + stamina.regSpeed < GetWorld()->GetTimeSeconds()) {
-			stamina += stamina.regAmount;
-			stamina.lastRegTime = GetWorld()->GetTimeSeconds();
-		}
-	}
+
+	//if (stamina.regAmount > 0.0f) {
+		
+		//if (stamina.lastRegTime + stamina.regSpeed < GetWorld()->GetTimeSeconds()) {
+			//int32 num = OnAttrChange.GetAllObjects().Num();
+			//UE_LOG(LogTemp, Warning, TEXT("stamina: %f delegate num: %i"), stamina.value, num);
+			//OnAttrChange.Broadcast();
+			//stamina += stamina.regAmount;
+			//stamina.lastRegTime = GetWorld()->GetTimeSeconds();
+		//}
+	//}
 }
 
 void UAttributeComponent::ApplyDamage(float amount){
 	health -= amount;
-	OnHealthUpdate.Broadcast(health, amount);
+	//OnHealthUpdate.Broadcast(health, amount);
 	if (health <= 0.0f) {
 		OnDeath.Broadcast();
 	}

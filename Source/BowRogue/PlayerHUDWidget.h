@@ -27,13 +27,15 @@ protected:
 	UFUNCTION()
 	void OnHealthUpdate(float currentHealth, float updateAmount);
 
-	UFUNCTION()
-		void OnStaminaUpdate();
+
 
 public:
 
 	UPROPERTY(meta = (BindWidget))
 	class UHealthWidget * healthWidget;
+
+	UFUNCTION()
+	void OnStaminaUpdate();
 
 	void Init(class UAttributeComponent* _attrComp);
 

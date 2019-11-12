@@ -63,7 +63,7 @@ void ADungeonGenerator::StartRoomGeneration(){
 
 	SpawnRooms();
 
-	LogGrid();
+	//LogGrid();
 }
 
 void ADungeonGenerator::PathMaker(FIntVector startPos, FIntVector dir, int32 length, int32 pathDistance, float accuracy){
@@ -138,7 +138,7 @@ ADungeonRoom* ADungeonGenerator::SpawnRooms(){
 }
 
 bool ADungeonGenerator::CheckConnectors(ADungeonRoom* cRoom, const FIntVector & gridPos){
-	UE_LOG(LogTemp, Warning, TEXT("checkGrid %s"), *gridPos.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("checkGrid %s"), *gridPos.ToString());
 
 	ADungeonRoom** frontRoom = spawnedRooms.Find(gridPos + FGridDir::FRONT_VEC);
 	if (frontRoom) {

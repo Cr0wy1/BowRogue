@@ -9,51 +9,44 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttrChange);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthUpdate, float, currentHealth, float, updateAmount);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttrChange);
 
 
 
 
-USTRUCT(BlueprintType)
-struct BOWROGUE_API FAttribute {
-	GENERATED_BODY()
+//USTRUCT(BlueprintType)
+//struct BOWROGUE_API FAttribute {
+//	GENERATED_BODY()
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+//	float value = 100.0f;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+//	float max = 100.0f;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+//	float regAmount = 0.0f;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+//	float regSpeed = 1.0f;
+//
+//	float lastRegTime = 0.0f;
+//
+//	void SetValue(float newValue) {
+//		value = newValue;
+//	}
+//
+//	FAttribute& operator+=(float addvalue) {
+//		value += addvalue;
+//		return *this;
+//	}
+//
+//	FAttribute& operator-=(float subvalue) {
+//		value -= subvalue;
+//		return *this;
+//	}
+//};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	float value = 100.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	float max = 100.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	float regAmount;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	float regSpeed = 1.0f;
-
-	float lastRegTime = 0.0f;
-
-	FOnAttrChange OnAttrChange;
-
-
-	void SetValue(float newValue) {
-		value = newValue;
-		OnAttrChange.Broadcast();
-	}
-
-	FAttribute& operator+=(float addvalue) {
-		value += addvalue;
-		OnAttrChange.Broadcast();
-		return *this;
-	}
-
-	FAttribute& operator-=(float subvalue) {
-		value -= subvalue;
-		OnAttrChange.Broadcast();
-		return *this;
-	}
-};
 
 
 
@@ -65,7 +58,7 @@ class BOWROGUE_API UAttributeComponent : public UActorComponent
 public:	
 
 	FOnDeath OnDeath;
-	FOnHealthUpdate OnHealthUpdate;
+	//FOnAttrChange OnAttrChange;
 
 	// Sets default values for this component's properties
 	UAttributeComponent();
@@ -87,8 +80,8 @@ protected:
 
 public:	
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	FAttribute stamina;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	//FAttribute stamina;
 
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -97,5 +90,5 @@ public:
 		
 	FORCEINLINE float GetHealth() const { return health; }
 	FORCEINLINE float GetMaxHealth() const { return maxHealth; }
-	FORCEINLINE FAttribute GetStamina() const { return stamina; }
+	//FORCEINLINE FAttribute GetStamina() const { return stamina; }
 };
