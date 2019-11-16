@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AdvancedWidget.h"
+#include "GameStructs.h"
 #include "PlayerHUDWidget.generated.h"
 
 
@@ -25,7 +26,7 @@ protected:
 	UTextBlock* interactText;
 
 	UFUNCTION()
-	void OnHealthUpdate(float currentHealth, float updateAmount);
+	void OnHealthUpdate(const FAttribute& attribute);
 
 
 
@@ -35,7 +36,7 @@ public:
 	class UHealthWidget * healthWidget;
 
 	UFUNCTION()
-	void OnStaminaUpdate();
+	void OnStaminaUpdate(const FAttribute& attribute);
 
 	void Init(class UAttributeComponent* _attrComp);
 

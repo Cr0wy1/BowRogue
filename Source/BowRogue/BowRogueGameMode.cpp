@@ -5,6 +5,7 @@
 #include "BowRogueCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "AdvancedPlayerController.h"
+#include "AdvancedPlayerState.h"
 
 ABowRogueGameMode::ABowRogueGameMode()
 	: Super()
@@ -15,6 +16,9 @@ ABowRogueGameMode::ABowRogueGameMode()
 
 	//Set default player controller class
 	PlayerControllerClass = AAdvancedPlayerController::StaticClass();
+
+	//Set PlayerState default class
+	PlayerStateClass = AAdvancedPlayerState::StaticClass();
 
 	// use our custom HUD class
 	HUDClass = ABowRogueHUD::StaticClass();

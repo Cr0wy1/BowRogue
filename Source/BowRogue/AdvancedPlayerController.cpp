@@ -16,6 +16,8 @@ void AAdvancedPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
 	character = Cast<AAdvancedCharacter>(GetCharacter());
+	ensureMsgf(character, TEXT("character is nullptr"));
+
 	if (character) {
 		UE_LOG(LogTemp, Warning, TEXT("character exists"));
 
@@ -33,12 +35,11 @@ void AAdvancedPlayerController::BeginPlay() {
 	}
 	
 	playerHUDWidget = CreateAddViewport<UPlayerHUDWidget>(this, widgetAsset_A->playerHUDWidget_BP);
+	
 	if (playerHUDWidget && character && character->GetAttrComp()) {
 		UE_LOG(LogTemp, Warning, TEXT("AddDynamicDelegate"));
 
 		playerHUDWidget->Init(character->GetAttrComp());
-		//character->GetAttrComp()->OnAttrChange.AddDynamic(playerHUDWidget, &UPlayerHUDWidget::OnStaminaUpdate);
-		//character->GetAttrComp()->OnAttrChange.AddDynamic(this, &AAdvancedPlayerController::OnPressedMap);
 	}
 }
 

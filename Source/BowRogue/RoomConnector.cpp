@@ -50,7 +50,7 @@ void ARoomConnector::BeginPlay()
 	doorA = Cast<ADungeonDoor>(doorAActorComp->GetChildActor());
 	doorB = Cast<ADungeonDoor>(doorBActorComp->GetChildActor());
 
-	UE_LOG(LogTemp, Warning, TEXT("Connector %s BeginPlay"), *GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("Connector %s BeginPlay"), *GetName());
 
 }
 
@@ -71,7 +71,7 @@ void ARoomConnector::OnTriggerOverlapBegin(UPrimitiveComponent * OverlappedComp,
 	
 	if (!bIsTriggerActive) return;
 
-	UE_LOG(LogTemp, Warning, TEXT("Overlap!"));
+	//UE_LOG(LogTemp, Warning, TEXT("Overlap!"));
 
 	if (doorA->IsOpen() && !doorB->IsOpen()) {
 		doorA->CloseDoor();
@@ -114,7 +114,7 @@ ARoomConnector * ARoomConnector::Construct(TSubclassOf<ARoomConnector> tempalteB
 
 
 	ARoomConnector* spawnedConnector = nullptr;
-	UE_LOG(LogTemp, Warning, TEXT("spawn roomConnector"));
+	//UE_LOG(LogTemp, Warning, TEXT("spawn roomConnector"));
 	if (roomA && roomB) {
 		
 		FRotator spawnRot = FRotator::ZeroRotator;

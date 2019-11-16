@@ -178,6 +178,50 @@ struct BOWROGUE_API FItemData : public FTableRowBase {
 
 	static FItemData* FromId(UDataTable* datatable, FName id);
 };	
+
+
+
+USTRUCT(BlueprintType)
+struct BOWROGUE_API FAttribute {
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	float value = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	float max = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	float regAmount = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	float regSpeed = 1.0f;
+
+	float lastRegTime = 0.0f;
+
+	void SetValue(float newValue) {
+		value = newValue;
+	}
+
+	FAttribute& operator+=(float addvalue) {
+		value += addvalue;
+		return *this;
+	}
+
+	FAttribute& operator-=(float subvalue) {
+		value -= subvalue;
+		return *this;
+	}
+
+	//Boolean operators
+	bool operator==(float other) const { return value == other; }
+	bool operator!=(float other) const { return value != other; }
+	bool operator<(float other) const { return value < other; }
+	bool operator>(float other) const { return value > other; }
+	bool operator>=(float other) const { return value >= other; }
+	bool operator<=(float other) const { return value >= other; }
+
+};
 /**
  * 
  */

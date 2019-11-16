@@ -9,6 +9,7 @@
 
 
 
+class AAdvancedPlayerController;
 class UCrosshairTraceComponent;
 class UAttributeComponent;
 struct FCrosshairResult;
@@ -54,6 +55,7 @@ protected:
 
 	bool bIsSprinting = false;
 
+	AAdvancedPlayerController* controllerAdv = nullptr;
 	UCharacterMovementComponent * movementComp = nullptr;
 
 	//COMPONENTS
@@ -95,6 +97,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	
+	FORCEINLINE AAdvancedPlayerController* GetController() const { return controllerAdv; }
 	FORCEINLINE class UCrosshairTraceComponent* GetCrosshairTraceComp() const { return crossTraceComp; }
 	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return meshFP; }
 	FORCEINLINE class UCameraComponent* GetFPCameraComp() const { return fpCameraComp; }

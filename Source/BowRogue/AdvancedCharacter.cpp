@@ -10,6 +10,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Pickup.h"
 #include "AttributeComponent.h"
+#include "AdvancedPlayerController.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -17,7 +18,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 // AAdvancedCharacter 
 
 AAdvancedCharacter::AAdvancedCharacter(){
-
+	
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -61,6 +62,8 @@ AAdvancedCharacter::AAdvancedCharacter(){
 // Called when the game starts or when spawned
 void AAdvancedCharacter::BeginPlay(){
 	Super::BeginPlay();
+	
+	controllerAdv = APawn::GetController<AAdvancedPlayerController>();
 	
 	meshFP->SetHiddenInGame(false, true);
 }
@@ -132,9 +135,11 @@ void AAdvancedCharacter::DeactivateSprint() {
 }
 
 void AAdvancedCharacter::MoveForward(float Value){
+	
 	if (Value != 0.0f){
 		// add movement in that direction 
 		AddMovementInput(GetActorForwardVector(), Value);
+		attrComp->stamina -= 0.01f;
 	}
 	
 }
@@ -143,6 +148,7 @@ void AAdvancedCharacter::MoveRight(float Value){
 	if (Value != 0.0f){
 		// add movement in that direction
 		AddMovementInput(GetActorRightVector(), Value);
+		attrComp->stamina -= 0.01f;
 	}
 }
 
