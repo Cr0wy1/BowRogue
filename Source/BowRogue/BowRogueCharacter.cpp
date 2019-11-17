@@ -38,6 +38,7 @@ void ABowRogueCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 }
 
 void ABowRogueCharacter::OnPickupTake(FItemData * itemData){
+	Super::OnPickupTake(itemData);
 	weapon->AttachItem(itemData);
 }
 

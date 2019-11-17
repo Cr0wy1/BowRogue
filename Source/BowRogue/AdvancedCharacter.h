@@ -32,6 +32,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float sprintSpeed = 1000.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float sprintStaminaConsume = 0.1f;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera") 
 	float BaseTurnRate; /** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 

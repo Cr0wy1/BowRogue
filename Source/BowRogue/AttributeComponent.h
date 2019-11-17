@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameStructs.h"
+#include "SortedMap.h"
 #include "AttributeComponent.generated.h"
 
 
@@ -26,10 +27,10 @@ public:
 	float walkSpeed = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	FAttribute health;
+	FDynamicAttribute health;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	FAttribute stamina;
+	FDynamicAttribute stamina;
 
 	//Events
 	FOnDeath OnDeath;
@@ -45,8 +46,14 @@ public:
 
 protected:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	TArray<FAttribute> attributes;
+
+	TSortedMap<FName, FAttribute*, FDefaultAllocator, FNameFastLess> attributesLookup;
+
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:	
 
@@ -54,8 +61,20 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void ApplyDamage(float amount);
-		
+
+	void AddHealth(float value);
+	void AddHealthMax(float value);
+	void AddStamina(float value);
+	void AddStaminaMax(float value);
+
+	const FAttribute* AddAttribute(FAttribute attribute);
+
+	//return true if attribute found, else false
+	bool UpdateAttribute(const FAttribute &attribute);
+	FORCEINLINE bool DoesAttributeExist(FName name);
+	FORCEINLINE const FAttribute* GetAttribute(FName name);
+
 	FORCEINLINE float GetHealth() const { return health.value; }
 	FORCEINLINE float GetMaxHealth() const { return health.max; }
-	FORCEINLINE FAttribute GetStamina() const { return stamina; }
+	FORCEINLINE FDynamicAttribute GetStamina() const { return stamina; }
 };

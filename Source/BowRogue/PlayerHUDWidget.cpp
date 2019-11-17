@@ -14,6 +14,8 @@ void UPlayerHUDWidget::Init(UAttributeComponent * _attrComp){
 	attrComp->OnStaminaChange.AddDynamic(this, &UPlayerHUDWidget::OnStaminaUpdate);
 	OnHealthUpdate(attrComp->health);
 	OnStaminaUpdate(attrComp->stamina);
+
+	
 }
 
 void UPlayerHUDWidget::OnHealthUpdate(const FAttribute& attribute) {
@@ -21,7 +23,6 @@ void UPlayerHUDWidget::OnHealthUpdate(const FAttribute& attribute) {
 }
 
 void UPlayerHUDWidget::OnStaminaUpdate(const FAttribute& attribute){
-	UE_LOG(LogTemp, Warning, TEXT("%s"), "staminaUpdate");
 	healthWidget->UpdateStamina(attribute.value, attribute.max);
 }
 

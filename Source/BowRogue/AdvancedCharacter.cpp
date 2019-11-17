@@ -70,6 +70,13 @@ void AAdvancedCharacter::BeginPlay(){
 
 void AAdvancedCharacter::OnPickupTake(FItemData * itemData){
 
+	//Update Attributes from itemdata
+	if (itemData) {
+		int32 numAttributes = itemData->updateAttributes.Num();
+		for (int32 i = 0; i < numAttributes; i++){
+			attrComp->UpdateAttribute(itemData->updateAttributes[i]);
+		}
+	}
 }
 
 
@@ -126,7 +133,7 @@ void AAdvancedCharacter::ActivateSprint() {
 	movementComp->MaxWalkSpeed = sprintSpeed;
 	bIsSprinting = true;
 
-	//attrComp->ApplyDamage(1.0f);
+	attrComp->AddHealth(-1.0f);
 }
 
 void AAdvancedCharacter::DeactivateSprint() {
@@ -139,7 +146,11 @@ void AAdvancedCharacter::MoveForward(float Value){
 	if (Value != 0.0f){
 		// add movement in that direction 
 		AddMovementInput(GetActorForwardVector(), Value);
-		attrComp->stamina -= 0.01f;
+
+		if (bIsSprinting) {
+			attrComp->AddStamina(-sprintStaminaConsume);
+		}
+		
 	}
 	
 }
@@ -148,7 +159,11 @@ void AAdvancedCharacter::MoveRight(float Value){
 	if (Value != 0.0f){
 		// add movement in that direction
 		AddMovementInput(GetActorRightVector(), Value);
-		attrComp->stamina -= 0.01f;
+
+		if (bIsSprinting) {
+			attrComp->AddStamina(-sprintStaminaConsume);
+		}
+		
 	}
 }
 

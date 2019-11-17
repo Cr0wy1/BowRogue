@@ -37,7 +37,7 @@ void AAdvancedPlayerController::BeginPlay() {
 	playerHUDWidget = CreateAddViewport<UPlayerHUDWidget>(this, widgetAsset_A->playerHUDWidget_BP);
 	
 	if (playerHUDWidget && character && character->GetAttrComp()) {
-		UE_LOG(LogTemp, Warning, TEXT("AddDynamicDelegate"));
+		//UE_LOG(LogTemp, Warning, TEXT("AddDynamicDelegate"));
 
 		playerHUDWidget->Init(character->GetAttrComp());
 	}

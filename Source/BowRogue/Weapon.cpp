@@ -51,6 +51,8 @@ void AWeapon::Tick(float DeltaTime){
 
 void AWeapon::Fire(const FVector targetLoc){
 
+	
+
 	//check shot delay time
 	if (GetWorld()->GetTimeSeconds() < (lastShotTime + properties.shotDelay)) return;
 

@@ -152,52 +152,18 @@ struct BOWROGUE_API FGridRoom : public FDungeonRoomParams {
 
 
 
-
-
-USTRUCT(BlueprintType)
-struct BOWROGUE_API FItemData : public FTableRowBase {
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 id = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FText name;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FText description;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EItemType type = EItemType::PASSIVE;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* mesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class AItem> itemBP;
-
-	static FItemData* FromId(UDataTable* datatable, FName id);
-};	
-
-
-
 USTRUCT(BlueprintType)
 struct BOWROGUE_API FAttribute {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	FName name = "ATTRIBUTE_NAME";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	float value = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	float max = 100.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	float regAmount = 0.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	float regSpeed = 1.0f;
-
-	float lastRegTime = 0.0f;
 
 	void SetValue(float newValue) {
 		value = newValue;
@@ -213,6 +179,18 @@ struct BOWROGUE_API FAttribute {
 		return *this;
 	}
 
+	FAttribute& operator+=(const FAttribute &other) {
+		value += other.value;
+		max += other.max;
+		return *this;
+	}
+
+	FAttribute& operator-=(const FAttribute &other) {
+		value -= other.value;
+		max -= other.max;
+		return *this;
+	}
+
 	//Boolean operators
 	bool operator==(float other) const { return value == other; }
 	bool operator!=(float other) const { return value != other; }
@@ -222,6 +200,51 @@ struct BOWROGUE_API FAttribute {
 	bool operator<=(float other) const { return value >= other; }
 
 };
+
+USTRUCT(BlueprintType)
+struct BOWROGUE_API FDynamicAttribute : public FAttribute {
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	float regAmount = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	float regSpeed = 1.0f;
+
+	float lastRegTime = 0.0f;
+
+};
+
+
+
+USTRUCT(BlueprintType)
+struct BOWROGUE_API FItemData : public FTableRowBase {
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 id = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		EItemType type = EItemType::PASSIVE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UStaticMesh* mesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<class AItem> itemBP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FAttribute> updateAttributes;
+
+	static FItemData* FromId(UDataTable* datatable, FName id);
+};
+
 /**
  * 
  */
