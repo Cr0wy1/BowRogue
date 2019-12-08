@@ -116,6 +116,10 @@ void AAdvancedCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AAdvancedCharacter::LookUpAtRate);
 }
 
+
+
+
+
 void AAdvancedCharacter::OnInteraction() {
 	if (crosshairResult->IsActorHit()) {
 		APickup* pickup = crosshairResult->GetHitActor<APickup>();
@@ -132,8 +136,6 @@ void AAdvancedCharacter::OnInteraction() {
 void AAdvancedCharacter::ActivateSprint() {
 	movementComp->MaxWalkSpeed = sprintSpeed;
 	bIsSprinting = true;
-
-	attrComp->AddHealth(-1.0f);
 }
 
 void AAdvancedCharacter::DeactivateSprint() {
@@ -177,4 +179,32 @@ void AAdvancedCharacter::LookUpAtRate(float Rate){
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
+FVector AAdvancedCharacter::GetGroundLocation() const{
+
+	float capsuleRadius, capsuleHalfHeight;
+	GetCapsuleComponent()->GetScaledCapsuleSize(capsuleRadius, capsuleHalfHeight);
+
+	FVector groundLoc = GetActorLocation();
+	groundLoc.Z -= capsuleHalfHeight;
+
+	return groundLoc;
+}
+
+float AAdvancedCharacter::TraceGroundDistance() const{
+
+	FVector start = GetGroundLocation();
+
+	FVector end = start;
+	end.Z -= 10000.0f;
+
+	FCollisionQueryParams traceParams;
+	traceParams.AddIgnoredActor(this);
+
+	FHitResult traceResult;
+	GetWorld()->LineTraceSingleByProfile(traceResult, start, end, GetCapsuleComponent()->GetCollisionProfileName(), traceParams);
+	
+	float distance = start.Z - traceResult.Location.Z;
+
+	return distance;
+}
 

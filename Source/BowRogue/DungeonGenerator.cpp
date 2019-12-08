@@ -142,22 +142,30 @@ bool ADungeonGenerator::CheckConnectors(ADungeonRoom* cRoom, const FIntVector & 
 
 	ADungeonRoom** frontRoom = spawnedRooms.Find(gridPos + FGridDir::FRONT_VEC);
 	if (frontRoom) {
-		ARoomConnector::Construct(roomConnectorBP, cRoom, *frontRoom);
+		ARoomConnector* connector = ARoomConnector::Construct(roomConnectorBP, cRoom, *frontRoom);
+		(*frontRoom)->AddConnector(FGridDir::BACK, connector);
+		cRoom->AddConnector(FGridDir::FRONT, connector);
 	}
 
 	ADungeonRoom** rightRoom = spawnedRooms.Find(gridPos + FGridDir::RIGHT_VEC);
 	if (rightRoom) {
-		ARoomConnector::Construct(roomConnectorBP, cRoom, *rightRoom);
+		ARoomConnector* connector = ARoomConnector::Construct(roomConnectorBP, cRoom, *rightRoom);
+		(*rightRoom)->AddConnector(FGridDir::LEFT, connector);
+		cRoom->AddConnector(FGridDir::RIGHT, connector);
 	}
 
 	ADungeonRoom** backRoom = spawnedRooms.Find(gridPos + FGridDir::BACK_VEC);
 	if (backRoom) {
-		ARoomConnector::Construct(roomConnectorBP, cRoom, *backRoom);
+		ARoomConnector* connector = ARoomConnector::Construct(roomConnectorBP, cRoom, *backRoom);
+		(*backRoom)->AddConnector(FGridDir::FRONT, connector);
+		cRoom->AddConnector(FGridDir::BACK, connector);
 	}
 
 	ADungeonRoom** leftRoom = spawnedRooms.Find(gridPos + FGridDir::LEFT_VEC);
 	if (leftRoom) {
-		ARoomConnector::Construct(roomConnectorBP, cRoom, *leftRoom);
+		ARoomConnector* connector = ARoomConnector::Construct(roomConnectorBP, cRoom, *leftRoom);
+		(*leftRoom)->AddConnector(FGridDir::RIGHT, connector);
+		cRoom->AddConnector(FGridDir::LEFT, connector);
 	}
 
 	return false;

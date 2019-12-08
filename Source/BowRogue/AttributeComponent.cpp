@@ -79,6 +79,7 @@ void UAttributeComponent::AddHealthMax(float value){
 }
 
 void UAttributeComponent::AddStamina(float value){
+	
 	stamina.value += value;
 	OnStaminaChange.Broadcast(stamina);
 }

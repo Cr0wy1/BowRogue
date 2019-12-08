@@ -34,8 +34,36 @@ protected:
 	
 	FDungeonRoomParams params;
 
+	//UPROPERTIES
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
+	UStaticMesh* meshWall = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
+	UStaticMesh* meshDoorWall = nullptr;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
 	FSpawnPattern spawnPattern;
+
+	//Components
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
+	UStaticMeshComponent* meshFloorComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
+	UStaticMeshComponent* meshRoofComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
+	UStaticMeshComponent* meshWall1Comp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
+	UStaticMeshComponent* meshWall2Comp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
+	UStaticMeshComponent* meshWall3Comp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
+	UStaticMeshComponent* meshWall4Comp;
+
+
 
 	ADungeonGenerator * dungeonGenerator;
 	FIntVector gridLoc;

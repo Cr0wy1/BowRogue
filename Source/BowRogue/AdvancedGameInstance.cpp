@@ -11,9 +11,15 @@ void UAdvancedGameInstance::Init(){
 	Super::Init();
 
 	if (dungeonGenerator_BP) {
-		dungeonGenerator = GetWorld()->SpawnActor<ADungeonGenerator>(dungeonGenerator_BP);
+		//dungeonGenerator = GetWorld()->SpawnActor<ADungeonGenerator>(dungeonGenerator_BP);
 	}
 	else {
 		UE_LOG(LogTemp, Error, TEXT("AdvancedGameInstance: Missing dungeonGenerator_BP"));
+	}
+}
+
+void UAdvancedGameInstance::SetDungeonGenerator(ADungeonGenerator * _dungeonGenerator){
+	if (_dungeonGenerator) {
+		dungeonGenerator = _dungeonGenerator;
 	}
 }

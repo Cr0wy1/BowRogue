@@ -37,6 +37,9 @@ public:
 
 	virtual void Init() override;
 
+	UFUNCTION(BlueprintCallable, Category = "DungeonGenerator")
+	void SetDungeonGenerator(ADungeonGenerator* _dungeonGenerator);
+
 	FORCEINLINE class UWidgetAsset* GetWidgetAsset() const { return widgetAsset_A; }
 	FORCEINLINE class ADungeonGenerator* GetDungeonGenerator() const { return dungeonGenerator; }
 	FORCEINLINE class UStructureAsset* GetStructureAsset() const { return structureAsset_A; }

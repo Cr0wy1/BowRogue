@@ -99,6 +99,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	FVector GetGroundLocation() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	float TraceGroundDistance() const;
 	
 	FORCEINLINE AAdvancedPlayerController* GetController() const { return controllerAdv; }
 	FORCEINLINE class UCrosshairTraceComponent* GetCrosshairTraceComp() const { return crossTraceComp; }
