@@ -16,10 +16,14 @@ protected:
 
 	//UProperties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
-	bool bDrawDebug = false;
+	float impactDamage = 10.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	float hitImpulse = 100.0f;
+	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	bool bDrawDebug = false;
 
 	//COMPONENTS
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Projectile")
@@ -51,6 +55,9 @@ public:
 	/** called when projectile hits something */
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Projectile")
+	void OnImpact(const FHitResult& Hit);
 
 	/** Returns CollisionComp subobject **/
 	FORCEINLINE class UStaticMeshComponent* GetCollisionMeshComp() const { return collisionMeshComp; }

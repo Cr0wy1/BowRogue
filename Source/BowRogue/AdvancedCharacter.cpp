@@ -11,6 +11,7 @@
 #include "Pickup.h"
 #include "AttributeComponent.h"
 #include "AdvancedPlayerController.h"
+#include "GameFramework/DamageType.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -65,6 +66,8 @@ void AAdvancedCharacter::BeginPlay(){
 	
 	controllerAdv = APawn::GetController<AAdvancedPlayerController>();
 	
+	OnTakeAnyDamage.AddDynamic(this, &AAdvancedCharacter::ReceiveDamageAny);
+
 	meshFP->SetHiddenInGame(false, true);
 }
 
@@ -117,6 +120,13 @@ void AAdvancedCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 }
 
 
+
+void AAdvancedCharacter::ReceiveDamageAny(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser) {
+
+	UE_LOG(LogTemp, Warning, TEXT("Player got %f damage"), Damage);
+	attrComp->AddHealth(-Damage);
+	
+}
 
 
 

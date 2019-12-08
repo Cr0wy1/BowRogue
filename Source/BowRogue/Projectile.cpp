@@ -4,6 +4,8 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h" //ApplyDamage
+#include "GameFramework/DamageType.h"
 
 AProjectile::AProjectile(){
 
@@ -58,8 +60,12 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 	if (OtherActor && OtherActor != this) {
 		UE_LOG(LogTemp, Warning, TEXT("Hittet Actor: %s"), *OtherActor->GetName());
 
+
+
 		FDamageEvent damageEvent;
-		OtherActor->TakeDamage(10.0f, damageEvent, nullptr, nullptr);
+		UGameplayStatics::ApplyDamage(OtherActor, impactDamage, nullptr, this, UDamageType::StaticClass());
+	
+		//OtherActor->TakeDamage(impactDamage, damageEvent, nullptr, nullptr);
 
 		// Only add impulse and destroy projectile if we hit a physics
 		if (OtherComp && OtherComp->IsSimulatingPhysics()) {
@@ -70,6 +76,8 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 
 			//Destroy();
 		}
+
+		OnImpact(Hit);
 	}
 
 	//draw debug impact point

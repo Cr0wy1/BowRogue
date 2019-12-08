@@ -69,6 +69,8 @@ void UAttributeComponent::ApplyDamage(float amount){
 }
 
 void UAttributeComponent::AddHealth(float value){
+	UE_LOG(LogTemp, Warning, TEXT("AttrComp: AddHealth %f"), value);
+
 	health.value += value;
 	OnHealthChange.Broadcast(health);
 }

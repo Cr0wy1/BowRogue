@@ -99,6 +99,10 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//On Take Damage Event
+	UFUNCTION()
+	virtual void ReceiveDamageAny(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	FVector GetGroundLocation() const;
 
