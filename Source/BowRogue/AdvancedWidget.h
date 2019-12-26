@@ -16,6 +16,7 @@ class BOWROGUE_API UAdvancedWidget : public UUserWidget
 	
 public:
 	
+
 };
 
 //Creates a Widget and adds it to player Screen, returns nullptr if widgetBP is not set

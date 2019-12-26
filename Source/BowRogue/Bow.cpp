@@ -17,6 +17,8 @@ ABow::ABow() {
 		drawArrow->InitialLifeSpan = 0.0f;
 	}
 	
+	properties.shootingType = EShootingType::CHARGE;
+	properties.shotDelay = 0.0f;
 }
 
 

@@ -67,7 +67,8 @@ public:
 	void AddStamina(float value);
 	void AddStaminaMax(float value);
 
-	const FAttribute* AddAttribute(FAttribute attribute);
+	UFUNCTION(BlueprintCallable)
+	void AddAttribute(FAttribute attribute);
 
 	//return true if attribute found, else false
 	bool UpdateAttribute(const FAttribute &attribute);
@@ -75,6 +76,10 @@ public:
 	FORCEINLINE const FAttribute* GetAttribute(FName name);
 
 	FORCEINLINE float GetHealth() const { return health.value; }
-	FORCEINLINE float GetMaxHealth() const { return health.max; }
+	FORCEINLINE float GetMaxHealth() const { return health.max; } 
 	FORCEINLINE FDynamicAttribute GetStamina() const { return stamina; }
+
+	//Debug
+	UFUNCTION(BlueprintCallable)
+	void PrintDebug();
 };

@@ -47,7 +47,7 @@ void AAdvancedPlayerController::SetupInputComponent(){
 
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("Map", IE_Pressed, this, &AAdvancedPlayerController::OnPressedMap);
+	InputComponent->BindAction("Map", IE_Pressed, this, &AAdvancedPlayerController::OnPressedMap); 
 	InputComponent->BindAction("Map", IE_Released, this, &AAdvancedPlayerController::OnReleaseMap);
 
 }
@@ -76,3 +76,4 @@ void AAdvancedPlayerController::OnReleaseMap(){
 		mapWidget->CloseMap();
 	}
 }
+

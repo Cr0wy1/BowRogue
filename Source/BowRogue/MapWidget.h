@@ -37,4 +37,5 @@ public:
 
 	UFUNCTION()
 	void DrawToCanvasRenderTarget(class UCanvas* canvas, int32 width, int32 height);
+
 };

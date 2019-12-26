@@ -10,6 +10,7 @@
 #include "Item.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
+#include "Kismet/GameplayStatics.h" //for finsihActorSpawning
 
 // Sets default values
 AWeapon::AWeapon()
@@ -74,7 +75,14 @@ void AWeapon::Fire(const FVector targetLoc){
 		FActorSpawnParameters projectileSpawnParams;
 		projectileSpawnParams.Owner = this;
 
-		AProjectile* spawnedProjectile = GetWorld()->SpawnActor<AProjectile>(projectileBP, projectileSpawnLoc, lookAtRot, projectileSpawnParams);
+		FTransform trans;
+		trans.SetLocation(projectileSpawnLoc);
+		trans.SetRotation(FQuat(lookAtRot));
+		AProjectile* spawnedProjectile = GetWorld()->SpawnActorDeferred<AProjectile>(projectileBP, trans);
+		OnProjectileSpawned(spawnedProjectile);
+		UGameplayStatics::FinishSpawningActor(spawnedProjectile, trans);
+		//AProjectile* spawnedProjectile = GetWorld()->SpawnActor<AProjectile>(projectileBP, projectileSpawnLoc, lookAtRot, projectileSpawnParams);
+		
 		
 		//Set shot time
 		lastShotTime = GetWorld()->GetTimeSeconds();
@@ -92,7 +100,7 @@ void AWeapon::StartShooting(const struct FCrosshairResult* _crossResult){
 
 void AWeapon::StopShooting(){
 	if (bIsShooting) {
-		if (properties.shootingType == EShootingType::CHARGE && crossResult) {
+		if (crossResult && properties.shootingType == EShootingType::CHARGE &&  properties.minShootingTime < cShootingDuration) {
 			Fire(crossResult->hitResult.ImpactPoint);
 		}
 		//UE_LOG(LogTemp, Warning, TEXT("ShootingDuration: %f"), cShootingDuration);
@@ -104,6 +112,7 @@ void AWeapon::StopShooting(){
 		OnStopShooting();
 	}
 }
+
 
 void AWeapon::SetFocus(const FVector & targetLoc){
 	FRotator lookAtRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), targetLoc);

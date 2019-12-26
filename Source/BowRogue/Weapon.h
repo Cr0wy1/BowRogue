@@ -36,6 +36,10 @@ struct BOWROGUE_API FWeaponProperties {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	int32 maxShotAmount = 100;
+
+	//hold min Time Trigger before Weapon can shoot, 0 is without delay, used for charge Weapons
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	float minShootingTime = 0.0f;
 };
 
 
@@ -85,6 +89,9 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
 	void OnStopShooting();
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
+	void OnProjectileSpawned(AProjectile* projectile);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -99,5 +106,6 @@ public:
 
 	virtual void AttachItem(FItemData * itemData);
 
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetCurrentShootingDuration() const { return cShootingDuration; }
 };

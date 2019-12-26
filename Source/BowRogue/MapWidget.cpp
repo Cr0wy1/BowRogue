@@ -89,3 +89,5 @@ void UMapWidget::DrawToCanvasRenderTarget(UCanvas * canvas, int32 width, int32 h
 		boxPos.X = 0;
 	}
 }
+
+ 

@@ -25,6 +25,15 @@ void UAttributeComponent::BeginPlay()
 	for (int32 i = 0; i < numAttributs; i++){
 		AddAttribute(attributes[i]);
 	}
+
+	FAttribute newAttr;
+	newAttr.name = "Speed";
+	newAttr.value = 5.0f;
+	newAttr.max = 10.0f;
+	AddAttribute(newAttr);
+	AddAttribute(newAttr);
+	 
+	PrintDebug();
 }
 
 void UAttributeComponent::EndPlay(const EEndPlayReason::Type EndPlayReason){
@@ -91,14 +100,14 @@ void UAttributeComponent::AddStaminaMax(float value){
 	OnStaminaChange.Broadcast(stamina);
 }
 
-const FAttribute* UAttributeComponent::AddAttribute(FAttribute attribute){
+void UAttributeComponent::AddAttribute(FAttribute attribute){
 	if (DoesAttributeExist(attribute.name)) {
 		UE_LOG(LogTemp, Warning, TEXT("AddAttribute: attribute %s already exist"), *attribute.name.ToString());
-		return nullptr;
+		return;
 	}
 
 	attributes.Add(attribute);
-	return attributesLookup.Add( attribute.name, new FAttribute(attribute));
+	attributesLookup.Add( attribute.name, new FAttribute(attribute));
 }
 
 bool UAttributeComponent::UpdateAttribute(const FAttribute &attribute){
@@ -129,6 +138,14 @@ bool UAttributeComponent::DoesAttributeExist(FName name){
 const FAttribute* UAttributeComponent::GetAttribute(FName name){
 	FAttribute** findAttr = attributesLookup.Find(name);
 	return findAttr ? *findAttr : nullptr;
+}
+
+//Debug
+void UAttributeComponent::PrintDebug(){
+	UE_LOG(LogTemp, Warning, TEXT("Attributes: "));
+	for (auto elem : attributesLookup){
+		UE_LOG(LogTemp, Warning, TEXT("%s: %f/%f"), *elem.Key.ToString(), elem.Value->value, elem.Value->max);
+	}
 }
 
 

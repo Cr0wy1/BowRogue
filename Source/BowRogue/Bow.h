@@ -20,6 +20,9 @@ class BOWROGUE_API ABow : public AWeapon
 
 protected:
 
+	UPROPERTY(EditAnywhere)
+	float drawAnimTime = 0.36f;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Bow")
 	bool bIsDrawing = false;
 
@@ -47,5 +50,6 @@ public:
 
 	ABow();
 
-	
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE float GetDrawPercent() const { return FMath::Clamp(cShootingDuration / drawAnimTime, 0.0f, 1.0f); }
 };

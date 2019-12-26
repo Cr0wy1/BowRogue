@@ -59,6 +59,7 @@ bool UCrosshairTraceComponent::CrosshairLineTrace(FHitResult &OUT_hitresult, FVe
 	}
 	else {
 		OUT_hitresult.Location = endLocation;
+		OUT_hitresult.ImpactPoint = endLocation;
 	}
 
 	if (bDrawDebugPoint) {

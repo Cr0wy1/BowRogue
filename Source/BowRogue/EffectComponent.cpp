@@ -27,7 +27,7 @@ void UEffectComponent::BeginPlay()
 
 	timeManager = &GetWorld()->GetTimerManager();
 	
-	AddEffect(new FEffectDataFreeze(character));
+	//AddEffect(new FEffectDataFreeze(character));
 }
 
 
