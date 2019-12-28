@@ -12,6 +12,7 @@
 #include "AttributeComponent.h"
 #include "AdvancedPlayerController.h"
 #include "GameFramework/DamageType.h"
+#include "DrawDebugHelpers.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -24,7 +25,7 @@ AAdvancedCharacter::AAdvancedCharacter(){
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(30.f, 96.0f);
+	GetCapsuleComponent()->InitCapsuleSize(50.0f, 96.0f);
 
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
@@ -51,6 +52,7 @@ AAdvancedCharacter::AAdvancedCharacter(){
 	movementComp->GravityScale = 3.0f;
 	movementComp->MaxFlySpeed = 2000.0f;
 	movementComp->BrakingDecelerationFlying = 2000.0f;
+	movementComp->NavAgentProps.bCanCrouch = true;
 
 	//Crosshair Trace
 	crossTraceComp = CreateDefaultSubobject<UCrosshairTraceComponent>("CrosshairTrace");
@@ -64,8 +66,14 @@ AAdvancedCharacter::AAdvancedCharacter(){
 void AAdvancedCharacter::BeginPlay(){
 	Super::BeginPlay();
 	
+	capsuleBaseHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+	cameraBaseLocation = fpCameraComp->RelativeLocation;
+	standingCapsuleShape = GetCapsuleComponent()->GetCollisionShape();
+	cRelativeCameraZOffset = 0.0f;
+
 	controllerAdv = APawn::GetController<AAdvancedPlayerController>();
 	
+	OnCharacterMovementUpdated.AddDynamic(this, &AAdvancedCharacter::OnMovementUpdate);
 	OnTakeAnyDamage.AddDynamic(this, &AAdvancedCharacter::ReceiveDamageAny);
 
 	meshFP->SetHiddenInGame(false, true);
@@ -100,8 +108,12 @@ void AAdvancedCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AAdvancedCharacter::DeactivateSprint);
 
 	// Bind jump events
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump); 
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	// Bind jump events
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AAdvancedCharacter::StartCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AAdvancedCharacter::StopCrouch);
 
 	//Interaction
 	PlayerInputComponent->BindAction("Interaction", IE_Pressed, this, &AAdvancedCharacter::OnInteraction);
@@ -154,7 +166,12 @@ void AAdvancedCharacter::DeactivateSprint() {
 }
 
 void AAdvancedCharacter::MoveForward(float Value){
-	
+	const FAttribute* speedAttr = attrComp->GetAttribute("Speed");
+	if (speedAttr) {
+		UE_LOG(LogTemp, Warning, TEXT("MoveForward"));
+
+		movementComp->MaxWalkSpeed *= speedAttr->value;
+	}
 	if (Value != 0.0f){
 		// add movement in that direction 
 		AddMovementInput(GetActorForwardVector(), Value);
@@ -216,5 +233,63 @@ float AAdvancedCharacter::TraceGroundDistance() const{
 	float distance = start.Z - traceResult.Location.Z;
 
 	return distance;
+}
+
+bool AAdvancedCharacter::OverlapStandingCheck() const{
+	FVector standingCapsuleLocation = GetCapsuleComponent()->GetComponentLocation();
+	standingCapsuleLocation.Z += 96.0f - movementComp->CrouchedHalfHeight;
+
+	FCollisionQueryParams CapsuleParams(SCENE_QUERY_STAT(CrouchTrace), false, this);
+	FCollisionResponseParams ResponseParam;
+	movementComp->InitCollisionParams(CapsuleParams, ResponseParam);
+
+	const ECollisionChannel CollisionChannel = GetCapsuleComponent()->GetCollisionObjectType();
+
+	bool bIsOverlapping = GetWorld()->OverlapBlockingTestByChannel(standingCapsuleLocation, FQuat::Identity, CollisionChannel, standingCapsuleShape, CapsuleParams, ResponseParam);
+
+	DrawDebugCapsule(GetWorld(), standingCapsuleLocation, 96, GetCapsuleComponent()->GetScaledCapsuleRadius(), FQuat::Identity, FColor::Red, true, 60, 0, 1);
+	 
+	return bIsOverlapping;
+}
+
+void AAdvancedCharacter::AdjustCameraToCapsuleHeight(float deltaSeconds){
+
+	float cCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+
+	float crouchShrinkPercent = cCapsuleHalfHeight / capsuleBaseHeight;
+	float deltaHeight = capsuleBaseHeight - cCapsuleHalfHeight;
+
+	float targetCamHeight = cameraBaseLocation.Z * crouchShrinkPercent;
+	float cCamHeight = fpCameraComp->RelativeLocation.Z;
+	FVector newCamLoc = fpCameraComp->RelativeLocation;
+
+
+	float updateCamHeight = (targetCamHeight - cCamHeight) * crouchWalkSwitchSpeed * deltaSeconds;
+	cRelativeCameraZOffset += updateCamHeight;
+
+	
+	newCamLoc.Z = cameraBaseLocation.Z + deltaHeight + cRelativeCameraZOffset;//Update Camera relative location to stay in place
+
+	fpCameraComp->SetRelativeLocation(newCamLoc);
+	
+}
+
+void AAdvancedCharacter::OnMovementUpdate(float DeltaSeconds, FVector OldLocation, FVector OldVelocity){
+	AdjustCameraToCapsuleHeight(DeltaSeconds);
+}
+
+void AAdvancedCharacter::StartCrouch(){
+	
+	if (!bIsCrouched) {
+		Crouch();
+	}
+}
+ 
+void AAdvancedCharacter::StopCrouch(){ 
+
+	if (bIsCrouched) {
+		UnCrouch();
+	}
+
 }
 

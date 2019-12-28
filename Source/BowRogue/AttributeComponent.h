@@ -21,7 +21,10 @@ class BOWROGUE_API UAttributeComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	FAttribute walkSpeedMultiplier;
+
 	//UPROPERTIES
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	float walkSpeed = 100.0f;

@@ -35,6 +35,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float sprintStaminaConsume = 0.1f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float crouchWalkSwitchSpeed = 10.0f;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera") 
 	float BaseTurnRate; /** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 
@@ -58,8 +61,14 @@ protected:
 
 	bool bIsSprinting = false;
 
+
 	AAdvancedPlayerController* controllerAdv = nullptr;
 	UCharacterMovementComponent * movementComp = nullptr;
+
+	float capsuleBaseHeight;
+	FVector cameraBaseLocation;
+	float cRelativeCameraZOffset;
+	FCollisionShape standingCapsuleShape;
 
 	//COMPONENTS
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
@@ -92,6 +101,11 @@ protected:
 	*/
 	void LookUpAtRate(float Rate);
 
+	void AdjustCameraToCapsuleHeight(float deltaSeconds);
+
+	UFUNCTION()
+	void OnMovementUpdate(float DeltaSeconds, FVector OldLocation, FVector OldVelocity);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -108,6 +122,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	float TraceGroundDistance() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	bool OverlapStandingCheck() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void StartCrouch();
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void StopCrouch();
 	
 	FORCEINLINE AAdvancedPlayerController* GetController() const { return controllerAdv; }
 	FORCEINLINE class UCrosshairTraceComponent* GetCrosshairTraceComp() const { return crossTraceComp; }

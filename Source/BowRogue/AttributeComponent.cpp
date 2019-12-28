@@ -10,6 +10,7 @@ UAttributeComponent::UAttributeComponent(){
 
 	health.name = "health";
 	stamina.name = "stamina";
+
 }
 
 
