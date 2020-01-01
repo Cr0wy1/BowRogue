@@ -127,6 +127,12 @@ public:
 	bool OverlapStandingCheck() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void StartJump();
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void StopJump();
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void StartCrouch();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")

@@ -3,12 +3,15 @@
 
 #include "AttributeComponent.h"
 #include "Engine/World.h"
+#include "AdvancedCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 
 
 UAttributeComponent::UAttributeComponent(){
 	PrimaryComponentTick.bCanEverTick = true;
 
-	health.name = "health";
+	health.name = "health"; 
 	stamina.name = "stamina";
 
 }
@@ -19,6 +22,8 @@ void UAttributeComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	character = Cast<AAdvancedCharacter>(GetOwner());
+
 	attributesLookup.Add(health.name, &health);
 	attributesLookup.Add(stamina.name, &stamina);
 
@@ -33,8 +38,14 @@ void UAttributeComponent::BeginPlay()
 	newAttr.max = 10.0f;
 	AddAttribute(newAttr);
 	AddAttribute(newAttr);
-	 
+	
+	AddAttribute("PlayerSizeMultiplier", 2.0f, 2.0f);
+
 	PrintDebug();
+	
+
+
+	//UpdateAttributes();
 }
 
 void UAttributeComponent::EndPlay(const EEndPlayReason::Type EndPlayReason){
@@ -109,6 +120,24 @@ void UAttributeComponent::AddAttribute(FAttribute attribute){
 
 	attributes.Add(attribute);
 	attributesLookup.Add( attribute.name, new FAttribute(attribute));
+}
+
+void UAttributeComponent::AddAttribute(FName name, float max, float value){
+	FAttribute newAttribute;
+	newAttribute.name = name;
+	newAttribute.max = max;
+	newAttribute.value = value;
+	AddAttribute(newAttribute);
+}
+
+void UAttributeComponent::UpdateAttributes(){
+	if (character) {
+		UCharacterMovementComponent* movementComp = character->GetCharacterMovement();
+
+		movementComp->MaxWalkSpeed = walkSpeed.value * walkSpeedMultiplier.value;
+		character->GetCapsuleComponent()->SetRelativeScale3D(FVector(sizeMultiplier.value));
+		movementComp->JumpZVelocity = jumpHeight.value;
+	}
 }
 
 bool UAttributeComponent::UpdateAttribute(const FAttribute &attribute){

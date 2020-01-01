@@ -66,10 +66,11 @@ AAdvancedCharacter::AAdvancedCharacter(){
 void AAdvancedCharacter::BeginPlay(){
 	Super::BeginPlay();
 	
+
 	capsuleBaseHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
 	cameraBaseLocation = fpCameraComp->RelativeLocation;
 	standingCapsuleShape = GetCapsuleComponent()->GetCollisionShape();
-	cRelativeCameraZOffset = 0.0f;
+	cRelativeCameraZOffset = 0.0f; 
 
 	controllerAdv = APawn::GetController<AAdvancedPlayerController>();
 	
@@ -166,12 +167,7 @@ void AAdvancedCharacter::DeactivateSprint() {
 }
 
 void AAdvancedCharacter::MoveForward(float Value){
-	const FAttribute* speedAttr = attrComp->GetAttribute("Speed");
-	if (speedAttr) {
-		UE_LOG(LogTemp, Warning, TEXT("MoveForward"));
 
-		movementComp->MaxWalkSpeed *= speedAttr->value;
-	}
 	if (Value != 0.0f){
 		// add movement in that direction 
 		AddMovementInput(GetActorForwardVector(), Value);
@@ -272,6 +268,7 @@ void AAdvancedCharacter::AdjustCameraToCapsuleHeight(float deltaSeconds){
 
 	fpCameraComp->SetRelativeLocation(newCamLoc);
 	
+	//GetCapsuleComponent()->SetCapsuleHalfHeight(GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight)
 }
 
 void AAdvancedCharacter::OnMovementUpdate(float DeltaSeconds, FVector OldLocation, FVector OldVelocity){

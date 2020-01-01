@@ -23,11 +23,18 @@ class BOWROGUE_API UAttributeComponent : public UActorComponent
 public:	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	FAttribute walkSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	FAttribute walkSpeedMultiplier;
 
-	//UPROPERTIES
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	float walkSpeed = 100.0f;
+	FAttribute sizeMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	FAttribute jumpHeight;
+
+	//UPROPERTIES
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	FDynamicAttribute health;
@@ -48,6 +55,8 @@ public:
 	UAttributeComponent();
 
 protected:
+
+	class AAdvancedCharacter * character = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	TArray<FAttribute> attributes;
@@ -72,6 +81,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddAttribute(FAttribute attribute);
+
+	
+	void AddAttribute(FName name, float max, float value);
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateAttributes();
 
 	//return true if attribute found, else false
 	bool UpdateAttribute(const FAttribute &attribute);

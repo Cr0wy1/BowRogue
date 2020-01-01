@@ -156,14 +156,20 @@ USTRUCT(BlueprintType)
 struct BOWROGUE_API FAttribute {
 	GENERATED_BODY()
 
+	FAttribute(){}
+	FAttribute(FName _name, float _value, float _max) : name(_name), value(_value), max(_max){}
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	FName name = "ATTRIBUTE_NAME";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	float value = 100.0f;
+	float min = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	float max = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	float value = 100.0f;
 
 	void SetValue(float newValue) {
 		value = newValue;
