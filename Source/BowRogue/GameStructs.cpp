@@ -5,6 +5,7 @@
 #include "Entity.h"
 #include "Item.h"
 #include "Engine/StaticMesh.h"
+#include "AttributeComponent.h"
 
 //Init statics 
 FIntVector FGridDir::FRONT_VEC = FIntVector(1, 0, 0);
@@ -104,3 +105,37 @@ FItemData * FItemData::FromId(UDataTable* datatable, FName id){
 
 	return itemData;
 }
+
+
+FAttribute::FAttribute(class UAttributeComponent* _attrComp, FName _name, float _min, float _max, float _value) : attrComp(_attrComp), name(_name), min(_min), max(_max), value(_value) {
+}
+
+
+
+void FAttribute::SetValue(float newValue){
+	value = FMath::Clamp(newValue, min, max);
+	NotifyAttributeComponent();
+}
+
+void FAttribute::SetMin(float newMin, bool updateValue){
+	min = newMin > max ? max : newMin;
+	if (updateValue && value < min) {
+		value = min;
+	}
+	NotifyAttributeComponent();
+}
+
+void FAttribute::SetMax(float newMax, bool updateValue){
+	max = newMax < min ? min : newMax;
+	if (updateValue && value > max) {
+		value = max;
+	}
+	NotifyAttributeComponent();
+}
+
+void FAttribute::NotifyAttributeComponent(){
+	if (attrComp) {
+		attrComp->OnAttributeUpdate(this);
+	}
+}
+

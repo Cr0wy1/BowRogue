@@ -14,6 +14,7 @@ UAttributeComponent::UAttributeComponent(){
 	health.name = "health"; 
 	stamina.name = "stamina";
 
+	
 }
 
 
@@ -24,38 +25,19 @@ void UAttributeComponent::BeginPlay()
 	
 	character = Cast<AAdvancedCharacter>(GetOwner());
 
-	attributesLookup.Add(health.name, &health);
-	attributesLookup.Add(stamina.name, &stamina);
+	AddAttribute(&health);
+	AddAttribute(&stamina);
+	AddAttribute(&walkSpeed);
 
-	int32 numAttributs = attributes.Num();
-	for (int32 i = 0; i < numAttributs; i++){
-		AddAttribute(attributes[i]);
-	}
-
-	FAttribute newAttr;
-	newAttr.name = "Speed";
-	newAttr.value = 5.0f;
-	newAttr.max = 10.0f;
-	AddAttribute(newAttr);
-	AddAttribute(newAttr);
-	
-	AddAttribute("PlayerSizeMultiplier", 2.0f, 2.0f);
 
 	PrintDebug();
 	
-
-
 	//UpdateAttributes();
 }
 
 void UAttributeComponent::EndPlay(const EEndPlayReason::Type EndPlayReason){
 	//Clear attribute pointers
-	for (auto attr : attributesLookup) {
-		if (attr.Value->name == "health" || attr.Value->name == "stamina") continue;
-		delete attr.Value;
-		attr.Value = nullptr;
-	}
-	attributesLookup.Reset();
+
 
 	Super::EndPlay(EndPlayReason);
 }
@@ -72,9 +54,7 @@ void UAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	if (stamina.regAmount > 0.0f) {
 		
 		if (stamina.lastRegTime + stamina.regSpeed < GetWorld()->GetTimeSeconds()) {
-			int32 num = OnStaminaChange.GetAllObjects().Num();
-			//UE_LOG(LogTemp, Warning, TEXT("stamina: %f delegate num: %i"), stamina.value, num);
-			OnStaminaChange.Broadcast(stamina);
+			//OnStaminaChange.Broadcast(stamina);
 			stamina += stamina.regAmount;
 			stamina.lastRegTime = GetWorld()->GetTimeSeconds();
 		}
@@ -82,7 +62,7 @@ void UAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 }
 
 void UAttributeComponent::ApplyDamage(float amount){
-	health -= amount;
+	health -= amount; 
 	//OnHealthUpdate.Broadcast(health, amount);
 	if (health <= 0.0f) { 
 		OnDeath.Broadcast();
@@ -93,42 +73,36 @@ void UAttributeComponent::AddHealth(float value){
 	UE_LOG(LogTemp, Warning, TEXT("AttrComp: AddHealth %f"), value);
 
 	health.value += value;
-	OnHealthChange.Broadcast(health);
+	//OnHealthChange.Broadcast(); 
 }
 
 void UAttributeComponent::AddHealthMax(float value){
 	health.max += value;
-	OnHealthChange.Broadcast(health);
+	//OnHealthChange.Broadcast(health);
 }
 
 void UAttributeComponent::AddStamina(float value){
 	
 	stamina.value += value;
-	OnStaminaChange.Broadcast(stamina);
+	//OnStaminaChange.Broadcast(stamina);
 }
 
 void UAttributeComponent::AddStaminaMax(float value){
 	stamina.max += value;
-	OnStaminaChange.Broadcast(stamina);
+	//OnStaminaChange.Broadcast(stamina);
 }
 
-void UAttributeComponent::AddAttribute(FAttribute attribute){
-	if (DoesAttributeExist(attribute.name)) {
-		UE_LOG(LogTemp, Warning, TEXT("AddAttribute: attribute %s already exist"), *attribute.name.ToString());
-		return;
+void UAttributeComponent::AddAttribute(FAttribute* attribute){
+	if (attribute) {
+		attributes.Add(attribute);
 	}
-
-	attributes.Add(attribute);
-	attributesLookup.Add( attribute.name, new FAttribute(attribute));
+	
 }
 
-void UAttributeComponent::AddAttribute(FName name, float max, float value){
-	FAttribute newAttribute;
-	newAttribute.name = name;
-	newAttribute.max = max;
-	newAttribute.value = value;
-	AddAttribute(newAttribute);
+void UAttributeComponent::OnAttributeUpdate(FAttribute * updatedAttribute){
+
 }
+
 
 void UAttributeComponent::UpdateAttributes(){
 	if (character) {
@@ -140,41 +114,13 @@ void UAttributeComponent::UpdateAttributes(){
 	}
 }
 
-bool UAttributeComponent::UpdateAttribute(const FAttribute &attribute){
-	UE_LOG(LogTemp, Warning, TEXT("health update 1"));
-	if (attribute.name == "health") {
-		UE_LOG(LogTemp, Warning, TEXT("health update 2"));
 
-		health.value += attribute.value;
-		health.max += attribute.max;
-		OnHealthChange.Broadcast(health);
-		return true;
-	}
-	
-	FAttribute** findAttr = attributesLookup.Find(attribute.name);
-	if (findAttr) {
-		**findAttr += attribute;
-		return true;
-	}
-	
-
-	return false;
-}
-
-bool UAttributeComponent::DoesAttributeExist(FName name){
-	return attributesLookup.Find(name);
-}
-
-const FAttribute* UAttributeComponent::GetAttribute(FName name){
-	FAttribute** findAttr = attributesLookup.Find(name);
-	return findAttr ? *findAttr : nullptr;
-}
 
 //Debug
 void UAttributeComponent::PrintDebug(){
 	UE_LOG(LogTemp, Warning, TEXT("Attributes: "));
-	for (auto elem : attributesLookup){
-		UE_LOG(LogTemp, Warning, TEXT("%s: %f/%f"), *elem.Key.ToString(), elem.Value->value, elem.Value->max);
+	for (FAttribute* elem : attributes){
+		UE_LOG(LogTemp, Warning, TEXT("%s: %f/%f"), *elem->name.ToString(), elem->value, elem->max);
 	}
 }
 

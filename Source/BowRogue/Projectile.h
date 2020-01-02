@@ -6,6 +6,22 @@
 #include "GameFramework/Actor.h"
 #include "Projectile.generated.h"
 
+
+
+USTRUCT()
+struct BOWROGUE_API FProjectileEffect {
+	GENERATED_BODY()
+
+	FProjectileEffect(){}
+
+		virtual void Tick(float deltaTime) {}
+	virtual void OnHit(const FHitResult& hitResult) {}
+};
+
+
+
+
+
 UCLASS()
 class BOWROGUE_API AProjectile : public AActor
 {
@@ -13,6 +29,8 @@ class BOWROGUE_API AProjectile : public AActor
 
 
 protected:
+
+	TArray<FProjectileEffect*> effects;
 
 	UPROPERTY(BlueprintReadOnly)
 	int32 bounceCounter;
@@ -82,8 +100,37 @@ public:
 
 //Projectile Effects
 	UFUNCTION(BlueprintCallable)
+	void AddSplitEffect(TSubclassOf<AProjectile> projectile_BP);
+
+	UFUNCTION(BlueprintCallable)
 	void SplitProjectile(TSubclassOf<AProjectile> projectile_BP);
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateScaleByTraceDistance(float scalor = 0.0001f);
+};
+
+
+
+USTRUCT()
+struct BOWROGUE_API FSplitEffect : public FProjectileEffect {
+	GENERATED_BODY()
+
+		AProjectile* mainProjectile;
+	TSubclassOf<AProjectile> splitProjectile_BP;
+
+	FSplitEffect(){}
+	FSplitEffect(AProjectile* _mainProjectile, TSubclassOf<AProjectile> _splitProjectile_BP) : mainProjectile(_mainProjectile), splitProjectile_BP(_splitProjectile_BP) {}
+
+	//virtual void Tick(float deltaTime) {}
+	virtual void OnHit(const FHitResult& hitResult) override {
+		FTransform trans;
+		trans.SetLocation(mainProjectile->GetActorLocation());
+		trans.SetRotation(mainProjectile->GetActorRightVector().ToOrientationQuat());
+		trans.SetScale3D(mainProjectile->GetActorScale3D() * 0.5f);
+
+		mainProjectile->GetWorld()->SpawnActor<AProjectile>(splitProjectile_BP, trans);
+
+		trans.SetRotation((mainProjectile->GetActorRightVector() * -1.0f).ToOrientationQuat());
+		mainProjectile->GetWorld()->SpawnActor<AProjectile>(splitProjectile_BP, trans);
+	}
 };

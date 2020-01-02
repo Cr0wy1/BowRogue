@@ -52,12 +52,12 @@ public:
 	UCrosshairTraceComponent* crossTraceComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
-	UAttributeComponent* attrComp;
+	UAttributeComponent* attributeComp;
 
 	// Sets default values for this character's properties
 	AAdvancedCharacter();
 
-protected:
+protected: 
 
 	bool bIsSprinting = false;
 
@@ -142,6 +142,6 @@ public:
 	FORCEINLINE class UCrosshairTraceComponent* GetCrosshairTraceComp() const { return crossTraceComp; }
 	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return meshFP; }
 	FORCEINLINE class UCameraComponent* GetFPCameraComp() const { return fpCameraComp; }
-	FORCEINLINE class UAttributeComponent* GetAttrComp() const { return attrComp; }
+	FORCEINLINE class UAttributeComponent* GetAttrComp() const { return attributeComp; }
 	FORCEINLINE bool IsSprinting() const { return bIsSprinting; }
 };

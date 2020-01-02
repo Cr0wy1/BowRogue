@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameStructs.h"
-#include "SortedMap.h"
 #include "AttributeComponent.generated.h"
 
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttrChange, const FAttribute&, attribute);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttrChangeSignature);
+
 
 
 
@@ -23,16 +24,16 @@ class BOWROGUE_API UAttributeComponent : public UActorComponent
 public:	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	FAttribute walkSpeed;
+	FAttribute walkSpeed = FAttribute(this, "WalkSpeed", 300, 1000, 600);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	FAttribute walkSpeedMultiplier;
+	FAttribute walkSpeedMultiplier = FAttribute(this, "WalkSpeedMultiplier", 1.0, 5.0, 1.0);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	FAttribute sizeMultiplier;
+	FAttribute sizeMultiplier = FAttribute(this, "SizeMultiplier", 0.5, 2.0, 1.0);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	FAttribute jumpHeight;
+	FAttribute jumpHeight = FAttribute(this, "JumpHeight", 600, 1000, 860);
 
 	//UPROPERTIES
 
@@ -45,11 +46,12 @@ public:
 	//Events
 	FOnDeath OnDeath;
 
-	UPROPERTY(BlueprintAssignable)
-	FOnAttrChange OnHealthChange;
+	UPROPERTY(BlueprintAssignable, Category = "Attribute") 
+	FOnAttrChangeSignature OnAttrChange;
+	
 
-	UPROPERTY(BlueprintAssignable)
-	FOnAttrChange OnStaminaChange;
+	//UPROPERTY(BlueprintAssignable)
+	//FOnAttrChange OnStaminaChange;
 
 	// Sets default values for this component's properties
 	UAttributeComponent();
@@ -58,10 +60,7 @@ protected:
 
 	class AAdvancedCharacter * character = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	TArray<FAttribute> attributes;
-
-	TSortedMap<FName, FAttribute*, FDefaultAllocator, FNameFastLess> attributesLookup;
+	TArray<FAttribute*> attributes;
 
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -79,19 +78,14 @@ public:
 	void AddStamina(float value);
 	void AddStaminaMax(float value);
 
-	UFUNCTION(BlueprintCallable)
-	void AddAttribute(FAttribute attribute);
+	void AddAttribute(FAttribute* attribute);
 
-	
-	void AddAttribute(FName name, float max, float value);
+	//Called from FAttribute struct if min, max or value getting updated
+	void OnAttributeUpdate(FAttribute* updatedAttribute);
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateAttributes();
 
-	//return true if attribute found, else false
-	bool UpdateAttribute(const FAttribute &attribute);
-	FORCEINLINE bool DoesAttributeExist(FName name);
-	FORCEINLINE const FAttribute* GetAttribute(FName name);
 
 	FORCEINLINE float GetHealth() const { return health.value; }
 	FORCEINLINE float GetMaxHealth() const { return health.max; } 

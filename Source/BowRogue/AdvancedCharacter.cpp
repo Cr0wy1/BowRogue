@@ -13,20 +13,20 @@
 #include "AdvancedPlayerController.h"
 #include "GameFramework/DamageType.h"
 #include "DrawDebugHelpers.h"
-
+ 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
-
+ 
 //////////////////////////////////////////////////////////////////////////
-// AAdvancedCharacter 
+// AAdvancedCharacter  
 
-AAdvancedCharacter::AAdvancedCharacter(){
+AAdvancedCharacter::AAdvancedCharacter(){ 
 	
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(50.0f, 96.0f);
-
+	 
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
@@ -34,7 +34,7 @@ AAdvancedCharacter::AAdvancedCharacter(){
 	// Create a CameraComponent	
 	fpCameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	fpCameraComp->SetupAttachment(GetCapsuleComponent());
-	fpCameraComp->RelativeLocation = FVector(0.0f, 0.0f, 64.f); // Position the camera
+	fpCameraComp->RelativeLocation = FVector(0.0f, 0.0f, 64.f); // Position the camera 
 	fpCameraComp->bUsePawnControlRotation = true;
 	
 	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
@@ -44,8 +44,8 @@ AAdvancedCharacter::AAdvancedCharacter(){
 	meshFP->bCastDynamicShadow = false;
 	meshFP->CastShadow = false;
 	meshFP->RelativeRotation = FRotator(1.9f, -19.19f, 5.2f);
-	meshFP->RelativeLocation = FVector(-0.5f, -4.4f, -155.7f);
-
+	meshFP->RelativeLocation = FVector(-0.5f, -4.4f, -155.7f); 
+	 
 	//Movement
 	movementComp = GetCharacterMovement();
 	movementComp->JumpZVelocity = 860.0f;
@@ -56,18 +56,18 @@ AAdvancedCharacter::AAdvancedCharacter(){
 
 	//Crosshair Trace
 	crossTraceComp = CreateDefaultSubobject<UCrosshairTraceComponent>("CrosshairTrace");
-	crosshairResult = crossTraceComp->GetCrosshairResultPtr();
-
+	crosshairResult = crossTraceComp->GetCrosshairResultPtr();  
+	 
 	//Attributes
-	attrComp = CreateDefaultSubobject<UAttributeComponent>("Attribute Comp");
-}
+	attributeComp = CreateDefaultSubobject<UAttributeComponent>("Attributes");
+} 
 
 // Called when the game starts or when spawned
 void AAdvancedCharacter::BeginPlay(){
 	Super::BeginPlay();
 	
 
-	capsuleBaseHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+	capsuleBaseHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(); 
 	cameraBaseLocation = fpCameraComp->RelativeLocation;
 	standingCapsuleShape = GetCapsuleComponent()->GetCollisionShape();
 	cRelativeCameraZOffset = 0.0f; 
@@ -84,10 +84,15 @@ void AAdvancedCharacter::OnPickupTake(FItemData * itemData){
 
 	//Update Attributes from itemdata
 	if (itemData) {
+
 		int32 numAttributes = itemData->updateAttributes.Num();
 		for (int32 i = 0; i < numAttributes; i++){
-			attrComp->UpdateAttribute(itemData->updateAttributes[i]);
+			//attrComp->UpdateAttribute(itemData->updateAttributes[i]);
 		}
+
+		//if (itemData->itemBP) {
+
+		//}
 	}
 }
 
@@ -137,7 +142,7 @@ void AAdvancedCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 void AAdvancedCharacter::ReceiveDamageAny(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser) {
 
 	UE_LOG(LogTemp, Warning, TEXT("Player got %f damage"), Damage);
-	attrComp->AddHealth(-Damage);
+	attributeComp->AddHealth(-Damage);
 	
 }
 
@@ -173,11 +178,11 @@ void AAdvancedCharacter::MoveForward(float Value){
 		AddMovementInput(GetActorForwardVector(), Value);
 
 		if (bIsSprinting) {
-			attrComp->AddStamina(-sprintStaminaConsume);
+			attributeComp->AddStamina(-sprintStaminaConsume);
 		}
 		
 	}
-	
+	  
 }
 
 void AAdvancedCharacter::MoveRight(float Value){
@@ -186,7 +191,7 @@ void AAdvancedCharacter::MoveRight(float Value){
 		AddMovementInput(GetActorRightVector(), Value);
 
 		if (bIsSprinting) {
-			attrComp->AddStamina(-sprintStaminaConsume);
+			attributeComp->AddStamina(-sprintStaminaConsume);
 		}
 		
 	}
@@ -246,6 +251,14 @@ bool AAdvancedCharacter::OverlapStandingCheck() const{
 	DrawDebugCapsule(GetWorld(), standingCapsuleLocation, 96, GetCapsuleComponent()->GetScaledCapsuleRadius(), FQuat::Identity, FColor::Red, true, 60, 0, 1);
 	 
 	return bIsOverlapping;
+}
+
+void AAdvancedCharacter::StartJump(){
+
+}
+
+void AAdvancedCharacter::StopJump(){
+
 }
 
 void AAdvancedCharacter::AdjustCameraToCapsuleHeight(float deltaSeconds){

@@ -10,8 +10,8 @@
 
 void UPlayerHUDWidget::Init(UAttributeComponent * _attrComp){
 	attrComp = _attrComp;
-	attrComp->OnHealthChange.AddDynamic(this, &UPlayerHUDWidget::OnHealthUpdate);
-	attrComp->OnStaminaChange.AddDynamic(this, &UPlayerHUDWidget::OnStaminaUpdate);
+	//attrComp->OnHealthChange.AddDynamic(this, &UPlayerHUDWidget::OnHealthUpdate);
+	//attrComp->OnStaminaChange.AddDynamic(this, &UPlayerHUDWidget::OnStaminaUpdate);
 	OnHealthUpdate(attrComp->health);
 	OnStaminaUpdate(attrComp->stamina);
 

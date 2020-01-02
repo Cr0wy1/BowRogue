@@ -59,6 +59,8 @@ void AProjectile::BeginPlay(){
 		DrawDebugPoint(GetWorld(), startLoc, 10.0f, FColor::Green, true, 20);
 		DrawDebugDirectionalArrow(GetWorld(), startLoc, endLoc, 100.0f, FColor::Blue, true, 20.0f, 0, 1.0f);
 	}
+
+	
 }
 
 // Called every frame
@@ -96,6 +98,10 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 		}
 
 		OnImpact(Hit);
+
+		for (auto effect : effects){
+			effect->OnHit(Hit);
+		}
 	}
 
 	//draw debug impact point
@@ -115,6 +121,10 @@ void AProjectile::SetDummy() {
 	projectileMovement->SetAutoActivate(false);
 
 } 
+
+void AProjectile::AddSplitEffect(TSubclassOf<AProjectile> projectile_BP){
+	effects.Add(new FSplitEffect(this, projectile_BP));
+}
 
 //Projectile Effects
 void AProjectile::SplitProjectile(TSubclassOf<AProjectile> projectile_BP){ 

@@ -156,8 +156,7 @@ USTRUCT(BlueprintType)
 struct BOWROGUE_API FAttribute {
 	GENERATED_BODY()
 
-	FAttribute(){}
-	FAttribute(FName _name, float _value, float _max) : name(_name), value(_value), max(_max){}
+	class UAttributeComponent* attrComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	FName name = "ATTRIBUTE_NAME";
@@ -171,10 +170,20 @@ struct BOWROGUE_API FAttribute {
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	float value = 100.0f;
 
-	void SetValue(float newValue) {
-		value = newValue;
-	}
+	FAttribute() {}
+	FAttribute(class UAttributeComponent* _attrComp, FName _name, float _min, float _max, float _value);
 
+
+	void SetValue(float newValue);
+	void SetMin(float newMin, bool updateValue = false);
+	void SetMax(float newMax, bool updateValue = false);
+
+protected:
+
+	void NotifyAttributeComponent();
+
+
+public:
 	FAttribute& operator+=(float addvalue) {
 		value += addvalue;
 		return *this;
