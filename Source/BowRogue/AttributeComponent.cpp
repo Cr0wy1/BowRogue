@@ -32,6 +32,8 @@ void UAttributeComponent::BeginPlay()
 
 	PrintDebug();
 	
+	
+
 	//UpdateAttributes();
 }
 
@@ -62,6 +64,8 @@ void UAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 }
 
 void UAttributeComponent::ApplyDamage(float amount){
+	UE_LOG(LogTemp, Warning, TEXT("Health: %f, ApplyDamage: %f"), health.value, amount);
+
 	health -= amount; 
 	//OnHealthUpdate.Broadcast(health, amount);
 	if (health <= 0.0f) { 

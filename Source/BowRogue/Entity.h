@@ -36,6 +36,9 @@ protected:
 	UFUNCTION()
 	void OnDeath();
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Entity")
+	void OnTakeDamage(float damageAmount);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

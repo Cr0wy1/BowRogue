@@ -46,6 +46,8 @@ float AEntity::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, 
 
 	UE_LOG(LogTemp, Warning, TEXT("you Damage me!"));
 
+	OnTakeDamage(DamageAmount);
+
 	attributeComp->ApplyDamage(DamageAmount);
 
 	return DamageAmount;

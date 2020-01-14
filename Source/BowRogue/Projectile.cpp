@@ -60,7 +60,10 @@ void AProjectile::BeginPlay(){
 		DrawDebugDirectionalArrow(GetWorld(), startLoc, endLoc, 100.0f, FColor::Blue, true, 20.0f, 0, 1.0f);
 	}
 
-	
+	for (auto effect : effects) {
+		effect->OnSpawn();
+	}
+	effectManager.CallAllOnSpawn();
 }
 
 // Called every frame
@@ -73,6 +76,19 @@ void AProjectile::Tick(float DeltaTime) {
 
 		lastTickLocation = GetActorLocation();
 	}
+
+	for (auto effect : effects) {
+		if (effect) {
+			effect->Tick(DeltaTime);
+		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("Effect is nullptr"));
+
+		}
+		
+	}
+
+	effectManager.CallAllOnTick(DeltaTime);
 }
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit){
@@ -100,8 +116,14 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 		OnImpact(Hit);
 
 		for (auto effect : effects){
-			effect->OnHit(Hit);
+			if (effect) {
+				effect->OnHit(Hit);
+			}
+			
 		}
+
+		effectManager.CallAllOnHit(Hit);
+
 	}
 
 	//draw debug impact point
@@ -122,9 +144,38 @@ void AProjectile::SetDummy() {
 
 } 
 
-void AProjectile::AddSplitEffect(TSubclassOf<AProjectile> projectile_BP){
-	effects.Add(new FSplitEffect(this, projectile_BP));
+UProjectileEffectClass* AProjectile::AddEffect(TSubclassOf<UProjectileEffectClass> newEffect){
+	
+	FName newEffectName = newEffect.GetDefaultObject()->GetNameId();
+	for (auto effect : effects) {
+		if (effect->GetNameId() == newEffectName) {
+			UE_LOG(LogTemp, Warning, TEXT("effect allready exists"));
+
+			return nullptr;
+		}
+	}
+
+	UProjectileEffectClass* addedEffect = NewObject<UProjectileEffectClass>(this, newEffect);
+	addedEffect->Init(this);
+	effects.Add(addedEffect);
+	
+	return addedEffect;
 }
+
+UProjectileEffectBase * AProjectile::AddProjectileEffect(TSubclassOf<UProjectileEffectBase> newEffect){
+	FName newEffectName = newEffect.GetDefaultObject()->GetNameId();
+	if (effectManager.HasEffect(newEffectName)) {
+		UE_LOG(LogTemp, Warning, TEXT("effect allready exists"));
+		return nullptr;
+	}
+
+	UProjectileEffectBase* addedEffect = NewObject<UProjectileEffectBase>(this, newEffect);
+	addedEffect->Init(this);
+	effectManager.effects.Add(addedEffect);
+
+	return addedEffect;
+}
+
 
 //Projectile Effects
 void AProjectile::SplitProjectile(TSubclassOf<AProjectile> projectile_BP){ 
@@ -142,4 +193,8 @@ void AProjectile::SplitProjectile(TSubclassOf<AProjectile> projectile_BP){
 void AProjectile::UpdateScaleByTraceDistance(float scalor){
 	FVector newScale = spawnScale + (distanceTraveled * scalor);
 	SetActorScale3D(newScale);
+}
+
+void UProjectileEffectClass::Init(AProjectile * _mainProjectile){
+	mainProjectile = _mainProjectile;
 }

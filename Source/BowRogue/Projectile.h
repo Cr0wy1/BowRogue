@@ -4,18 +4,54 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "EffectBase.h"
 #include "Projectile.generated.h"
 
 
 
-USTRUCT()
-struct BOWROGUE_API FProjectileEffect {
+UCLASS(Blueprintable, BlueprintType)
+class BOWROGUE_API UProjectileEffectClass : public UObject{
 	GENERATED_BODY()
+		
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	FName nameId = "NONE";
 
-	FProjectileEffect(){}
+	UPROPERTY(BlueprintReadOnly)
+	class AProjectile * mainProjectile;
+public:
+		UProjectileEffectClass() {}
 
-		virtual void Tick(float deltaTime) {}
-	virtual void OnHit(const FHitResult& hitResult) {}
+		virtual void BeginDestroy() override {
+			UE_LOG(LogTemp, Warning, TEXT("I am getting destroyed!"));
+			Super::BeginDestroy();
+		}
+
+	virtual void Init(class AProjectile * _mainProjectile);
+
+	virtual void Tick(float deltaTime) {
+		OnTickEvent(deltaTime);
+	}
+
+	virtual void OnHit(const FHitResult& hitResult) {
+		OnHitEvent(hitResult);
+	}
+
+	virtual void OnSpawn() {
+		OnSpawnEvent();
+	}
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHitEvent(const FHitResult& hitResult);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnTickEvent(float deltaTime);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnSpawnEvent();
+
+
+	FORCEINLINE FName GetNameId() const { return nameId; }
 };
 
 
@@ -30,7 +66,10 @@ class BOWROGUE_API AProjectile : public AActor
 
 protected:
 
-	TArray<FProjectileEffect*> effects;
+	FProjectileEffectManager effectManager;
+
+	UPROPERTY()
+	TArray<UProjectileEffectClass*> effects;
 
 	UPROPERTY(BlueprintReadOnly)
 	int32 bounceCounter;
@@ -100,7 +139,10 @@ public:
 
 //Projectile Effects
 	UFUNCTION(BlueprintCallable)
-	void AddSplitEffect(TSubclassOf<AProjectile> projectile_BP);
+	UProjectileEffectClass* AddEffect(TSubclassOf<UProjectileEffectClass> newEffect);
+
+	UFUNCTION(BlueprintCallable)
+	UProjectileEffectBase* AddProjectileEffect(TSubclassOf<UProjectileEffectBase> newEffect);
 
 	UFUNCTION(BlueprintCallable)
 	void SplitProjectile(TSubclassOf<AProjectile> projectile_BP);
@@ -111,15 +153,16 @@ public:
 
 
 
-USTRUCT()
-struct BOWROGUE_API FSplitEffect : public FProjectileEffect {
+UCLASS()
+class BOWROGUE_API USplitEffectClass : public UProjectileEffectClass {
 	GENERATED_BODY()
-
-		AProjectile* mainProjectile;
+	
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<AProjectile> splitProjectile_BP;
 
-	FSplitEffect(){}
-	FSplitEffect(AProjectile* _mainProjectile, TSubclassOf<AProjectile> _splitProjectile_BP) : mainProjectile(_mainProjectile), splitProjectile_BP(_splitProjectile_BP) {}
+public:
+	USplitEffectClass() {}
+	
 
 	//virtual void Tick(float deltaTime) {}
 	virtual void OnHit(const FHitResult& hitResult) override {

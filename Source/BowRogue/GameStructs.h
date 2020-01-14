@@ -212,7 +212,7 @@ public:
 	bool operator<(float other) const { return value < other; }
 	bool operator>(float other) const { return value > other; }
 	bool operator>=(float other) const { return value >= other; }
-	bool operator<=(float other) const { return value >= other; }
+	bool operator<=(float other) const { return value <= other; }
 
 };
 
