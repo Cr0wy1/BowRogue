@@ -153,30 +153,113 @@ struct BOWROGUE_API FGridRoom : public FDungeonRoomParams {
 
 
 USTRUCT(BlueprintType)
+struct BOWROGUE_API FAttributeField {
+	GENERATED_BODY()
+
+	friend FAttribute;
+
+protected:
+
+	struct FAttribute* attribute;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	float value = 0.0f;
+
+	void NotifyAttribute();
+public:
+
+	FAttributeField(){}
+	FAttributeField(FAttribute* _attribute, float _value);
+
+	void Init(FAttribute* _attribute);
+
+	void Set(float newValue) {
+		value = newValue;
+		NotifyAttribute();
+	}
+
+	float Get() const { return value; }
+
+	operator float() const {
+		return value;
+	}
+
+	FAttributeField& operator=(float otherValue) {
+		value = otherValue;
+		NotifyAttribute();
+		return *this;
+	}
+
+	FAttributeField& operator+=(float otherValue) {
+		value += otherValue;
+		NotifyAttribute();
+		return *this;
+	}
+
+	FAttributeField& operator-=(float otherValue) {
+		value -= otherValue;
+		NotifyAttribute();
+		return *this;
+	}
+
+	FAttributeField& operator*=(float otherValue) {
+		value *= otherValue;
+		NotifyAttribute();
+		return *this;
+	}
+
+	FAttributeField& operator/=(float otherValue) {
+		value /= otherValue;
+		NotifyAttribute();
+		return *this;
+	}
+};
+
+
+
+USTRUCT(BlueprintType)
 struct BOWROGUE_API FAttribute {
 	GENERATED_BODY()
 
+		friend FAttributeField;
+
+protected:
 	class UAttributeComponent* attrComp;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	FName name = "ATTRIBUTE_NAME";
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	float min = 1.0f;
+	FAttributeField min;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	float max = 100.0f;
+	FAttributeField max;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	float value = 100.0f;
+	FAttributeField value;
 
-	FAttribute() {}
+
+	FAttribute(){
+		min.value = 0.0f;
+		max.value = 100.0f;
+		value.value = 100.0f;
+	}
 	FAttribute(class UAttributeComponent* _attrComp, FName _name, float _min, float _max, float _value);
+
+	void Init(class UAttributeComponent* _attrComp);
 
 
 	void SetValue(float newValue);
-	void SetMin(float newMin, bool updateValue = false);
-	void SetMax(float newMax, bool updateValue = false);
+	void SetMin(float newMin, bool updateValue = false); //updateValue = updates value if value is out of attribute range
+	void SetMax(float newMax, bool updateValue = false); //updateValue = updates value if value is out of attribute range
+
+	FString ToString() const {
+		FString string;
+		string = name.ToString() + " Attribute(Min:" + FString::SanitizeFloat(min) + ", Max:" + FString::SanitizeFloat(max) + ", Value:" + FString::SanitizeFloat(value) + ")";
+		return string;
+	}
 
 protected:
 
@@ -219,6 +302,9 @@ public:
 USTRUCT(BlueprintType)
 struct BOWROGUE_API FDynamicAttribute : public FAttribute {
 	GENERATED_BODY()
+	
+	FDynamicAttribute(){}
+	FDynamicAttribute(class UAttributeComponent* _attrComp, FName _name, float _min, float _max, float _value);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	float regAmount = 0.0f;

@@ -26,9 +26,10 @@ protected:
 	UTextBlock* interactText;
 
 	UFUNCTION()
-	void OnHealthUpdate(const FAttribute& attribute);
+	void OnHealthUpdate();
 
-
+	UFUNCTION()
+	void OnAttributeUpdate();
 
 public:
 
@@ -36,7 +37,7 @@ public:
 	class UHealthWidget * healthWidget;
 
 	UFUNCTION()
-	void OnStaminaUpdate(const FAttribute& attribute);
+	void OnStaminaUpdate();
 
 	void Init(class UAttributeComponent* _attrComp);
 

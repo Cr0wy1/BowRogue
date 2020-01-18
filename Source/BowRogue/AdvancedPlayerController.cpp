@@ -38,6 +38,7 @@ void AAdvancedPlayerController::BeginPlay() {
 	
 	if (playerHUDWidget && character && character->GetAttrComp()) {
 		//UE_LOG(LogTemp, Warning, TEXT("AddDynamicDelegate"));
+		
 
 		playerHUDWidget->Init(character->GetAttrComp());
 	}

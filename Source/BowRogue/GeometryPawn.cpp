@@ -10,12 +10,10 @@ AGeometryPawn::AGeometryPawn(){
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//sceneComp = CreateDefaultSubobject<USceneComponent>("Scene");
-	//RootComponent = sceneComp;
-
 	meshComp = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	RootComponent = meshComp;
-	//meshComp->SetupAttachment(sceneComp);
+	meshComp->SetSimulatePhysics(true);
+	meshComp->SetNotifyRigidBodyCollision(true); //Simulation Generating Hit Events
 	
 }
 
@@ -23,6 +21,16 @@ AGeometryPawn::AGeometryPawn(){
 void AGeometryPawn::BeginPlay(){
 	Super::BeginPlay();
 	
+	meshComp->OnComponentHit.AddDynamic(this, &AGeometryPawn::OnHit);
+}
+
+void AGeometryPawn::OnHit(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit){
+	if (OtherActor) {
+		//UE_LOG(LogTemp, Warning, TEXT("%s hitted %s"), *GetName(), *OtherActor->GetName());
+
+		FDamageEvent damageEvent;
+		OtherActor->TakeDamage(damage, damageEvent, nullptr, this);
+	}
 }
 
 // Called every frame
@@ -47,7 +55,12 @@ float AGeometryPawn::TakeDamage(float DamageAmount, FDamageEvent const & DamageE
 
 	UE_LOG(LogTemp, Warning, TEXT("%s: DamageTaken(%f)"), *GetName(), DamageAmount);
 
-	return 0.0f;
+	health -= DamageAmount;
+	if (health <= 0.0f) {
+		Destroy();
+	}
+
+	return DamageAmount;
 }
 
 void AGeometryPawn::AddRotateImpulse(float amount){

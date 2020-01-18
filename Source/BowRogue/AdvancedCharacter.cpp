@@ -66,6 +66,7 @@ AAdvancedCharacter::AAdvancedCharacter(){
 void AAdvancedCharacter::BeginPlay(){
 	Super::BeginPlay();
 	
+	UE_LOG(LogTemp, Warning, TEXT("Character %s Start Player Health: %s"), *attributeComp->GetName(), *attributeComp->health.ToString());
 
 	capsuleBaseHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(); 
 	cameraBaseLocation = fpCameraComp->RelativeLocation;
@@ -142,7 +143,7 @@ void AAdvancedCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 void AAdvancedCharacter::ReceiveDamageAny(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser) {
 
 	UE_LOG(LogTemp, Warning, TEXT("Player got %f damage"), Damage);
-	attributeComp->AddHealth(-Damage);
+	attributeComp->health -= Damage;
 	
 }
 
@@ -164,6 +165,7 @@ void AAdvancedCharacter::OnInteraction() {
 void AAdvancedCharacter::ActivateSprint() {
 	movementComp->MaxWalkSpeed = sprintSpeed;
 	bIsSprinting = true;
+	attributeComp->healthAttribute->SetValue(10);
 }
 
 void AAdvancedCharacter::DeactivateSprint() {
@@ -178,7 +180,7 @@ void AAdvancedCharacter::MoveForward(float Value){
 		AddMovementInput(GetActorForwardVector(), Value);
 
 		if (bIsSprinting) {
-			attributeComp->AddStamina(-sprintStaminaConsume);
+			attributeComp->stamina -= sprintStaminaConsume;
 		}
 		
 	}
@@ -191,7 +193,7 @@ void AAdvancedCharacter::MoveRight(float Value){
 		AddMovementInput(GetActorRightVector(), Value);
 
 		if (bIsSprinting) {
-			attributeComp->AddStamina(-sprintStaminaConsume);
+			attributeComp->stamina -= sprintStaminaConsume;
 		}
 		
 	}

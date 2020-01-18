@@ -11,10 +11,9 @@
 UAttributeComponent::UAttributeComponent(){
 	PrimaryComponentTick.bCanEverTick = true;
 
-	health.name = "health"; 
-	stamina.name = "stamina";
+	//health = FDynamicAttribute(this, "Healht001", 0, 100, 200);
 
-	
+	healthAttribute = UAttributeObject::CreateAttribute(this, "HealthAttribute", 100.0f);
 }
 
 
@@ -25,22 +24,28 @@ void UAttributeComponent::BeginPlay()
 	
 	character = Cast<AAdvancedCharacter>(GetOwner());
 
-	AddAttribute(&health);
-	AddAttribute(&stamina);
-	AddAttribute(&walkSpeed);
+	//attributes.Reset(); 
+	 
+	health.Init(this);
 
+	AddAttribute(&health);
+	AddAttribute(&stamina); 
+	//AddAttribute(&walkSpeed);
+
+	UE_LOG(LogTemp, Warning, TEXT("AttributeComp %s Start Player Health: %s"), *GetName(), *health.ToString());
 
 	PrintDebug();
 	
 	
+	healthAttribute->OnChange.AddDynamic(this, &UAttributeComponent::PrintDebug);
 
 	//UpdateAttributes();
 }
 
 void UAttributeComponent::EndPlay(const EEndPlayReason::Type EndPlayReason){
 	//Clear attribute pointers
-
-
+	 
+	UE_LOG(LogTemp, Warning, TEXT("End Player Health: %s"), *health.ToString());
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -52,7 +57,7 @@ void UAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 	//UE_LOG(LogTemp, Warning, TEXT("UAttributeComponent: tick"));
 
-
+	//UE_LOG(LogTemp, Warning, TEXT("Tick Player Health: %s"), *health.ToString());
 	if (stamina.regAmount > 0.0f) {
 		
 		if (stamina.lastRegTime + stamina.regSpeed < GetWorld()->GetTimeSeconds()) {
@@ -73,28 +78,6 @@ void UAttributeComponent::ApplyDamage(float amount){
 	}
 }
 
-void UAttributeComponent::AddHealth(float value){
-	UE_LOG(LogTemp, Warning, TEXT("AttrComp: AddHealth %f"), value);
-
-	health.value += value;
-	//OnHealthChange.Broadcast(); 
-}
-
-void UAttributeComponent::AddHealthMax(float value){
-	health.max += value;
-	//OnHealthChange.Broadcast(health);
-}
-
-void UAttributeComponent::AddStamina(float value){
-	
-	stamina.value += value;
-	//OnStaminaChange.Broadcast(stamina);
-}
-
-void UAttributeComponent::AddStaminaMax(float value){
-	stamina.max += value;
-	//OnStaminaChange.Broadcast(stamina);
-}
 
 void UAttributeComponent::AddAttribute(FAttribute* attribute){
 	if (attribute) {
@@ -104,7 +87,8 @@ void UAttributeComponent::AddAttribute(FAttribute* attribute){
 }
 
 void UAttributeComponent::OnAttributeUpdate(FAttribute * updatedAttribute){
-
+	UE_LOG(LogTemp, Warning, TEXT("on Attribute update Health: %s"), *health.ToString());
+	OnAttrChange.Broadcast();
 }
 
 
@@ -112,9 +96,9 @@ void UAttributeComponent::UpdateAttributes(){
 	if (character) {
 		UCharacterMovementComponent* movementComp = character->GetCharacterMovement();
 
-		movementComp->MaxWalkSpeed = walkSpeed.value * walkSpeedMultiplier.value;
-		character->GetCapsuleComponent()->SetRelativeScale3D(FVector(sizeMultiplier.value));
-		movementComp->JumpZVelocity = jumpHeight.value;
+		//movementComp->MaxWalkSpeed = walkSpeed.value * walkSpeedMultiplier.value;
+		//character->GetCapsuleComponent()->SetRelativeScale3D(FVector(sizeMultiplier.value));
+		//movementComp->JumpZVelocity = jumpHeight.value;
 	}
 }
 
@@ -124,7 +108,7 @@ void UAttributeComponent::UpdateAttributes(){
 void UAttributeComponent::PrintDebug(){
 	UE_LOG(LogTemp, Warning, TEXT("Attributes: "));
 	for (FAttribute* elem : attributes){
-		UE_LOG(LogTemp, Warning, TEXT("%s: %f/%f"), *elem->name.ToString(), elem->value, elem->max);
+		//UE_LOG(LogTemp, Warning, TEXT("%s: %f/%f"), *elem->name.ToString(), elem->value, elem->max);
 	}
 }
 

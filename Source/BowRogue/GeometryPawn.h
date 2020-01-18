@@ -29,8 +29,17 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Force")
 	FVector constantVelocity;
 
+	UPROPERTY(EditAnywhere, Category = "Attribute")
+	float health = 100.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Attribute")
+	float damage = 10.0f;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 public:	
 	// Called every frame

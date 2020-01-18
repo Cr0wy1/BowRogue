@@ -10,20 +10,28 @@
 
 void UPlayerHUDWidget::Init(UAttributeComponent * _attrComp){
 	attrComp = _attrComp;
+	attrComp->OnAttrChange.AddDynamic(this, &UPlayerHUDWidget::OnAttributeUpdate);
 	//attrComp->OnHealthChange.AddDynamic(this, &UPlayerHUDWidget::OnHealthUpdate);
 	//attrComp->OnStaminaChange.AddDynamic(this, &UPlayerHUDWidget::OnStaminaUpdate);
-	OnHealthUpdate(attrComp->health);
-	OnStaminaUpdate(attrComp->stamina);
+	OnHealthUpdate();
+	OnStaminaUpdate();
 
 	
 }
 
-void UPlayerHUDWidget::OnHealthUpdate(const FAttribute& attribute) {
-	healthWidget->UpdateHealth(attribute.value, attribute.max);
+void UPlayerHUDWidget::OnHealthUpdate() {
+	UE_LOG(LogTemp, Warning, TEXT("Widget Health: %s"), *attrComp->health.ToString());
+
+	healthWidget->UpdateHealth(attrComp->health.value, attrComp->health.max);
+}
+void UPlayerHUDWidget::OnAttributeUpdate(){
+	OnHealthUpdate();
+	OnStaminaUpdate();
 }
 
-void UPlayerHUDWidget::OnStaminaUpdate(const FAttribute& attribute){
-	healthWidget->UpdateStamina(attribute.value, attribute.max);
+
+void UPlayerHUDWidget::OnStaminaUpdate(){
+	healthWidget->UpdateStamina(attrComp->health.value, attrComp->health.max);
 }
 
 void UPlayerHUDWidget::SetInteractText(bool visible, FText text){

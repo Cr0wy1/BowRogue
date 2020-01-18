@@ -15,6 +15,35 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttrChangeSignature);
 
 
 
+UCLASS()
+class BOWROGUE_API UAttributeObject : public UObject {
+	GENERATED_BODY()
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float value;
+
+public:
+
+	FOnAttrChangeSignature OnChange;
+
+	void SetValue(float newValue) {
+		value = newValue;
+		OnChange.Broadcast();
+	}
+
+	static UAttributeObject* CreateAttribute(UObject* outer, FName _name, float _value) {
+		UAttributeObject* attribute = NewObject<UAttributeObject>(outer, _name);
+		attribute->name = _name;
+		attribute->value = _value;
+		return attribute;
+	}
+};
+
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BOWROGUE_API UAttributeComponent : public UActorComponent
@@ -23,16 +52,18 @@ class BOWROGUE_API UAttributeComponent : public UActorComponent
 
 public:	
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	FAttribute walkSpeed = FAttribute(this, "WalkSpeed", 300, 1000, 600);
+	UAttributeObject * healthAttribute;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	FAttribute walkSpeedMultiplier = FAttribute(this, "WalkSpeedMultiplier", 1.0, 5.0, 1.0);
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	//FAttribute walkSpeed = FAttribute(this, "WalkSpeed", 300, 1000, 600);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	FAttribute sizeMultiplier = FAttribute(this, "SizeMultiplier", 0.5, 2.0, 1.0);
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	//FAttribute walkSpeedMultiplier = FAttribute(this, "WalkSpeedMultiplier", 1.0, 5.0, 1.0);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
+	//FAttribute sizeMultiplier = FAttribute(this, "SizeMultiplier", 0.5, 2.0, 1.0);
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	FAttribute jumpHeight = FAttribute(this, "JumpHeight", 600, 1000, 860);
 
 	//UPROPERTIES
@@ -41,7 +72,7 @@ public:
 	FDynamicAttribute health;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	FDynamicAttribute stamina;
+	FDynamicAttribute stamina = FDynamicAttribute(this, "Stamina", 0, 100, 100);
 
 	//Events
 	FOnDeath OnDeath;
@@ -73,11 +104,6 @@ public:
 
 	void ApplyDamage(float amount);
 
-	void AddHealth(float value);
-	void AddHealthMax(float value);
-	void AddStamina(float value);
-	void AddStaminaMax(float value);
-
 	void AddAttribute(FAttribute* attribute);
 
 	//Called from FAttribute struct if min, max or value getting updated
@@ -85,11 +111,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateAttributes();
-
-
-	FORCEINLINE float GetHealth() const { return health.value; }
-	FORCEINLINE float GetMaxHealth() const { return health.max; } 
-	FORCEINLINE FDynamicAttribute GetStamina() const { return stamina; }
 
 	//Debug
 	UFUNCTION(BlueprintCallable)

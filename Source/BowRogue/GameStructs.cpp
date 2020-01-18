@@ -107,13 +107,40 @@ FItemData * FItemData::FromId(UDataTable* datatable, FName id){
 }
 
 
-FAttribute::FAttribute(class UAttributeComponent* _attrComp, FName _name, float _min, float _max, float _value) : attrComp(_attrComp), name(_name), min(_min), max(_max), value(_value) {
+
+
+//AttributeField
+FAttributeField::FAttributeField(FAttribute * _attribute, float _value) {
+	attribute = _attribute;
+	value = _value;
+}
+
+void FAttributeField::Init(FAttribute * _attribute){
+	attribute = _attribute;
+}
+
+void FAttributeField::NotifyAttribute(){
+	if (attribute) {
+		attribute->NotifyAttributeComponent();
+	}
+}
+
+//FAttribute
+FAttribute::FAttribute(class UAttributeComponent* _attrComp, FName _name, float _min, float _max, float _value) : attrComp(_attrComp), name(_name), min(this, _min), max(this, _max), value(this, _value) {
+
+}
+
+void FAttribute::Init(UAttributeComponent * _attrComp){
+	attrComp = _attrComp;
+	min.Init(this);
+	max.Init(this);
+	value.Init(this);
 }
 
 
 
 void FAttribute::SetValue(float newValue){
-	value = FMath::Clamp(newValue, min, max);
+	value = FMath::Clamp(newValue, (float)min, (float)max);
 	NotifyAttributeComponent();
 }
 
@@ -138,4 +165,9 @@ void FAttribute::NotifyAttributeComponent(){
 		attrComp->OnAttributeUpdate(this);
 	}
 }
+
+FDynamicAttribute::FDynamicAttribute(UAttributeComponent * _attrComp, FName _name, float _min, float _max, float _value) : FAttribute(_attrComp, _name, _min, _max, _value){
+
+}
+
 
