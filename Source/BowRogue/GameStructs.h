@@ -152,68 +152,7 @@ struct BOWROGUE_API FGridRoom : public FDungeonRoomParams {
 
 
 
-USTRUCT(BlueprintType)
-struct BOWROGUE_API FAttributeField {
-	GENERATED_BODY()
 
-	friend FAttribute;
-
-protected:
-
-	struct FAttribute* attribute;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	float value = 0.0f;
-
-	void NotifyAttribute();
-public:
-
-	FAttributeField(){}
-	FAttributeField(FAttribute* _attribute, float _value);
-
-	void Init(FAttribute* _attribute);
-
-	void Set(float newValue) {
-		value = newValue;
-		NotifyAttribute();
-	}
-
-	float Get() const { return value; }
-
-	operator float() const {
-		return value;
-	}
-
-	FAttributeField& operator=(float otherValue) {
-		value = otherValue;
-		NotifyAttribute();
-		return *this;
-	}
-
-	FAttributeField& operator+=(float otherValue) {
-		value += otherValue;
-		NotifyAttribute();
-		return *this;
-	}
-
-	FAttributeField& operator-=(float otherValue) {
-		value -= otherValue;
-		NotifyAttribute();
-		return *this;
-	}
-
-	FAttributeField& operator*=(float otherValue) {
-		value *= otherValue;
-		NotifyAttribute();
-		return *this;
-	}
-
-	FAttributeField& operator/=(float otherValue) {
-		value /= otherValue;
-		NotifyAttribute();
-		return *this;
-	}
-};
 
 
 
@@ -221,81 +160,23 @@ USTRUCT(BlueprintType)
 struct BOWROGUE_API FAttribute {
 	GENERATED_BODY()
 
-		friend FAttributeField;
-
 protected:
-	class UAttributeComponent* attrComp;
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	FName name = "ATTRIBUTE_NAME";
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	FAttributeField min;
+	float min = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	FAttributeField max;
+	float max = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
-	FAttributeField value;
+	float value = 100.0f;
 
 
-	FAttribute(){
-		min.value = 0.0f;
-		max.value = 100.0f;
-		value.value = 100.0f;
-	}
-	FAttribute(class UAttributeComponent* _attrComp, FName _name, float _min, float _max, float _value);
-
-	void Init(class UAttributeComponent* _attrComp);
-
-
-	void SetValue(float newValue);
-	void SetMin(float newMin, bool updateValue = false); //updateValue = updates value if value is out of attribute range
-	void SetMax(float newMax, bool updateValue = false); //updateValue = updates value if value is out of attribute range
-
-	FString ToString() const {
-		FString string;
-		string = name.ToString() + " Attribute(Min:" + FString::SanitizeFloat(min) + ", Max:" + FString::SanitizeFloat(max) + ", Value:" + FString::SanitizeFloat(value) + ")";
-		return string;
-	}
-
-protected:
-
-	void NotifyAttributeComponent();
-
-
-public:
-	FAttribute& operator+=(float addvalue) {
-		value += addvalue;
-		return *this;
-	}
-
-	FAttribute& operator-=(float subvalue) {
-		value -= subvalue;
-		return *this;
-	}
-
-	FAttribute& operator+=(const FAttribute &other) {
-		value += other.value;
-		max += other.max;
-		return *this;
-	}
-
-	FAttribute& operator-=(const FAttribute &other) {
-		value -= other.value;
-		max -= other.max;
-		return *this;
-	}
-
-	//Boolean operators
-	bool operator==(float other) const { return value == other; }
-	bool operator!=(float other) const { return value != other; }
-	bool operator<(float other) const { return value < other; }
-	bool operator>(float other) const { return value > other; }
-	bool operator>=(float other) const { return value >= other; }
-	bool operator<=(float other) const { return value <= other; }
+	FAttribute(){}
 
 };
 

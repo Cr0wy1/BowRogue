@@ -66,7 +66,7 @@ AAdvancedCharacter::AAdvancedCharacter(){
 void AAdvancedCharacter::BeginPlay(){
 	Super::BeginPlay();
 	
-	UE_LOG(LogTemp, Warning, TEXT("Character %s Start Player Health: %s"), *attributeComp->GetName(), *attributeComp->health.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("Character %s Start Player Health: %s"), *attributeComp->GetName(), *attributeComp->health.ToString());
 
 	capsuleBaseHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(); 
 	cameraBaseLocation = fpCameraComp->RelativeLocation;
@@ -74,7 +74,8 @@ void AAdvancedCharacter::BeginPlay(){
 	cRelativeCameraZOffset = 0.0f; 
 
 	controllerAdv = APawn::GetController<AAdvancedPlayerController>();
-	
+	controllerAdv->CreateWidgets();
+
 	OnCharacterMovementUpdated.AddDynamic(this, &AAdvancedCharacter::OnMovementUpdate);
 	OnTakeAnyDamage.AddDynamic(this, &AAdvancedCharacter::ReceiveDamageAny);
 
@@ -143,7 +144,7 @@ void AAdvancedCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 void AAdvancedCharacter::ReceiveDamageAny(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser) {
 
 	UE_LOG(LogTemp, Warning, TEXT("Player got %f damage"), Damage);
-	attributeComp->health -= Damage;
+	attributeComp->health->value -= Damage;
 	
 }
 
@@ -165,7 +166,6 @@ void AAdvancedCharacter::OnInteraction() {
 void AAdvancedCharacter::ActivateSprint() {
 	movementComp->MaxWalkSpeed = sprintSpeed;
 	bIsSprinting = true;
-	attributeComp->healthAttribute->SetValue(10);
 }
 
 void AAdvancedCharacter::DeactivateSprint() {
@@ -180,7 +180,7 @@ void AAdvancedCharacter::MoveForward(float Value){
 		AddMovementInput(GetActorForwardVector(), Value);
 
 		if (bIsSprinting) {
-			attributeComp->stamina -= sprintStaminaConsume;
+			attributeComp->stamina->value -= sprintStaminaConsume;
 		}
 		
 	}
@@ -193,11 +193,11 @@ void AAdvancedCharacter::MoveRight(float Value){
 		AddMovementInput(GetActorRightVector(), Value);
 
 		if (bIsSprinting) {
-			attributeComp->stamina -= sprintStaminaConsume;
+			attributeComp->stamina->value -= sprintStaminaConsume;
 		}
 		
 	}
-}
+} 
 
 void AAdvancedCharacter::TurnAtRate(float Rate){
 	// calculate delta for this frame from the rate information

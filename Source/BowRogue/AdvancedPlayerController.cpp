@@ -15,7 +15,7 @@
 void AAdvancedPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
-	character = Cast<AAdvancedCharacter>(GetCharacter());
+	character = GetAdvancedCharacter();
 	ensureMsgf(character, TEXT("character is nullptr"));
 
 	if (character) {
@@ -25,23 +25,7 @@ void AAdvancedPlayerController::BeginPlay() {
 	}
 
 	gameInstance = GetGameInstance<UAdvancedGameInstance>();
-	ADungeonGenerator* dungeonGenerator = gameInstance->GetDungeonGenerator();
-	UWidgetAsset* widgetAsset_A = gameInstance->GetWidgetAsset();
 
-	//Create Widgets
-	mapWidget = CreateAddViewport<UMapWidget>(this, widgetAsset_A->mapWidget_BP);
-	if (mapWidget && dungeonGenerator) {
-		mapWidget->Update(dungeonGenerator->GetGridPtr());
-	}
-	
-	playerHUDWidget = CreateAddViewport<UPlayerHUDWidget>(this, widgetAsset_A->playerHUDWidget_BP);
-	
-	if (playerHUDWidget && character && character->GetAttrComp()) {
-		//UE_LOG(LogTemp, Warning, TEXT("AddDynamicDelegate"));
-		
-
-		playerHUDWidget->Init(character->GetAttrComp());
-	}
 }
 
 void AAdvancedPlayerController::SetupInputComponent(){
@@ -64,6 +48,28 @@ void AAdvancedPlayerController::OnCrosshairHitNewActor(AActor * actor){
 	else {
 		playerHUDWidget->SetInteractText(false);
 	}
+}
+
+void AAdvancedPlayerController::CreateWidgets(){
+	gameInstance = GetGameInstance<UAdvancedGameInstance>();
+	ADungeonGenerator* dungeonGenerator = gameInstance->GetDungeonGenerator();
+	UWidgetAsset* widgetAsset_A = gameInstance->GetWidgetAsset();
+
+	//Create Widgets
+	mapWidget = CreateAddViewport<UMapWidget>(this, widgetAsset_A->mapWidget_BP);
+	if (mapWidget && dungeonGenerator) {
+		mapWidget->Update(dungeonGenerator->GetGridPtr());
+	}
+
+	//playerHUDWidget = CreateAddViewport<UPlayerHUDWidget>(this, widgetAsset_A->playerHUDWidget_BP);
+
+	//if (playerHUDWidget && character && character->GetAttrComp()) {
+		//playerHUDWidget->Init(character->GetAttrComp());
+	//}
+}
+
+AAdvancedCharacter * AAdvancedPlayerController::GetAdvancedCharacter() const{
+	return Cast<AAdvancedCharacter>(GetCharacter());
 }
 
 void AAdvancedPlayerController::OnPressedMap(){

@@ -48,7 +48,7 @@ float AEntity::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, 
 
 	OnTakeDamage(DamageAmount);
 
-	attributeComp->ApplyDamage(DamageAmount);
+	attributeComp->health->value -= DamageAmount;
 
 	return DamageAmount;
 }

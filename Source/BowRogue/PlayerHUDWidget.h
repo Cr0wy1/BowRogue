@@ -39,6 +39,7 @@ public:
 	UFUNCTION()
 	void OnStaminaUpdate();
 
+	UFUNCTION(BlueprintCallable)
 	void Init(class UAttributeComponent* _attrComp);
 
 	void SetInteractText(bool visible, FText text = FText::FromString("Press 'E'") );

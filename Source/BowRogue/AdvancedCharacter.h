@@ -142,6 +142,8 @@ public:
 	FORCEINLINE class UCrosshairTraceComponent* GetCrosshairTraceComp() const { return crossTraceComp; }
 	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return meshFP; }
 	FORCEINLINE class UCameraComponent* GetFPCameraComp() const { return fpCameraComp; }
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE class UAttributeComponent* GetAttrComp() const { return attributeComp; }
 	FORCEINLINE bool IsSprinting() const { return bIsSprinting; }
 };

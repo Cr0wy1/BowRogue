@@ -10,19 +10,22 @@
 
 void UPlayerHUDWidget::Init(UAttributeComponent * _attrComp){
 	attrComp = _attrComp;
-	attrComp->OnAttrChange.AddDynamic(this, &UPlayerHUDWidget::OnAttributeUpdate);
-	//attrComp->OnHealthChange.AddDynamic(this, &UPlayerHUDWidget::OnHealthUpdate);
-	//attrComp->OnStaminaChange.AddDynamic(this, &UPlayerHUDWidget::OnStaminaUpdate);
-	OnHealthUpdate();
-	OnStaminaUpdate();
+	if (attrComp) {
+		//attrComp->health->OnChange.AddDynamic(this, &UPlayerHUDWidget::OnHealthUpdate);
+		//attrComp->stamina->OnChange.AddDynamic(this, &UPlayerHUDWidget::OnStaminaUpdate);
 
-	
+		//OnHealthUpdate();
+		//OnStaminaUpdate();
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("UPlayerHUDWidget: attrComp is nullptr"));
+	}
 }
 
 void UPlayerHUDWidget::OnHealthUpdate() {
-	UE_LOG(LogTemp, Warning, TEXT("Widget Health: %s"), *attrComp->health.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Widget Health: %s"), *attrComp->health->ToString());
 
-	healthWidget->UpdateHealth(attrComp->health.value, attrComp->health.max);
+	healthWidget->UpdateHealth(attrComp->health->value, attrComp->health->max);
 }
 void UPlayerHUDWidget::OnAttributeUpdate(){
 	OnHealthUpdate();
@@ -31,7 +34,7 @@ void UPlayerHUDWidget::OnAttributeUpdate(){
 
 
 void UPlayerHUDWidget::OnStaminaUpdate(){
-	healthWidget->UpdateStamina(attrComp->health.value, attrComp->health.max);
+	healthWidget->UpdateStamina(attrComp->stamina->value, attrComp->stamina->max);
 }
 
 void UPlayerHUDWidget::SetInteractText(bool visible, FText text){

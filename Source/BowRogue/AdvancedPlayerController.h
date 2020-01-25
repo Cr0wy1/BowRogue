@@ -38,4 +38,10 @@ public:
 
 	UFUNCTION()
 		void OnCrosshairHitNewActor(AActor* actor);
+
+	void CreateWidgets();
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE class AAdvancedCharacter* GetAdvancedCharacter() const;
+		 
 };

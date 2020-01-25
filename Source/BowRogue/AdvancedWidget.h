@@ -9,6 +9,10 @@
 /**
  * 
  */
+class AAdvancedCharacter;
+
+
+
 UCLASS()
 class BOWROGUE_API UAdvancedWidget : public UUserWidget
 {
@@ -16,7 +20,8 @@ class BOWROGUE_API UAdvancedWidget : public UUserWidget
 	
 public:
 	
-
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE AAdvancedCharacter* GetAdvancedCharacter() const;
 };
 
 //Creates a Widget and adds it to player Screen, returns nullptr if widgetBP is not set

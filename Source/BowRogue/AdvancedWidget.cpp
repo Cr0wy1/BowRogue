@@ -2,3 +2,9 @@
 
 
 #include "AdvancedWidget.h"
+#include "AdvancedCharacter.h"
+
+
+AAdvancedCharacter* UAdvancedWidget::GetAdvancedCharacter() const{
+	return Cast<AAdvancedCharacter>(GetOwningPlayerPawn());
+}
