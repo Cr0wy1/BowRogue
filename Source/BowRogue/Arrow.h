@@ -23,9 +23,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Arrow")
 	UStaticMeshComponent * fletchingMeshComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Particles")
+	class UNiagaraComponent* particleTrailComp;
+
 public:
 
 	AArrow();
 
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 };

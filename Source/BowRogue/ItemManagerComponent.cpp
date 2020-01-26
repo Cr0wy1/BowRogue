@@ -32,8 +32,8 @@ void UItemManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 void UItemManagerComponent::AddItem(FItemData * itemData){
 	if (itemData) {
-		if (itemData->updateAttributes.Num() > 0) {
-			for (FAttributeUpdate attributeUpdate : itemData->updateAttributes) {
+		if (itemData->characterUpdate.attributeUpdates.Num() > 0) {
+			for (auto attributeUpdate : itemData->characterUpdate.attributeUpdates) {
 				if (attributeUpdate.type == EAttributeType::HEALTH) {
 					advCharacter->healthComp->UpdateHealth(attributeUpdate);
 				}

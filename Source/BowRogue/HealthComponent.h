@@ -32,8 +32,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void UpdateHealth(const FAttributeUpdate &attributeUpdate);
-	void UpdateStamina(const FAttributeUpdate &attributeUpdate);
+	void UpdateHealth(const FPlayerAttributeUpdate &attributeUpdate);
+	void UpdateStamina(const FPlayerAttributeUpdate &attributeUpdate);
 
 	void ApplyDamage(float damageAmount);
 	void ConsumeStamina(float amount);

@@ -108,6 +108,10 @@ public:
 
 
 
+
+
+
+
 UCLASS()
 class BOWROGUE_API USplitEffectClass : public UProjectileEffectBase {
 	GENERATED_BODY()

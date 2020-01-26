@@ -33,13 +33,15 @@ void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	}
 }
 
-void UHealthComponent::UpdateHealth(const FAttributeUpdate & attributeUpdate){
+void UHealthComponent::UpdateHealth(const FPlayerAttributeUpdate & attributeUpdate){
+	health.min += attributeUpdate.min;
 	health.value += attributeUpdate.value;
 	health.max += attributeUpdate.max;
 	health.ClampValue();
 }
 
-void UHealthComponent::UpdateStamina(const FAttributeUpdate & attributeUpdate){
+void UHealthComponent::UpdateStamina(const FPlayerAttributeUpdate & attributeUpdate){
+	stamina.min += attributeUpdate.min;
 	stamina.value += attributeUpdate.value;
 	stamina.max += attributeUpdate.max;
 	stamina.ClampValue();

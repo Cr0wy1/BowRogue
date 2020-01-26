@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
+#include "ItemUpdateStructs.h"
 #include "GameStructs.generated.h"
 
 
@@ -52,13 +53,6 @@ enum class EItemType : uint8 {
 	ACTIVE,
 };
 
-
-UENUM()
-enum class EAttributeType : uint8 {
-	NONE,
-	HEALTH,
-	STAMINA,
-};
 
 
 USTRUCT()
@@ -160,21 +154,6 @@ struct BOWROGUE_API FGridRoom : public FDungeonRoomParams {
 
 
 
-USTRUCT(BlueprintType)
-struct BOWROGUE_API FAttributeUpdate {
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute Update")
-	EAttributeType type = EAttributeType::NONE;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute Update")
-	float value = 0.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute Update")
-	float max = 0.0f;
-
-};
-
 
 
 
@@ -263,7 +242,15 @@ struct BOWROGUE_API FItemData : public FTableRowBase {
 		TSubclassOf<class AItem> itemBP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<FAttributeUpdate> updateAttributes;
+	FCharacterUpdate characterUpdate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FProjectileUpdate projectileUpdate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FArrowUpdate arrowUpdate;
+
+
 
 	static FItemData* FromId(UDataTable* datatable, FName id);
 };

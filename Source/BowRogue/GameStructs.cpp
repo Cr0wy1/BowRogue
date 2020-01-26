@@ -6,6 +6,7 @@
 #include "Item.h"
 #include "Engine/StaticMesh.h"
 #include "AttributeComponent.h"
+#include "EffectBase.h"
 
 //Init statics 
 FIntVector FGridDir::FRONT_VEC = FIntVector(1, 0, 0);
