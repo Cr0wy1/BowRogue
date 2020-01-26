@@ -53,6 +53,14 @@ enum class EItemType : uint8 {
 };
 
 
+UENUM()
+enum class EAttributeType : uint8 {
+	NONE,
+	HEALTH,
+	STAMINA,
+};
+
+
 USTRUCT()
 struct BOWROGUE_API FGridDir {
 	GENERATED_BODY()
@@ -152,6 +160,21 @@ struct BOWROGUE_API FGridRoom : public FDungeonRoomParams {
 
 
 
+USTRUCT(BlueprintType)
+struct BOWROGUE_API FAttributeUpdate {
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute Update")
+	EAttributeType type = EAttributeType::NONE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute Update")
+	float value = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute Update")
+	float max = 0.0f;
+
+};
+
 
 
 
@@ -178,6 +201,25 @@ public:
 
 	FAttribute(){}
 
+	void ClampValue() {
+		if (min > max) {
+			min = max;
+			value = min;
+		}
+		else {
+			value = FMath::Clamp(value, min, max);
+		}
+	}
+
+
+	void SetName(FName newName) { name = newName; }
+	void SetMin(float newMin) { min = newMin; }
+	void SetMax(float newMax) { max = newMax; }
+	void SetValue(float newValue) { value = newValue; }
+
+	FORCEINLINE float GetMin() const { return min; }
+	FORCEINLINE float GetMax() const { return max; }
+	FORCEINLINE float GetValue() const { return value; }
 };
 
 USTRUCT(BlueprintType)
@@ -185,7 +227,6 @@ struct BOWROGUE_API FDynamicAttribute : public FAttribute {
 	GENERATED_BODY()
 	
 	FDynamicAttribute(){}
-	FDynamicAttribute(class UAttributeComponent* _attrComp, FName _name, float _min, float _max, float _value);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attribute")
 	float regAmount = 0.0f;
@@ -222,7 +263,7 @@ struct BOWROGUE_API FItemData : public FTableRowBase {
 		TSubclassOf<class AItem> itemBP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<FAttribute> updateAttributes;
+		TArray<FAttributeUpdate> updateAttributes;
 
 	static FItemData* FromId(UDataTable* datatable, FName id);
 };

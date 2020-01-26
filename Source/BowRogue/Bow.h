@@ -20,6 +20,8 @@ class BOWROGUE_API ABow : public AWeapon
 
 protected:
 
+	float arrowBaseSpeed;
+
 	UPROPERTY(EditAnywhere)
 	float drawAnimTime = 0.36f;
 
@@ -34,12 +36,15 @@ protected:
 	UChildActorComponent* drawArrowActor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arrow")
-	class UAnimationAsset* drawMontage;
+	class UAnimMontage* drawMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Arrow")
-	class UAnimationAsset* releaseMontage;
+	class UAnimMontage* releaseMontage;
 
 	virtual void BeginPlay() override;
+
+	virtual void BeforeProjectileFired(AProjectile* templateProjectile) override;
+	virtual void AfterProjectileFired(AProjectile* firedProjectile) override;
 
 	virtual void StartShooting(const struct FCrosshairResult* _crossResult) override;
 	virtual void StopShooting() override;
@@ -51,5 +56,5 @@ public:
 	ABow();
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE float GetDrawPercent() const { return FMath::Clamp(cShootingDuration / drawAnimTime, 0.0f, 1.0f); }
+	FORCEINLINE float GetDrawPercent() const { return FMath::Clamp(cShootingDuration / (drawAnimTime / properties.chargeSpeed), 0.0f, 1.0f); }
 };

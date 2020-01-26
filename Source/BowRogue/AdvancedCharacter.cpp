@@ -9,8 +9,9 @@
 #include "CrosshairTraceComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Pickup.h"
-#include "AttributeComponent.h"
+#include "HealthComponent.h"
 #include "AdvancedPlayerController.h"
+#include "ItemManagerComponent.h"
 #include "GameFramework/DamageType.h"
 #include "DrawDebugHelpers.h"
  
@@ -59,7 +60,10 @@ AAdvancedCharacter::AAdvancedCharacter(){
 	crosshairResult = crossTraceComp->GetCrosshairResultPtr();  
 	 
 	//Attributes
-	attributeComp = CreateDefaultSubobject<UAttributeComponent>("Attributes");
+	healthComp = CreateDefaultSubobject<UHealthComponent>("Health");
+
+	//ItemManager
+	itemManagerComp = CreateDefaultSubobject<UItemManagerComponent>("ItemManager");
 } 
 
 // Called when the game starts or when spawned
@@ -86,15 +90,7 @@ void AAdvancedCharacter::OnPickupTake(FItemData * itemData){
 
 	//Update Attributes from itemdata
 	if (itemData) {
-
-		int32 numAttributes = itemData->updateAttributes.Num();
-		for (int32 i = 0; i < numAttributes; i++){
-			//attrComp->UpdateAttribute(itemData->updateAttributes[i]);
-		}
-
-		//if (itemData->itemBP) {
-
-		//}
+		itemManagerComp->AddItem(itemData);
 	}
 }
 
@@ -144,7 +140,8 @@ void AAdvancedCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 void AAdvancedCharacter::ReceiveDamageAny(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser) {
 
 	UE_LOG(LogTemp, Warning, TEXT("Player got %f damage"), Damage);
-	attributeComp->health->value -= Damage;
+	healthComp->ApplyDamage(Damage);
+	//attributeComp->health->value -= Damage;
 	
 }
 
@@ -180,7 +177,8 @@ void AAdvancedCharacter::MoveForward(float Value){
 		AddMovementInput(GetActorForwardVector(), Value);
 
 		if (bIsSprinting) {
-			attributeComp->stamina->value -= sprintStaminaConsume;
+			healthComp->ConsumeStamina(sprintStaminaConsume);
+			//attributeComp->stamina->value -= sprintStaminaConsume;
 		}
 		
 	}
@@ -193,7 +191,8 @@ void AAdvancedCharacter::MoveRight(float Value){
 		AddMovementInput(GetActorRightVector(), Value);
 
 		if (bIsSprinting) {
-			attributeComp->stamina->value -= sprintStaminaConsume;
+			healthComp->ConsumeStamina(sprintStaminaConsume);
+			//attributeComp->stamina->value -= sprintStaminaConsume;
 		}
 		
 	}

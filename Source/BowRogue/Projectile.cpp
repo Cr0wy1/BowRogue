@@ -43,11 +43,15 @@ void AProjectile::OnConstruction(const FTransform & Transform){
 	else {
 		// Die after 3 seconds by default
 		InitialLifeSpan = 20.0f;
+		projectileMovement->InitialSpeed = speed;
+		projectileMovement->ProjectileGravityScale = weight;
 	}
 }
 
 void AProjectile::BeginPlay(){
 	Super::BeginPlay();
+
+
 
 	projectileMovement->OnProjectileBounce.AddDynamic(this, &AProjectile::OnBounce);
 
@@ -60,9 +64,6 @@ void AProjectile::BeginPlay(){
 		DrawDebugDirectionalArrow(GetWorld(), startLoc, endLoc, 100.0f, FColor::Blue, true, 20.0f, 0, 1.0f);
 	}
 
-	for (auto effect : effects) {
-		effect->OnSpawn();
-	}
 	effectManager.CallAllOnSpawn();
 }
 
@@ -75,17 +76,6 @@ void AProjectile::Tick(float DeltaTime) {
 		distanceTraveled += FVector::Distance(GetActorLocation(), lastTickLocation);
 
 		lastTickLocation = GetActorLocation();
-	}
-
-	for (auto effect : effects) {
-		if (effect) {
-			effect->Tick(DeltaTime);
-		}
-		else {
-			UE_LOG(LogTemp, Warning, TEXT("Effect is nullptr"));
-
-		}
-		
 	}
 
 	effectManager.CallAllOnTick(DeltaTime);
@@ -115,13 +105,6 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 
 		OnImpact(Hit);
 
-		for (auto effect : effects){
-			if (effect) {
-				effect->OnHit(Hit);
-			}
-			
-		}
-
 		effectManager.CallAllOnHit(Hit);
 
 	}
@@ -144,23 +127,6 @@ void AProjectile::SetDummy() {
 
 } 
 
-UProjectileEffectClass* AProjectile::AddEffect(TSubclassOf<UProjectileEffectClass> newEffect){
-	
-	FName newEffectName = newEffect.GetDefaultObject()->GetNameId();
-	for (auto effect : effects) {
-		if (effect->GetNameId() == newEffectName) {
-			UE_LOG(LogTemp, Warning, TEXT("effect allready exists"));
-
-			return nullptr;
-		}
-	}
-
-	UProjectileEffectClass* addedEffect = NewObject<UProjectileEffectClass>(this, newEffect);
-	addedEffect->Init(this);
-	effects.Add(addedEffect);
-	
-	return addedEffect;
-}
 
 UProjectileEffectBase * AProjectile::AddProjectileEffect(TSubclassOf<UProjectileEffectBase> newEffect){
 	FName newEffectName = newEffect.GetDefaultObject()->GetNameId();
@@ -195,6 +161,3 @@ void AProjectile::UpdateScaleByTraceDistance(float scalor){
 	SetActorScale3D(newScale);
 }
 
-void UProjectileEffectClass::Init(AProjectile * _mainProjectile){
-	mainProjectile = _mainProjectile;
-}

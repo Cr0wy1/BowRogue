@@ -10,6 +10,7 @@
 #include "Item.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h" //for finsihActorSpawning
 
 // Sets default values
@@ -29,6 +30,11 @@ AWeapon::AWeapon()
 void AWeapon::BeginPlay(){
 	Super::BeginPlay();
 	
+	projectileSpawnParams.Owner = this;
+	FTransform trans;
+	trans.SetLocation(projectileSpawnLoc);
+	projectileTemplate = GetWorld()->SpawnActorDeferred<AProjectile>(projectileBP, trans);
+	projectileTemplate->GetProjectileMovement()->bShouldBounce = false;
 	
 }
 
@@ -71,22 +77,27 @@ void AWeapon::Fire(const FVector targetLoc){
 		FRotator lookAtRot = UKismetMathLibrary::FindLookAtRotation(projectileSpawnLoc, targetLoc);
 
 		//UE_LOG(LogTemp, Warning, TEXT("Projectile spawned: %s"), *projectileSpawnLoc.ToString());
-
-		FActorSpawnParameters projectileSpawnParams;
-		projectileSpawnParams.Owner = this;
-
+		
 		FTransform trans;
 		trans.SetLocation(projectileSpawnLoc);
 		trans.SetRotation(FQuat(lookAtRot));
-		AProjectile* spawnedProjectile = GetWorld()->SpawnActorDeferred<AProjectile>(projectileBP, trans);
-		OnProjectileSpawned(spawnedProjectile);
-		UGameplayStatics::FinishSpawningActor(spawnedProjectile, trans);
-		//AProjectile* spawnedProjectile = GetWorld()->SpawnActor<AProjectile>(projectileBP, projectileSpawnLoc, lookAtRot, projectileSpawnParams);
 		
-		
+		BeforeProjectileFired(projectileTemplate);
+		projectileSpawnParams.Template = projectileTemplate;
+		AProjectile* spawnedProjectile = GetWorld()->SpawnActor<AProjectile>(projectileBP, projectileSpawnLoc, lookAtRot, projectileSpawnParams);
+		AfterProjectileFired(spawnedProjectile);
+
 		//Set shot time
-		lastShotTime = GetWorld()->GetTimeSeconds();
+		lastShotTime = GetWorld()->GetTimeSeconds(); 
 	}
+
+}
+
+void AWeapon::BeforeProjectileFired(AProjectile * templateProjectile){
+
+}
+
+void AWeapon::AfterProjectileFired(AProjectile * firedProjectile){
 
 }
 

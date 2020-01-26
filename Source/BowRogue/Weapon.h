@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameStructs.h"
+#include "Engine/World.h"
 #include "Weapon.generated.h"
 
 
@@ -40,6 +41,9 @@ struct BOWROGUE_API FWeaponProperties {
 	//hold min Time Trigger before Weapon can shoot, 0 is without delay, used for charge Weapons
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	float minShootingTime = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	float chargeSpeed = 1.0f;
 };
 
 
@@ -54,7 +58,8 @@ public:
 
 protected:
 
-	
+	FActorSpawnParameters projectileSpawnParams;
+	AProjectile* projectileTemplate;
 
 	float lastShotTime = 0.0f;
 
@@ -82,6 +87,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void BeforeProjectileFired(AProjectile* templateProjectile);
+	virtual void AfterProjectileFired(AProjectile* firedProjectile);
+
 	//Blueprint Events
 	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
 	void OnStartShooting();
@@ -89,8 +97,6 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
 	void OnStopShooting();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
-	void OnProjectileSpawned(AProjectile* projectile);
 
 public:	
 	// Called every frame
@@ -108,4 +114,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetCurrentShootingDuration() const { return cShootingDuration; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE float GetChargePercent() const { return FMath::Clamp(cShootingDuration / properties.chargeSpeed, 0.0f, 1.0f); }
 };

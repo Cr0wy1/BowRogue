@@ -11,7 +11,8 @@
 
 class AAdvancedPlayerController;
 class UCrosshairTraceComponent;
-class UAttributeComponent;
+class UHealthComponent;
+class UItemManagerComponent;
 struct FCrosshairResult;
 
 
@@ -51,8 +52,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CrosshairTrace")
 	UCrosshairTraceComponent* crossTraceComp;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
-	UAttributeComponent* attributeComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Health")
+	UHealthComponent* healthComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "ItemManager")
+	UItemManagerComponent* itemManagerComp;
 
 	// Sets default values for this character's properties
 	AAdvancedCharacter();
@@ -144,6 +148,9 @@ public:
 	FORCEINLINE class UCameraComponent* GetFPCameraComp() const { return fpCameraComp; }
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE class UAttributeComponent* GetAttrComp() const { return attributeComp; }
+	FORCEINLINE class UHealthComponent* GetHealthComp() const { return healthComp; }
+
+	FORCEINLINE UItemManagerComponent* GetItemManagerComp() const { return itemManagerComp; }
+
 	FORCEINLINE bool IsSprinting() const { return bIsSprinting; }
 };

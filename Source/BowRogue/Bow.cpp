@@ -4,6 +4,7 @@
 #include "Bow.h"
 #include "Arrow.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Animation/AnimInstance.h"
 
 ABow::ABow() {
 
@@ -19,6 +20,8 @@ ABow::ABow() {
 	
 	properties.shootingType = EShootingType::CHARGE;
 	properties.shotDelay = 0.0f;
+
+	
 }
 
 
@@ -28,12 +31,22 @@ void ABow::BeginPlay(){
 	drawArrowActor->AttachToComponent(skeletalMeshComp, FAttachmentTransformRules::KeepRelativeTransform, "projectile");
 }
 
+void ABow::BeforeProjectileFired(AProjectile * templateProjectile){
+	arrowBaseSpeed = projectileTemplate->speed;
+	templateProjectile->speed *= GetDrawPercent();
+}
+
+void ABow::AfterProjectileFired(AProjectile * firedProjectile){
+	projectileTemplate->speed = arrowBaseSpeed;
+}
+
 void ABow::StartShooting(const FCrosshairResult * _crossResult){
 	Super::StartShooting(_crossResult);
 	
 	bIsDrawing = true;
 
 	if (drawMontage) {
+		skeletalMeshComp->GetAnimInstance()->Montage_Play(drawMontage, properties.chargeSpeed);
 		//skeletalMeshComp->PlayAnimation(drawMontage, false);
 	}
 }
