@@ -110,6 +110,7 @@ public:
 
 	void SetFocus(const FVector &targetLoc);
 
+	void UpdateWeapon(const FWeaponUpdate &weaponUpdate);
 	virtual void AttachItem(FItemData * itemData);
 
 	UFUNCTION(BlueprintCallable)
@@ -117,4 +118,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetChargePercent() const { return FMath::Clamp(cShootingDuration / properties.chargeSpeed, 0.0f, 1.0f); }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE AProjectile* GetProjectileTemplate() const { return projectileTemplate; }
 };

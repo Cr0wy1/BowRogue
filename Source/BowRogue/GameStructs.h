@@ -245,6 +245,9 @@ struct BOWROGUE_API FItemData : public FTableRowBase {
 	FCharacterUpdate characterUpdate;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FWeaponUpdate weaponUpdate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FProjectileUpdate projectileUpdate;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

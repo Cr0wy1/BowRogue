@@ -131,6 +131,10 @@ void AWeapon::SetFocus(const FVector & targetLoc){
 }
 
 
+void AWeapon::UpdateWeapon(const FWeaponUpdate & weaponUpdate){
+
+}
+
 void AWeapon::AttachItem(FItemData * itemData) {
 	if (!itemData) {
 		UE_LOG(LogTemp, Warning, TEXT("AWeapon::AttachItem: itemdata is nullptr"));
@@ -147,6 +151,7 @@ void AWeapon::AttachItem(FItemData * itemData) {
 			
 			//UStaticMeshComponent* newMesh = FObjectInitializer::CreateDefaultSubobject<UStaticMeshComponent>(this, *itemData->name.ToString());
 			UStaticMeshComponent* newMesh = NewObject<UStaticMeshComponent>(this, "test");
+			newMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			newMesh->RegisterComponent();
 
 			if (newMesh) {

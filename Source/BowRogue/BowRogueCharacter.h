@@ -23,6 +23,9 @@ class ABowRogueCharacter : public AAdvancedCharacter
 public:
 	ABowRogueCharacter();
 
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE AWeapon* GetWeapon() const { return weapon; }
+
 protected:
 
 	

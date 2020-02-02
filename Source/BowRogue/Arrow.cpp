@@ -32,5 +32,44 @@ void AArrow::OnConstruction(const FTransform & Transform){
 	}
 }
 
+void AArrow::UpdateArrow(const FArrowUpdate & arrowUpdate){
+	UE_LOG(LogTemp, Warning, TEXT("ArrowUpdate!")); 
+
+	for (auto meshUpdate : arrowUpdate.meshUpdates){
+
+		UStaticMeshComponent* targetMesh = GetMeshCompFromType(meshUpdate.meshType);
+
+		if (targetMesh) {
+			if (meshUpdate.newMesh) {
+				targetMesh->SetStaticMesh(meshUpdate.newMesh);
+			}
+			if (meshUpdate.bOverrideColor) {
+				//TODO set update color function
+			}
+		} 
+
+	}
+}
+
+UStaticMeshComponent * AArrow::GetMeshCompFromType(EArrowMeshType meshType){
+	UStaticMeshComponent* targetMesh = nullptr;
+
+	switch (meshType) {
+	case EArrowMeshType::HEAD:
+		targetMesh = collisionMeshComp;
+		break;
+	case EArrowMeshType::BODY:
+		targetMesh = bodyMeshComp;
+		break;
+	case EArrowMeshType::FLETCHING:
+		targetMesh = fletchingMeshComp;
+		break;
+	default:
+		break;
+	}
+
+	return targetMesh;
+}
+
  
 

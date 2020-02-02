@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "EffectBase.h"
+#include "ItemUpdateStructs.h"
 #include "Projectile.generated.h"
 
 
@@ -78,6 +79,10 @@ public:
 	AProjectile();
 
 	virtual void OnConstruction(const FTransform& Transform) override;
+
+	void UpdateProjectile(const FProjectileUpdate &projectileUpdate);
+
+	void UpdateAttribute(const FProjectileAttributeUpdate &projectileAttribute);
 
 	//void ShouldBounce(bool shouldBounce){ projectileMovement }
 	/** called when projectile hits something */

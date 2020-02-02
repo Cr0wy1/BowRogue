@@ -64,6 +64,18 @@ struct BOWROGUE_API FPlayerAttributeUpdate : public FAttributeUpdateBase {
 
 
 USTRUCT(BlueprintType)
+struct BOWROGUE_API FWeaponAttachmentUpdate {
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName socketName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* meshAttachment;
+};
+
+
+USTRUCT(BlueprintType)
 struct BOWROGUE_API FProjectileAttributeUpdate : public FAttributeUpdateBase {
 	GENERATED_BODY()
 
@@ -82,7 +94,7 @@ struct BOWROGUE_API FArrowMeshUpdate {
 	EArrowMeshType meshType = EArrowMeshType::NONE;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UStaticMesh* newHead;
+	class UStaticMesh* newMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bOverrideColor = false;
@@ -103,6 +115,14 @@ struct BOWROGUE_API FCharacterUpdate {
 
 };
 
+
+USTRUCT(BlueprintType)
+struct BOWROGUE_API FWeaponUpdate {
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FWeaponAttachmentUpdate> attachmentUpdates;
+};
 
 
 USTRUCT(BlueprintType)

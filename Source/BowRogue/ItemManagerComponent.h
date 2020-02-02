@@ -19,7 +19,7 @@ public:
 
 protected:
 
-	class AAdvancedCharacter * advCharacter;
+	class ABowRogueCharacter * bowCharacter;
 
 	TArray<FItemData*> collectedItems;
 

@@ -48,6 +48,7 @@ void AProjectile::OnConstruction(const FTransform & Transform){
 	}
 }
 
+
 void AProjectile::BeginPlay(){
 	Super::BeginPlay();
 
@@ -80,6 +81,37 @@ void AProjectile::Tick(float DeltaTime) {
 
 	effectManager.CallAllOnTick(DeltaTime);
 }
+
+void AProjectile::UpdateProjectile(const FProjectileUpdate & projectileUpdate){
+	for (auto effect : projectileUpdate.addEffects) {
+		AddProjectileEffect(effect);
+	}
+
+	for (auto attribute : projectileUpdate.attributeUpdates) {
+		UpdateAttribute(attribute);
+	}
+}
+
+void AProjectile::UpdateAttribute(const FProjectileAttributeUpdate & projectileAttribute){
+	switch (projectileAttribute.type){
+	case EProjectileAttributeType::DAMAGE :
+		impactDamage += projectileAttribute.value;
+		break;
+	case EProjectileAttributeType::KNOCKBACK:
+		hitImpulse += projectileAttribute.value;
+		break;
+	case EProjectileAttributeType::SPEED:
+		speed += projectileAttribute.value;
+		break;
+	case EProjectileAttributeType::WEIGHT:
+		weight += projectileAttribute.value;
+		break;
+	default:
+		break;
+	}
+}
+
+
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit){
 

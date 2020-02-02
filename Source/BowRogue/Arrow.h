@@ -29,7 +29,11 @@ protected:
 public:
 
 	AArrow();
-
+	 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+
+	void UpdateArrow(const FArrowUpdate &arrowUpdate);
+
+	UStaticMeshComponent * GetMeshCompFromType(EArrowMeshType meshType);
 };
