@@ -42,6 +42,13 @@ public:
 	void CreateWidgets();
 
 	UFUNCTION(BlueprintCallable)
+	void SetUIOnlyMode(class UWidget* inWidgetToFocus = nullptr, bool bShowCursor = true);
+
+	//if widgetToRemove is nullptr, its remove this Widget
+	UFUNCTION(BlueprintCallable)
+	void SetGameOnlyMode(UUserWidget* widgetToRemove = nullptr);
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE class AAdvancedCharacter* GetAdvancedCharacter() const;
 		 
 };

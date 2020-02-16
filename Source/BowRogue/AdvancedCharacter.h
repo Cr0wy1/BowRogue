@@ -121,6 +121,9 @@ public:
 	UFUNCTION()
 	virtual void ReceiveDamageAny(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
+	UFUNCTION(BlueprintCallable, Category = "Controls")
+	void SetMouseSensitivity(float sensitivity) { BaseLookUpRate = sensitivity; BaseTurnRate = sensitivity; }
+
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	FVector GetGroundLocation() const;
 

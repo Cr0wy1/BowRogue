@@ -3,8 +3,6 @@
 
 #include "AdvancedWidget.h"
 #include "AdvancedCharacter.h"
+#include "AdvancedPlayerController.h"
+//#include "WidgetBlueprintLibrary.h"
 
-
-AAdvancedCharacter* UAdvancedWidget::GetAdvancedCharacter() const{
-	return Cast<AAdvancedCharacter>(GetOwningPlayerPawn());
-}

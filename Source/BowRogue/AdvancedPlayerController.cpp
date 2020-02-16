@@ -84,3 +84,28 @@ void AAdvancedPlayerController::OnReleaseMap(){
 	}
 }
 
+void AAdvancedPlayerController::SetUIOnlyMode(UWidget* inWidgetToFocus, bool bShowCursor) {
+	FInputModeUIOnly inputMode;
+
+	if (inWidgetToFocus) {
+		inputMode.SetWidgetToFocus(inWidgetToFocus->TakeWidget());
+	}
+
+	inputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+	SetInputMode(inputMode);
+	bShowMouseCursor = bShowCursor;
+}
+
+
+void AAdvancedPlayerController::SetGameOnlyMode(UUserWidget* widgetToRemove) {
+	FInputModeGameOnly inputMode;
+
+	if (widgetToRemove) {
+		widgetToRemove->RemoveFromParent();
+	}
+
+	SetInputMode(inputMode);
+	bShowMouseCursor = false;
+}
+

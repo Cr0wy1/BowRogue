@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.25807.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{D3F93359-1D49-4405-8847-E4EA19A3B5C5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{D80A57ED-0C47-4E29-81EF-16B8E3C82F50}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{D760332F-79A2-4A29-A423-473695D08031}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{51E99D59-3D12-40B5-9743-017CE6CB4090}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UE4", "Intermediate\ProjectFiles\UE4.vcxproj", "{8509980E-5926-4189-BE42-064BD6FDEEBE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BowRogue", "Intermediate\ProjectFiles\BowRogue.vcxproj", "{FEC16126-3D40-418E-8892-5B292F0C3FDD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Visualizers", "Visualizers", "{A98A7940-5536-40CB-8DEE-615C13AED6A3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Visualizers", "Visualizers", "{350FF369-D25D-4E11-BC6B-7B9005C37A33}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\Programs\Unreal Engine\UE_4.23\Engine\Extras\VisualStudioDebugging\UE4.natvis = ..\..\..\Programs\Unreal Engine\UE_4.23\Engine\Extras\VisualStudioDebugging\UE4.natvis
 	EndProjectSection
@@ -81,7 +81,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{8509980E-5926-4189-BE42-064BD6FDEEBE} = {D3F93359-1D49-4405-8847-E4EA19A3B5C5}
-		{FEC16126-3D40-418E-8892-5B292F0C3FDD} = {D760332F-79A2-4A29-A423-473695D08031}
+		{8509980E-5926-4189-BE42-064BD6FDEEBE} = {D80A57ED-0C47-4E29-81EF-16B8E3C82F50}
+		{FEC16126-3D40-418E-8892-5B292F0C3FDD} = {51E99D59-3D12-40B5-9743-017CE6CB4090}
 	EndGlobalSection
 EndGlobal
