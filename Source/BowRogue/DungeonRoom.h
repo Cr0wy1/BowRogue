@@ -14,6 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRoomClear);
 class AEntity;
 class ADungeonGenerator;
 class ARoomConnector;
+class ASpawningFloorActor;
 
 
 
@@ -36,6 +37,9 @@ protected:
 
 	//UPROPERTIES
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
+	TSubclassOf<ASpawningFloorActor> spawningFloorBP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	UStaticMesh* meshWall = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
@@ -46,7 +50,7 @@ protected:
 
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
-	UStaticMeshComponent* meshFloorComp;
+	USceneComponent* sceneRootComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
 	UStaticMeshComponent* meshRoofComp;

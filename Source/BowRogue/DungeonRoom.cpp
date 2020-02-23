@@ -12,36 +12,43 @@
 #include "Pickup.h"
 #include "AdvancedGameInstance.h"
 #include "Components/StaticMeshComponent.h"
+#include "SpawningFloorActor.h"
 
 // Sets default values
 ADungeonRoom::ADungeonRoom(){
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	meshFloorComp = CreateDefaultSubobject<UStaticMeshComponent>("Floor Mesh");
-	meshFloorComp->SetRelativeLocationAndRotation(FVector(0, 0, 0), FRotator(0, 0, 0));
-	meshFloorComp->SetRelativeScale3D(FVector(2.0f));
-	meshFloorComp->SetupAttachment(RootComponent);
+	sceneRootComp = CreateDefaultSubobject<USceneComponent>("Scene Root");
+	sceneRootComp->SetupAttachment(RootComponent);
+	sceneRootComp->SetRelativeScale3D(FVector(2.0f));
+
+	//meshFloorComp = CreateDefaultSubobject<UStaticMeshComponent>("Floor Mesh");
+	//meshFloorComp->SetRelativeLocationAndRotation(FVector(0, 0, 0), FRotator(0, 0, 0));
+	//meshFloorComp->SetRelativeScale3D(FVector(2.0f));
+	//meshFloorComp->SetupAttachment(RootComponent);
 
 	meshRoofComp = CreateDefaultSubobject<UStaticMeshComponent>("Roof Mesh");
 	meshRoofComp->SetRelativeLocationAndRotation(FVector(0, 0, 500), FRotator(180, 0, 0));
-	meshRoofComp->SetupAttachment(meshFloorComp);
+	meshRoofComp->SetupAttachment(sceneRootComp);
 
 	meshWall1Comp = CreateDefaultSubobject<UStaticMeshComponent>("Wall1 Mesh");
 	meshWall1Comp->SetRelativeLocationAndRotation(FVector(500, 0, 0), FRotator(0, -180, 0));
-	meshWall1Comp->SetupAttachment(meshFloorComp);
+	meshWall1Comp->SetupAttachment(sceneRootComp);
 
 	meshWall2Comp = CreateDefaultSubobject<UStaticMeshComponent>("Wall2 Mesh");
 	meshWall2Comp->SetRelativeLocationAndRotation(FVector(0, 500, 0), FRotator(0, -90, 0));
-	meshWall2Comp->SetupAttachment(meshFloorComp);
+	meshWall2Comp->SetupAttachment(sceneRootComp);
 
 	meshWall3Comp = CreateDefaultSubobject<UStaticMeshComponent>("Wall3 Mesh");
 	meshWall3Comp->SetRelativeLocationAndRotation(FVector(-500, 0, 0), FRotator(0, 0, 0));
-	meshWall3Comp->SetupAttachment(meshFloorComp);
+	meshWall3Comp->SetupAttachment(sceneRootComp);
 
 	meshWall4Comp = CreateDefaultSubobject<UStaticMeshComponent>("Wall4 Mesh");
 	meshWall4Comp->SetRelativeLocationAndRotation(FVector(0, -500, 0), FRotator(0, 90, 0));
-	meshWall4Comp->SetupAttachment(meshFloorComp);
+	meshWall4Comp->SetupAttachment(sceneRootComp);
+
+
 }
 
 // Called when the game starts or when spawned
@@ -54,6 +61,10 @@ void ADungeonRoom::BeginPlay(){
 
 	if (!meshWall) {
 		UE_LOG(LogTemp, Warning, TEXT("ADungeonRoom: meshWall is nullptr"));
+	}
+
+	if (spawningFloorBP) {
+		GetWorld()->SpawnActor<ASpawningFloorActor>(spawningFloorBP, GetActorLocation(), FRotator::ZeroRotator);
 	}
 }
 

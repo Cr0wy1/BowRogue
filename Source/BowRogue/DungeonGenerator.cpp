@@ -125,7 +125,7 @@ ADungeonRoom* ADungeonGenerator::SpawnRooms(){
 				ADungeonRoom* spawnedRoom = ADungeonRoom::Construct(this, dungeonRoomBPs[iRandRoomBP], spawnLoc, FIntVector(x, y, 0), roomGrid[x][y]);
 
 				spawnedRooms.Add(FIntVector(x, y, 0), spawnedRoom);
-				CheckConnectors(spawnedRoom, FIntVector(x, y, 0));
+				//CheckConnectors(spawnedRoom, FIntVector(x, y, 0));
 
 				++roomsPlaced;
 			}
