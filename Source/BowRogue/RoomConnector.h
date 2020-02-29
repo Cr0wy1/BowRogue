@@ -75,11 +75,6 @@ protected:
 	UFUNCTION()
 	void OnTriggerOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UFUNCTION()
-	void OnRoomAClear();
-
-	UFUNCTION()
-	void OnRoomBClear();
 
 public:	
 	// Called every frame

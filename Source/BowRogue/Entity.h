@@ -47,9 +47,5 @@ public:
 
 	void SetSpawner(AEntitySpawner* _spawner);
 
-	//spawn the entity and return it, return nullptr if spawner is nullptr
-	static AEntity* Spawn(TSubclassOf<AEntity> templateClass, const FVector &Location, AEntitySpawner* spawner);
 
-	//spawn the entity and return it, return nullptr if spawner is nullptr
-	static AEntity* Spawn(const FEntitySpawnParams &params, AEntitySpawner* spawner);
 };

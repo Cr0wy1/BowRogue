@@ -10,7 +10,18 @@
 
 
 class ADungeonRoom;
-class ARoomConnector;
+
+
+
+USTRUCT()
+struct BOWROGUE_API FConnectedRooms {
+	GENERATED_BODY()
+
+	ADungeonRoom* front = nullptr;
+	ADungeonRoom* right = nullptr;
+	ADungeonRoom* back = nullptr;
+	ADungeonRoom* left = nullptr;
+};
 
 
 
@@ -48,14 +59,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dungeon")
 	float roomMargin = 600.0f;
 
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dungeon")
 	TArray<TSubclassOf<ADungeonRoom>> dungeonRoomBPs;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dungeon")
-	TSubclassOf<ARoomConnector> roomConnectorBP;
 
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	virtual void BeginPlay() override; 
 
 	void StartRoomGeneration();
 	void PathMaker(FIntVector startPos, FIntVector dir, int32 length, int32 pathDistance, float accuracy = 1.0f);

@@ -75,7 +75,7 @@ void UMapWidget::DrawToCanvasRenderTarget(UCanvas * canvas, int32 width, int32 h
 					canvas->K2_DrawBox(boxPos + boxSize*0.25f, FVector2D(boxSize, boxSize)*0.5f, 10.0f, iconColor);
 					//boxColor = FLinearColor::Blue;
 				}
-				else if(roomType == ERoomType::BOSS){
+				else if(roomType == ERoomType::END){
 					canvas->K2_DrawBox(boxPos + boxSize * 0.25f, FVector2D(boxSize, boxSize)*0.5f, 10.0f, FLinearColor::Red);
 					//boxColor = FLinearColor::White;
 				}

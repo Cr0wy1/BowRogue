@@ -58,13 +58,6 @@ void ARoomConnector::Init(ADungeonRoom * _roomA, ADungeonRoom * _roomB){
 	roomA = _roomA;
 	roomB = _roomB;
 
-	if (roomA->IsOpen()) {
-		doorA->OpenDoor();
-	}
-
-	if (roomB->IsOpen()) {
-		doorB->OpenDoor();
-	}
 }
 
 void ARoomConnector::OnTriggerOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult){
@@ -75,33 +68,18 @@ void ARoomConnector::OnTriggerOverlapBegin(UPrimitiveComponent * OverlappedComp,
 
 	if (doorA->IsOpen() && !doorB->IsOpen()) {
 		doorA->CloseDoor();
-		roomB->PrepareEnter();
+		//roomB->PrepareEnter();
 		doorB->OpenDoor();
 	}
 	else if(!doorA->IsOpen() && doorB->IsOpen()){
 		doorB->CloseDoor();
-		roomA->PrepareEnter();
+		//roomA->PrepareEnter();
 		doorA->OpenDoor();
 	}
 
 	bIsTriggerActive = false;
 }
 
-void ARoomConnector::OnRoomAClear(){
-	doorA->OpenDoor();
-
-	if (roomB->IsOpen()) {
-		doorB->OpenDoor();
-	}
-}
-
-void ARoomConnector::OnRoomBClear(){
-	doorB->OpenDoor();
-
-	if (roomA->IsOpen()) {
-		doorA->OpenDoor();
-	}
-}
 
 // Called every frame
 void ARoomConnector::Tick(float DeltaTime)
@@ -134,8 +112,8 @@ ARoomConnector * ARoomConnector::Construct(TSubclassOf<ARoomConnector> tempalteB
 		spawnedConnector->Init(roomA, roomB);
 
 		//UE_LOG(LogTemp, Warning, TEXT("Connector %s after BeginPlay"), *spawnedConnector->GetName());
-		roomA->OnRoomClear.AddDynamic(spawnedConnector, &ARoomConnector::OnRoomAClear);
-		roomB->OnRoomClear.AddDynamic(spawnedConnector, &ARoomConnector::OnRoomBClear);
+		//roomA->OnRoomClear.AddDynamic(spawnedConnector, &ARoomConnector::OnRoomAClear);
+		//roomB->OnRoomClear.AddDynamic(spawnedConnector, &ARoomConnector::OnRoomBClear);
 	}
 
 	return spawnedConnector;

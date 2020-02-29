@@ -6,6 +6,12 @@
 #include "GameFramework/Actor.h"
 #include "PortalPlatform.generated.h"
 
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTeleportSignature, AActor*, teleportedActor, FVector, destination);
+
+
+
 UCLASS()
 class BOWROGUE_API APortalPlatform : public AActor
 {
@@ -17,14 +23,7 @@ public:
 
 protected:
 
-	UPROPERTY(EditAnywhere)
-	bool bIsPortalActive = true;
-
 	bool bIsRecivingTeleport = false;
-
-
-	UPROPERTY(EditAnywhere)
-	APortalPlatform* targetPortal = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Portal")
 	class UStaticMeshComponent * meshComp;
@@ -44,6 +43,23 @@ protected:
 	void TeleportActor(AActor* actor);
 
 public:	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool bIsPortalActive = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		APortalPlatform* targetPortal = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool bUseVectorLocation = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bUseVectorLocation"))
+		FVector targetLocation;
+
+	FOnTeleportSignature OnTeleport;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnTeleportEvent(AActor* teleportedActor, FVector destination);
 
 	void SetTargetPortal(APortalPlatform* _targetPortal) { targetPortal = _targetPortal; }
 	void SetPortalActive(bool isActive) { bIsPortalActive = isActive; }

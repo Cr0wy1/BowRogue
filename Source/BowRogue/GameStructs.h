@@ -42,7 +42,7 @@ enum class ERoomType : uint8 {
 	SPAWN,
 	RIDDLE,
 	TREASURE,
-	BOSS,
+	END,
 };
 
 
@@ -98,39 +98,6 @@ FORCEINLINE uint32 GetTypeHash(const FGridDir& gridir) {
 	return FCrc::MemCrc_DEPRECATED(&gridir, sizeof(FGridDir));
 }
 
-USTRUCT(BlueprintType)
-struct BOWROGUE_API FEntitySpawnParams {
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
-	TSubclassOf<AEntity> templateClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
-	FVector location;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
-	FRotator rotation;
-
-	FEntitySpawnParams() {};
-	FEntitySpawnParams(TSubclassOf<AEntity> _templateClass, FVector _location, FRotator _rotation = FRotator::ZeroRotator) : templateClass(_templateClass), location(_location), rotation(_rotation){};
-};
-
-
-USTRUCT(BlueprintType)
-struct BOWROGUE_API FSpawnPattern {
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
-	TArray<FEntitySpawnParams> spawns;
-
-	FEntitySpawnParams& operator[](int32 index) {
-		return spawns[index];
-	}
-
-	const FEntitySpawnParams& operator[](int32 index) const {
-		return spawns[index];
-	}
-};
 
 
 //DungeonRoom

@@ -60,21 +60,5 @@ void AEntity::SetSpawner(AEntitySpawner * _spawner){
 	}
 }
 
-AEntity * AEntity::Spawn(TSubclassOf<AEntity> templateClass, const FVector & Location, AEntitySpawner * spawner){
-	return Spawn(FEntitySpawnParams(templateClass, Location), spawner);
-}
 
-AEntity * AEntity::Spawn(const FEntitySpawnParams & params, AEntitySpawner * spawner){
-	if (spawner) {
-		AEntity* spawnedEntity = spawner->GetWorld()->SpawnActor<AEntity>(params.templateClass, params.location, params.rotation);
-		if (spawnedEntity) {
-			spawnedEntity->SetSpawner(spawner);
-		}
-		
-	
-		return spawnedEntity;
-	}
-	
-	return nullptr;
-}
 

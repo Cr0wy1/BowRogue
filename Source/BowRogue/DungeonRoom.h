@@ -9,12 +9,10 @@
 
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRoomClear);
-
-class AEntity;
+class ADungeon;
 class ADungeonGenerator;
-class ARoomConnector;
 class ASpawningFloorActor;
+class UAdvancedGameInstance;
 
 
 
@@ -29,11 +27,10 @@ public:
 	ADungeonRoom();
 
 protected:
-
-	bool bIsClear = false;
-	bool bIsOpen = false;
 	
 	FDungeonRoomParams params;
+
+	UAdvancedGameInstance* gameInstance = nullptr;
 
 	//UPROPERTIES
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
@@ -41,12 +38,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	UStaticMesh* meshWall = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
-	UStaticMesh* meshDoorWall = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnParams")
-	FSpawnPattern spawnPattern;
 
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
@@ -72,35 +63,31 @@ protected:
 	ADungeonGenerator * dungeonGenerator;
 	FIntVector gridLoc;
 
-	class AEntitySpawner* spawner = nullptr;
-
-	TMap<FGridDir, ARoomConnector*> connectors;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION()
-	void OnAllEntitiesKilled();
+
+	void BuildRoom();
 
 public:	
 
-	FOnRoomClear OnRoomClear;
 
-	void Init(ADungeonGenerator * _dungeonGenerator, FIntVector _gridLoc, const FDungeonRoomParams &_params);
+	void Init(FIntVector _gridLoc, const FDungeonRoomParams &_params);
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	//return spawned Room, returns nullptr if dungeonGenerator is nullptr
-	static ADungeonRoom* Construct(ADungeonGenerator * dungeonGenerator, TSubclassOf<ADungeonRoom> classBP, FVector location, FIntVector gridLoc, const FDungeonRoomParams &params = FDungeonRoomParams());
+	static ADungeonRoom* Construct(AActor* owner, TSubclassOf<ADungeonRoom> classBP, FVector location, FIntVector gridLoc, const FDungeonRoomParams &params = FDungeonRoomParams());
 
-	void AddConnector(const FGridDir &dir, ARoomConnector* connector);
+	void AddConnector(const FGridDir &dir);
 
-	void PrepareEnter();
+	void AdjustRoomConnections();
 
-	void SetOpen(bool isOpen);
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE ADungeon* TryGetDungeon();
 
 	FORCEINLINE FIntVector GetGridLoc() const { return gridLoc; }
 	FORCEINLINE ADungeonGenerator* GetDungeonGenerator() const { return dungeonGenerator; }
-	FORCEINLINE bool IsClear() const { return bIsClear; }
-	FORCEINLINE bool IsOpen() const { return bIsOpen; }
+	FORCEINLINE FDungeonRoomParams GetDungeonRoomParams() const { return params; }
 };

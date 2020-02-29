@@ -8,7 +8,6 @@
 
 
 
-class ADungeonGenerator;
 /**
  * 
  */
@@ -19,10 +18,6 @@ class BOWROGUE_API UAdvancedGameInstance : public UGameInstance
 	
 protected:
 
-	ADungeonGenerator * dungeonGenerator = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DungeonGenerator")
-	TSubclassOf<ADungeonGenerator> dungeonGenerator_BP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Structures")
 	class UStructureAsset* structureAsset_A;
@@ -37,11 +32,7 @@ public:
 
 	virtual void Init() override;
 
-	UFUNCTION(BlueprintCallable, Category = "DungeonGenerator")
-	void SetDungeonGenerator(ADungeonGenerator* _dungeonGenerator);
-
 	FORCEINLINE class UWidgetAsset* GetWidgetAsset() const { return widgetAsset_A; }
-	FORCEINLINE class ADungeonGenerator* GetDungeonGenerator() const { return dungeonGenerator; }
 	FORCEINLINE class UStructureAsset* GetStructureAsset() const { return structureAsset_A; }
 	FORCEINLINE class UDataTable* GetItemDataTable() const { return itemDataTable; }
 };

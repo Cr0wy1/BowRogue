@@ -8,7 +8,6 @@
 #include "Pickup.h"
 #include "WidgetAsset.h"
 #include "MapWidget.h"
-#include "DungeonGenerator.h"
 #include "PlayerHUDWidget.h"
 #include "AttributeComponent.h"
 
@@ -52,14 +51,14 @@ void AAdvancedPlayerController::OnCrosshairHitNewActor(AActor * actor){
 
 void AAdvancedPlayerController::CreateWidgets(){
 	gameInstance = GetGameInstance<UAdvancedGameInstance>();
-	ADungeonGenerator* dungeonGenerator = gameInstance->GetDungeonGenerator();
+	//ADungeonGenerator* dungeonGenerator = gameInstance->GetDungeonGenerator();
 	UWidgetAsset* widgetAsset_A = gameInstance->GetWidgetAsset();
 
 	//Create Widgets
 	mapWidget = CreateAddViewport<UMapWidget>(this, widgetAsset_A->mapWidget_BP);
-	if (mapWidget && dungeonGenerator) {
-		mapWidget->Update(dungeonGenerator->GetGridPtr());
-	}
+	//if (mapWidget && dungeonGenerator) {
+		//mapWidget->Update(dungeonGenerator->GetGridPtr());
+	//}
 
 	//playerHUDWidget = CreateAddViewport<UPlayerHUDWidget>(this, widgetAsset_A->playerHUDWidget_BP);
 

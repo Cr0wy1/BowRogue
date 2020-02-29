@@ -41,14 +41,25 @@ void APortalPlatform::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor 
 	}
 }
 
-void APortalPlatform::TeleportActor(AActor * actor){ 
-	if (actor && targetPortal) {
+void APortalPlatform::TeleportActor(AActor * actor){
+	if (!actor) return;
+
+	if (bUseVectorLocation) {
+		actor->SetActorLocation(targetLocation, false, nullptr, ETeleportType::None);
+
+		OnTeleport.Broadcast(actor, targetLocation);
+		OnTeleportEvent(actor, targetLocation);
+	}
+	else if (targetPortal) {
 
 		FVector portalDeltaLoc = targetPortal->GetActorLocation() - GetActorLocation();
 		FVector newActorLoc = actor->GetActorLocation() + portalDeltaLoc;
 
 		targetPortal->ReciveTeleport();
-		actor->SetActorLocation(newActorLoc, true, nullptr, ETeleportType::None);
+		actor->SetActorLocation(newActorLoc, false, nullptr, ETeleportType::None);
+		
+		OnTeleport.Broadcast(actor, newActorLoc);
+		OnTeleportEvent(actor, newActorLoc);
 	}
 }
 

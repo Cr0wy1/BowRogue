@@ -139,7 +139,7 @@ void AAdvancedCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void AAdvancedCharacter::ReceiveDamageAny(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser) {
 
-	UE_LOG(LogTemp, Warning, TEXT("Player got %f damage"), Damage);
+	//UE_LOG(LogTemp, Warning, TEXT("Player got %f damage"), Damage);
 	healthComp->ApplyDamage(Damage);
 	//attributeComp->health->value -= Damage;
 	

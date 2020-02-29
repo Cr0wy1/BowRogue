@@ -27,14 +27,6 @@ void AEntitySpawner::Tick(float DeltaTime)
 
 }
 
-void AEntitySpawner::SpawnEntities(FSpawnPattern spawnPattern){
-	
-	int32 spawnNum = spawnPattern.spawns.Num();
-	for (int32 i = 0; i < spawnNum; i++){
-		spawnPattern[i].location += GetActorLocation();
-		AEntity::Spawn(spawnPattern[i], this);
-	}
-}
 
 void AEntitySpawner::AddSpawnedEntity(AEntity * spawnedEntity){
 	spawnedEntities.AddUnique(spawnedEntity);

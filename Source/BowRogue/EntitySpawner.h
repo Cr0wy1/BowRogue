@@ -39,7 +39,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SpawnEntities(FSpawnPattern spawnPattern);
 
 	void AddSpawnedEntity(AEntity* spawnedEntity);
 	void RemovedSpawnedEntity(AEntity* spawnedEntity);
