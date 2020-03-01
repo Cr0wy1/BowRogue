@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "GameStructs.h"
 #include "SaveGameData.generated.h"
 
 /**
@@ -20,9 +21,22 @@ public:
 
 	//Save for current Run
 	bool bIsInRun;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTransform characterTransform;
-	float health;
-	float stamina;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FAttribute health;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FDynamicAttribute stamina;
 	//attributes
 	//collectet
+
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "worldContextObject"))
+	void SaveAll(const UObject* worldContextObject);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "worldContextObject"))
+	void LoadAll(const UObject* worldContextObject);
 };

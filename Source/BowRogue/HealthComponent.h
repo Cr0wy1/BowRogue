@@ -8,6 +8,11 @@
 #include "HealthComponent.generated.h"
 
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathSignature);
+
+
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BOWROGUE_API UHealthComponent : public UActorComponent
 {
@@ -29,6 +34,10 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+
+	UPROPERTY(BlueprintAssignable)
+	FOnDeathSignature OnDeath;
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -38,6 +47,8 @@ public:
 	void ApplyDamage(float damageAmount);
 	void ConsumeStamina(float amount);
 
+	void SetHealth(FAttribute& attribute) { health = attribute; }
+	void SetStamina(FDynamicAttribute& attribute) { stamina = attribute; }
 	FORCEINLINE FAttribute GetHealth() const { return health; }
 	FORCEINLINE FDynamicAttribute GetStamina() const { return stamina; }
 };

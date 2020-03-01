@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "GameFramework/Pawn.h"
 #include "GameStructs.h"
 #include "Entity.generated.h"
 
@@ -14,7 +14,7 @@ class AEntitySpawner;
 
 
 UCLASS()
-class BOWROGUE_API AEntity : public ACharacter
+class BOWROGUE_API AEntity : public APawn
 {
 	GENERATED_BODY()
 

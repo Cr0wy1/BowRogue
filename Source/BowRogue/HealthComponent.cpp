@@ -49,6 +49,9 @@ void UHealthComponent::UpdateStamina(const FPlayerAttributeUpdate & attributeUpd
 
 void UHealthComponent::ApplyDamage(float damageAmount){
 	health.value -= damageAmount;
+	if (health.value <= 0) {
+		OnDeath.Broadcast();
+	}
 	health.ClampValue();
 }
 
