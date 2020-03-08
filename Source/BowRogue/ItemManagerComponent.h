@@ -8,6 +8,12 @@
 #include "ItemManagerComponent.generated.h"
 
 
+
+class UItemObject;
+
+
+
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BOWROGUE_API UItemManagerComponent : public UActorComponent
 {
@@ -22,6 +28,9 @@ protected:
 	class ABowRogueCharacter * bowCharacter;
 
 	TArray<FItemData*> collectedItems;
+
+	UPROPERTY()
+	TArray<UItemObject*> itemObjects;
 
 	// Called when the game starts
 	virtual void BeginPlay() override;

@@ -23,6 +23,7 @@ class BOWROGUE_API UAdvancedFunctionLibrary : public UBlueprintFunctionLibrary
 	 
 public:
 
+
 	UFUNCTION(BlueprintCallable, Category = "AdvancedLibrary", meta = (DeterminesOutputType = "widgetClass"))
 	static UWidget* CreateAddViewport(APlayerController* ownerController, TSubclassOf<UUserWidget> widgetClass);
 
@@ -34,4 +35,5 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "AdvancedLibrary", meta = (WorldContext = "worldContextObject", UnsafeDuringActorConstruction = "true"))
 	static AAdvancedPlayerController* GetAdvancedPlayerController(const UObject* worldContextObject, int32 playerIndex = 0);
+
 };

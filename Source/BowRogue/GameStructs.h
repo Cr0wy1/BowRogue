@@ -190,23 +190,26 @@ USTRUCT(BlueprintType)
 struct BOWROGUE_API FItemData : public FTableRowBase {
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 id = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 id = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FText name;
+	FText name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FText description;
+	FText description;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		EItemType type = EItemType::PASSIVE;
+	EItemType type = EItemType::PASSIVE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) 
+	UTexture2D* texture;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UStaticMesh* mesh;
+	UStaticMesh* mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<class AItem> itemBP;
+	TSubclassOf<class UItemObject> itemObjectBP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCharacterUpdate characterUpdate;

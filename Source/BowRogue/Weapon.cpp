@@ -141,10 +141,7 @@ void AWeapon::AttachItem(FItemData * itemData) {
 		return;
 	}
 
-	if (itemData->itemBP) {
-
-	}
-	else if (itemData->mesh) {
+	if (itemData->mesh) {
 		//UE_LOG(LogTemp, Warning, TEXT("mesh: %s"), itemData->mesh->Get);
 
 		if (skeletalMeshComp->DoesSocketExist("slot_01")) {

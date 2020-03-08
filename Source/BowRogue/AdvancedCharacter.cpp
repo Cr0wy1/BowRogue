@@ -112,7 +112,7 @@ void AAdvancedCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AAdvancedCharacter::DeactivateSprint);
 
 	// Bind jump events
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump); 
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AAdvancedCharacter::OnPressJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	// Bind jump events
@@ -254,11 +254,16 @@ bool AAdvancedCharacter::OverlapStandingCheck() const{
 	return bIsOverlapping;
 }
 
-void AAdvancedCharacter::StartJump(){
+void AAdvancedCharacter::OnPressJump(){
+	if (!movementComp->IsFalling()) {
+		OnJump();
+		OnJumpEvent.Broadcast();
+	}
 
+	ACharacter::Jump();
 }
 
-void AAdvancedCharacter::StopJump(){
+void AAdvancedCharacter::OnReleaseJump(){
 
 }
 

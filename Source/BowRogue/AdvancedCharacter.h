@@ -9,7 +9,7 @@
 
 
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnJumpSignature);
 
 
 
@@ -23,10 +23,13 @@ struct FCrosshairResult;
 
 UCLASS()
 class BOWROGUE_API AAdvancedCharacter : public ACharacter
-{
+{ 
 	GENERATED_BODY()
 
 public:
+
+	UPROPERTY(BlueprintAssignable)
+	FOnJumpSignature OnJumpEvent;
 
 	const FCrosshairResult* crosshairResult = nullptr;
 
@@ -138,16 +141,19 @@ public:
 	bool OverlapStandingCheck() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	void StartJump();
+	void OnPressJump();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	void StopJump();
+	void OnReleaseJump();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void StartCrouch();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void StopCrouch();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnJump();
 	
 	FORCEINLINE AAdvancedPlayerController* GetController() const { return controllerAdv; }
 	FORCEINLINE class UCrosshairTraceComponent* GetCrosshairTraceComp() const { return crossTraceComp; }

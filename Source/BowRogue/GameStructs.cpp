@@ -3,7 +3,7 @@
 
 #include "GameStructs.h"
 #include "Entity.h"
-#include "Item.h"
+#include "ItemObject.h"
 #include "Engine/StaticMesh.h"
 #include "AttributeComponent.h"
 #include "EffectBase.h"

@@ -6,6 +6,7 @@
 #include "HealthComponent.h"
 #include "Bow.h"
 #include "Arrow.h"
+#include "ItemObject.h"
 
 // Sets default values for this component's properties
 UItemManagerComponent::UItemManagerComponent(){
@@ -30,7 +31,7 @@ void UItemManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 
-}
+} 
 
 void UItemManagerComponent::AddItem(FItemData * itemData){
 	if (itemData) {
@@ -42,8 +43,6 @@ void UItemManagerComponent::AddItem(FItemData * itemData){
 				else if (attributeUpdate.type == EAttributeType::STAMINA) {
 					bowCharacter->healthComp->UpdateStamina(attributeUpdate);
 				}
-
-				
 			}
 		}
 
@@ -53,6 +52,13 @@ void UItemManagerComponent::AddItem(FItemData * itemData){
 		if (arrowTemplate) {
 			arrowTemplate->UpdateArrow(itemData->arrowUpdate);
 			arrowTemplate->UpdateProjectile(itemData->projectileUpdate);
+		}
+
+		//Uobject
+		if (itemData->itemObjectBP) {
+			UItemObject* newItemObject = UItemObject::Construct(this, *itemData);
+			newItemObject->OnAddItem(bowCharacter);
+			itemObjects.Add(newItemObject);
 		}
 
 		collectedItems.Add(itemData);
