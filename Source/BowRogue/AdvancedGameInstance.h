@@ -28,6 +28,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Datatable")
 	class UDataTable* itemDataTable;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dungeon Defaults")
+	class UDungeonDefaultsAsset* dungeonDefaults_A;
+	 
 public:
 
 	virtual void Init() override;
@@ -35,4 +38,5 @@ public:
 	FORCEINLINE class UWidgetAsset* GetWidgetAsset() const { return widgetAsset_A; }
 	FORCEINLINE class UStructureAsset* GetStructureAsset() const { return structureAsset_A; }
 	FORCEINLINE class UDataTable* GetItemDataTable() const { return itemDataTable; }
+	FORCEINLINE class UDungeonDefaultsAsset* GetDungeonDefaultsAsset() const { return dungeonDefaults_A; }
 };

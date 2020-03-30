@@ -13,18 +13,6 @@ class ADungeonRoom;
 
 
 
-USTRUCT()
-struct BOWROGUE_API FConnectedRooms {
-	GENERATED_BODY()
-
-	ADungeonRoom* front = nullptr;
-	ADungeonRoom* right = nullptr;
-	ADungeonRoom* back = nullptr;
-	ADungeonRoom* left = nullptr;
-};
-
-
-
 UCLASS()
 class BOWROGUE_API ADungeonGenerator : public AActor
 {
@@ -77,9 +65,6 @@ protected:
 	//returns room if room spawned, else return nullptr
 	ADungeonRoom* SpawnRooms();
 
-	//returns true if connector spawned
-	bool CheckConnectors(ADungeonRoom* cRoom, const FIntVector &gridPos);
-
 	void LogGrid();
 
 public:	
@@ -87,7 +72,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	void SetSeed(int32 seed);
-
+	 
 	//return a random rotation vector +90 or -90 rot
 	FIntVector GetRandRotDirVector(const FIntVector &vec) const;
 

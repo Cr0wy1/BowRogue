@@ -11,6 +11,7 @@
 
 
 class AEntity;
+class ADungeonRoom;
 
 
 
@@ -97,6 +98,20 @@ public:
 FORCEINLINE uint32 GetTypeHash(const FGridDir& gridir) {
 	return FCrc::MemCrc_DEPRECATED(&gridir, sizeof(FGridDir));
 }
+
+
+
+USTRUCT(BlueprintType)
+struct BOWROGUE_API FConnectedRooms {
+	GENERATED_BODY()
+
+	ADungeonRoom* front = nullptr;
+	ADungeonRoom* right = nullptr;
+	ADungeonRoom* back = nullptr;
+	ADungeonRoom* left = nullptr;
+	ADungeonRoom* top = nullptr;
+	ADungeonRoom* bottom = nullptr;
+};
 
 
 

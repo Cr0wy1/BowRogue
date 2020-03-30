@@ -34,7 +34,7 @@ protected:
 	TMap<FIntVector, ADungeonRoom*> spawnedRooms;
 
 	int32 roomsPlaced = 0;
-
+	 
 	//UPROPERTIES
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dungeon")
 		int32 seed = 1;
@@ -66,8 +66,10 @@ protected:
 	//returns room if room spawned, else return nullptr
 	void SpawnRooms();
 
-	//returns true if connector spawned
-	bool CheckConnectors(ADungeonRoom* cRoom, const FIntVector &gridPos);
+	void StartRoomBuilding();
+
+	//returns true if connector spawned 
+	FConnectedRooms CheckConnectors(const FIntVector &gridPos);
 
 	TSubclassOf<ADungeonRoom> GetRoomBPFromType(ERoomType roomType);
 

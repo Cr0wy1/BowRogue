@@ -10,6 +10,7 @@
 
 class ADungeonRoom;
 class ADungeonRoomEnd;
+class AStageActor;
 
 
 
@@ -23,6 +24,9 @@ public:
 	ADungeon();
 
 protected:
+
+	int32 stageLevel = 0;
+	AStageActor* stageActor;
 
 	ADungeonRoom * roomSpawn;
 	ADungeonRoomEnd* roomEnd;
@@ -39,16 +43,30 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void Init(int32 _stageLevel);
+
 	void OnEnterDungeon();
 
 	UFUNCTION()
 	void OnLeaveDungeon(AActor* leavedActor, FVector destination);
 
 public:	
+
+	static ADungeon* Construct(AStageActor* _stageActor, FVector location, TSubclassOf<ADungeon> dungeonBP, int32 _stageLevel);
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void BuildDungeon();
+	void DestructDungeon();
+
 	void AddSpawnedRoom(ADungeonRoom* spawnedRoom);
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE AStageActor* GetStageActor() const { return stageActor; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int32 GetStageLevel() const { return stageLevel; }
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE FVector GetSpawnLocation() const { return GetActorLocation() + spawnLocRelative; }

@@ -7,6 +7,7 @@
 #include "Engine/StaticMesh.h"
 #include "AttributeComponent.h"
 #include "EffectBase.h"
+#include "DungeonRoom.h"
 
 //Init statics 
 FIntVector FGridDir::FRONT_VEC = FIntVector(1, 0, 0);

@@ -4,6 +4,9 @@
 #include "Dungeon.h"
 #include "DungeonRoomEnd.h"
 #include "PortalPlatform.h"
+#include "StageActor.h"
+#include "Engine/World.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ADungeon::ADungeon(){
@@ -18,15 +21,55 @@ void ADungeon::BeginPlay(){
 	
 }
 
+void ADungeon::Init(int32 _stageLevel){
+	stageLevel = _stageLevel;
+}
+
+void ADungeon::OnEnterDungeon(){
+	UE_LOG(LogTemp, Warning, TEXT("Enter Dungeon!"));
+
+	
+}
+
 void ADungeon::OnLeaveDungeon(AActor * leavedActor, FVector destination){
 	UE_LOG(LogTemp, Warning, TEXT("Leave Dungeon!"));
+	nextDungeon->OnEnterDungeon();
 
+	DestructDungeon();
+}
+
+ADungeon * ADungeon::Construct(AStageActor * _stageActor, FVector location, TSubclassOf<ADungeon> dungeonBP, int32 _stageLevel){
+
+	ADungeon* dungeon = nullptr;
+
+	if (_stageActor) {
+		FTransform trans = FTransform(FRotator::ZeroRotator, location);
+		dungeon = _stageActor->GetWorld()->SpawnActorDeferred<ADungeon>(dungeonBP, trans, _stageActor);
+		dungeon->stageActor = _stageActor;
+		dungeon->stageLevel = _stageLevel;
+		UGameplayStatics::FinishSpawningActor(dungeon, trans);
+	}
+
+	return dungeon;
 }
 
 // Called every frame
 void ADungeon::Tick(float DeltaTime){
 	Super::Tick(DeltaTime);
 
+}
+
+void ADungeon::BuildDungeon(){
+
+}
+
+void ADungeon::DestructDungeon(){
+	for (auto room : roomBase) {
+		room->DestructRoom();
+	}
+
+	roomSpawn->DestructRoom();
+	roomEnd->DestructRoom();
 }
 
 void ADungeon::AddSpawnedRoom(ADungeonRoom * spawnedRoom){

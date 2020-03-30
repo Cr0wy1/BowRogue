@@ -22,6 +22,9 @@ void ADungeonGenerator::BeginPlay(){
 	gameInstance = GetGameInstance<UAdvancedGameInstance>();
 	
 	if (gameInstance) {
+
+
+		
 		SetSeed(seed);
 		StartRoomGeneration();
 		SpawnRooms();
@@ -122,14 +125,13 @@ ADungeonRoom* ADungeonGenerator::SpawnRooms(){
 				spawnLoc.Z = GetActorLocation().Z;
 
 				int32 iRandRoomBP = FMath::Rand() % dungeonRoomBPs.Num();
-				ADungeonRoom* spawnedRoom = ADungeonRoom::Construct(this, dungeonRoomBPs[iRandRoomBP], spawnLoc, FIntVector(x, y, 0), roomGrid[x][y]);
+				//ADungeonRoom* spawnedRoom = ADungeonRoom::Construct(this, dungeonRoomBPs[iRandRoomBP], spawnLoc, FIntVector(x, y, 0), roomGrid[x][y]);
 
-				spawnedRooms.Add(FIntVector(x, y, 0), spawnedRoom);
-				CheckConnectors(spawnedRoom, FIntVector(x, y, 0));
+				//spawnedRooms.Add(FIntVector(x, y, 0), spawnedRoom);
 
 				++roomsPlaced;
 			}
-
+			 
 
 		}
 	}
@@ -137,35 +139,6 @@ ADungeonRoom* ADungeonGenerator::SpawnRooms(){
 	return nullptr;
 }
 
-bool ADungeonGenerator::CheckConnectors(ADungeonRoom* cRoom, const FIntVector & gridPos){
-	//UE_LOG(LogTemp, Warning, TEXT("checkGrid %s"), *gridPos.ToString());
-
-	ADungeonRoom** frontRoom = spawnedRooms.Find(gridPos + FGridDir::FRONT_VEC);
-	if (frontRoom) {
-		(*frontRoom)->AddConnector(FGridDir::BACK);
-		cRoom->AddConnector(FGridDir::FRONT);
-	}
-
-	ADungeonRoom** rightRoom = spawnedRooms.Find(gridPos + FGridDir::RIGHT_VEC);
-	if (rightRoom) {
-		(*rightRoom)->AddConnector(FGridDir::LEFT);
-		cRoom->AddConnector(FGridDir::RIGHT);
-	}
-
-	ADungeonRoom** backRoom = spawnedRooms.Find(gridPos + FGridDir::BACK_VEC);
-	if (backRoom) {
-		(*backRoom)->AddConnector(FGridDir::FRONT);
-		cRoom->AddConnector(FGridDir::BACK);
-	}
-
-	ADungeonRoom** leftRoom = spawnedRooms.Find(gridPos + FGridDir::LEFT_VEC);
-	if (leftRoom) {
-		(*leftRoom)->AddConnector(FGridDir::RIGHT);
-		cRoom->AddConnector(FGridDir::LEFT);
-	}
-
-	return false;
-}
 
 void ADungeonGenerator::LogGrid(){
 	if (roomGrid.Num() < 1 && roomGrid[0].Num() < 1) return;

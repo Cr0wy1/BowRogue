@@ -10,6 +10,9 @@
 #include "Components/StaticMeshComponent.h"
 #include "SpawningFloorActor.h"
 #include "Dungeon.h"
+#include "RoomPartRoof.h"
+#include "RoomPartWall.h"
+#include "RoomPartPillar.h"
 
 // Sets default values
 ADungeonRoom::ADungeonRoom(){
@@ -19,28 +22,6 @@ ADungeonRoom::ADungeonRoom(){
 	sceneRootComp = CreateDefaultSubobject<USceneComponent>("Scene Root"); 
 	sceneRootComp->SetupAttachment(RootComponent);
 	sceneRootComp->SetRelativeScale3D(FVector(2.0f));
-
-	meshRoofComp = CreateDefaultSubobject<UStaticMeshComponent>("Roof Mesh");
-	meshRoofComp->SetRelativeLocationAndRotation(FVector(0, 0, 500), FRotator(180, 0, 0));
-	meshRoofComp->SetupAttachment(sceneRootComp);
-
-	meshWall1Comp = CreateDefaultSubobject<UStaticMeshComponent>("Wall1 Mesh");
-	meshWall1Comp->SetRelativeLocationAndRotation(FVector(500, 0, 0), FRotator(0, -180, 0));
-	meshWall1Comp->SetupAttachment(sceneRootComp);
-
-	meshWall2Comp = CreateDefaultSubobject<UStaticMeshComponent>("Wall2 Mesh");
-	meshWall2Comp->SetRelativeLocationAndRotation(FVector(0, 500, 0), FRotator(0, -90, 0));
-	meshWall2Comp->SetupAttachment(sceneRootComp);
-
-	meshWall3Comp = CreateDefaultSubobject<UStaticMeshComponent>("Wall3 Mesh");
-	meshWall3Comp->SetRelativeLocationAndRotation(FVector(-500, 0, 0), FRotator(0, 0, 0));
-	meshWall3Comp->SetupAttachment(sceneRootComp);
-
-	meshWall4Comp = CreateDefaultSubobject<UStaticMeshComponent>("Wall4 Mesh");
-	meshWall4Comp->SetRelativeLocationAndRotation(FVector(0, -500, 0), FRotator(0, 90, 0));
-	meshWall4Comp->SetupAttachment(sceneRootComp);
-
-
 }
 
 // Called when the game starts or when spawned
@@ -48,33 +29,127 @@ void ADungeonRoom::BeginPlay(){
 	Super::BeginPlay();
 	
 	gameInstance = GetGameInstance<UAdvancedGameInstance>();
-
-	if (!meshWall) {
-		UE_LOG(LogTemp, Warning, TEXT("ADungeonRoom: meshWall is nullptr"));
-	}
 	
-	BuildRoom();
 }
 
-void ADungeonRoom::BuildRoom(){
+void ADungeonRoom::Init(FIntVector _gridLoc, const FDungeonRoomParams &_params) {
+	gridLoc = _gridLoc;
+	params = _params;
+
+}
+
+void ADungeonRoom::BuildRoom(FConnectedRooms _connectedRooms){
+
+	connectedRooms = _connectedRooms;
+
 	if (spawningFloorBP) {
-		GetWorld()->SpawnActor<ASpawningFloorActor>(spawningFloorBP, GetActorLocation(), FRotator::ZeroRotator);
+		floor = GetWorld()->SpawnActor<ASpawningFloorActor>(spawningFloorBP, GetActorLocation(), FRotator::ZeroRotator);
+	} 
+
+	if (roofBP) {
+		FTransform roofTrans = FTransform(FRotator(180, 0, 0), GetActorLocation() + FVector(0, 0, 1000), GetActorScale3D());
+		//UE_LOG(LogTemp, Warning, TEXT("%s"), *roofTrans.ToString());
+
+		roof = GetWorld()->SpawnActor<ARoomPartRoof>(roofBP, roofTrans);
+		roof->SetActorScale3D(GetActorScale3D());
 	}
 
-	UStructureAsset* structureAsset = gameInstance->GetStructureAsset();
-	if (structureAsset && structureAsset->bossPortal_BP) {
-		if (params.roomtype == ERoomType::END) {
-			GetWorld()->SpawnActor<AActor>(structureAsset->bossPortal_BP, GetActorLocation(), FRotator::ZeroRotator);
+	if (connectedRooms.front) {
+		UE_LOG(LogTemp, Warning, TEXT("cennector is set"));
+
+	}
+
+	if (wallBP) {
+		if (!connectedRooms.front) { 
+			FTransform wallTrans = FTransform(FRotator(0, 180, 0), GetActorLocation() + FVector(1000, 0, 0), GetActorScale3D());
+			walls.front = GetWorld()->SpawnActor<ARoomPartWall>(wallBP, wallTrans);
+			walls.front->SetActorScale3D(GetActorScale3D());
+		}
+		if (!connectedRooms.right) {
+			FTransform wallTrans = FTransform(FRotator(0, -90, 0), GetActorLocation() + FVector(0, 1000, 0), GetActorScale3D());
+			walls.right = GetWorld()->SpawnActor<ARoomPartWall>(wallBP, wallTrans);
+			walls.right->SetActorScale3D(GetActorScale3D());
+		}
+		if (!connectedRooms.back) {
+			FTransform wallTrans = FTransform(FRotator(0, 0, 0), GetActorLocation() + FVector(-1000, 0, 0), GetActorScale3D());
+			walls.back = GetWorld()->SpawnActor<ARoomPartWall>(wallBP, wallTrans);
+			walls.back->SetActorScale3D(GetActorScale3D());
+		}
+		if (!connectedRooms.left) {
+			FTransform wallTrans = FTransform(FRotator(0, 90, 0), GetActorLocation() + FVector(0, -1000, 0), GetActorScale3D());
+			walls.left = GetWorld()->SpawnActor<ARoomPartWall>(wallBP, wallTrans);
+			walls.left->SetActorScale3D(GetActorScale3D());
 		}
 	}
+
+	if (pillarBP) {
+		 
+		float pillarDistance = 960.0f;
+		 
+		bool bFrontRightPillar = walls.front && walls.right || !walls.front && !walls.right && !connectedRooms.front->connectedRooms.right;
+		bool bFrontLeftPillar = walls.front && walls.left || !walls.front && !walls.left && !connectedRooms.front->connectedRooms.left;
+		bool bBackRightPillar = walls.back && walls.right || !walls.back && !walls.right && !connectedRooms.back->connectedRooms.right;
+		bool bBackLeftPillar = walls.back && walls.left || !walls.back && !walls.left && !connectedRooms.back->connectedRooms.left;
+
+		if (bFrontRightPillar) {
+			ARoomPartPillar* pillar = GetWorld()->SpawnActor<ARoomPartPillar>(pillarBP, GetActorLocation() + FVector(pillarDistance, pillarDistance, 0), FRotator::ZeroRotator);
+			pillar->SetActorScale3D(GetActorScale3D()); 
+			pillars.Add(pillar);
+		}
+		 
+		if (bFrontLeftPillar) {
+			ARoomPartPillar* pillar = GetWorld()->SpawnActor<ARoomPartPillar>(pillarBP, GetActorLocation() + FVector(pillarDistance, -pillarDistance, 0), FRotator::ZeroRotator);
+			pillar->SetActorScale3D(GetActorScale3D());
+			pillars.Add(pillar);
+		}
+
+		if (bBackRightPillar) {
+			ARoomPartPillar* pillar = GetWorld()->SpawnActor<ARoomPartPillar>(pillarBP, GetActorLocation() + FVector(-pillarDistance, pillarDistance, 0), FRotator::ZeroRotator);
+			pillar->SetActorScale3D(GetActorScale3D());
+			pillars.Add(pillar);
+		}
+
+		if(bBackLeftPillar){
+			ARoomPartPillar* pillar = GetWorld()->SpawnActor<ARoomPartPillar>(pillarBP, GetActorLocation() + FVector(-pillarDistance, -pillarDistance, 0), FRotator::ZeroRotator);
+			pillar->SetActorScale3D(GetActorScale3D());
+			pillars.Add(pillar);
+		}
+
+	}
 }
 
+void ADungeonRoom::DestructRoom(){
+	if (walls.front) {
+		walls.front->Destroy();
+	}
 
-void ADungeonRoom::Init(FIntVector _gridLoc, const FDungeonRoomParams &_params){
-	gridLoc = _gridLoc; 
-	params = _params;
-	  
+	if (walls.back) {
+		walls.back->Destroy();
+	}
+
+	if (walls.right) {
+		walls.right->Destroy();
+	}
+
+	if (walls.left) {
+		walls.left->Destroy();
+	}
+	
+	if (roof) {
+		roof->Destroy();
+	}
+
+	if (floor) {
+		floor->Destroy();
+	}
+
+	for (auto pillar : pillars){
+		pillar->Destroy();
+	}
+
+	Destroy();
 }
+
 
 // Called every frame
 void ADungeonRoom::Tick(float DeltaTime){
@@ -109,34 +184,7 @@ ADungeonRoom * ADungeonRoom::Construct(AActor* owner, TSubclassOf<ADungeonRoom> 
 	return nullptr;
 }
 
-void ADungeonRoom::AddConnector(const FGridDir & dir){
-	UE_LOG(LogTemp, Warning, TEXT("Connector checked"));
 
-	switch (dir.GetType()) {
-	case EGridDir::FRONT:
-		meshWall1Comp->SetStaticMesh(nullptr);
-		//meshWall1Comp->SetStaticMesh(meshDoorWall); 
-		break;
-	case EGridDir::RIGHT:
-		meshWall2Comp->SetStaticMesh(nullptr); 
-		break;
-	case EGridDir::BACK:
-		meshWall3Comp->SetStaticMesh(nullptr);
-		break;
-	case EGridDir::LEFT:
-		meshWall4Comp->SetStaticMesh(nullptr);
-		break;
-	}
-
-}
-
-
-
-void ADungeonRoom::AdjustRoomConnections(){
-	if (dungeonGenerator) {
-		
-	}
-}
 
 ADungeon * ADungeonRoom::TryGetDungeon(){
 	return Cast<ADungeon>(GetOwner());

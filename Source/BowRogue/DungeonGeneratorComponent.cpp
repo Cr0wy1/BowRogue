@@ -4,6 +4,8 @@
 #include "DungeonGeneratorComponent.h"
 #include "DungeonRoomEnd.h"
 #include "Dungeon.h"
+#include "AdvancedGameInstance.h"
+#include "DungeonDefaultsAsset.h"
 
 // Sets default values for this component's properties
 UDungeonGeneratorComponent::UDungeonGeneratorComponent(){
@@ -18,13 +20,39 @@ UDungeonGeneratorComponent::UDungeonGeneratorComponent(){
 void UDungeonGeneratorComponent::BeginPlay(){
 	Super::BeginPlay();
 
-	if (!spawnRoomBP) { UE_LOG(LogTemp, Warning, TEXT("UDungeonGeneratorComponent: spawnRoomBP is empty")); return; }
-	if (!endRoomBP) { UE_LOG(LogTemp, Warning, TEXT("UDungeonGeneratorComponent: endRoomBP is empty")); return; }
-	if (dungeonRoomBPs.Num() < 1 || !dungeonRoomBPs[0]) { UE_LOG(LogTemp, Warning, TEXT("UDungeonGeneratorComponent: dungeonRoomBPs are empty")); return; }
+	UAdvancedGameInstance* gameInstance = GetOwner()->GetGameInstance<UAdvancedGameInstance>();
+
+	if (gameInstance) {
+		UDungeonDefaultsAsset* dungeonDefaults = gameInstance->GetDungeonDefaultsAsset();
+
+		if (!spawnRoomBP) {
+
+			UE_LOG(LogTemp, Warning, TEXT("UDungeonGeneratorComponent: spawnRoomBP is empty"));
+			spawnRoomBP = dungeonDefaults->roomDefault;
+
+		}
+
+		if (!endRoomBP) { 
+			UE_LOG(LogTemp, Warning, TEXT("UDungeonGeneratorComponent: endRoomBP is empty"));
+			endRoomBP = dungeonDefaults->roomEndDefault;
+		}
+
+		if (dungeonRoomBPs.Num() < 1 || !dungeonRoomBPs[0]) { 
+			UE_LOG(LogTemp, Warning, TEXT("UDungeonGeneratorComponent: dungeonRoomBPs are empty"));
+			dungeonRoomBPs.Add(dungeonDefaults->roomDefault);
+		}
+	}
+
+	ADungeon * dungeon = Cast<ADungeon>(GetOwner());
+	if (dungeon->GetStageActor()) {
+		roomGridRadius = dungeon->GetStageLevel() + 1;
+	}
+	
 
 	SetSeed(seed);
 	StartRoomGeneration();
 	SpawnRooms();
+	StartRoomBuilding();
 }
 
 
@@ -125,10 +153,8 @@ void UDungeonGeneratorComponent::SpawnRooms() {
 				spawnLoc.Z = GetOwner()->GetActorLocation().Z;
 
 				ADungeonRoom* spawnedRoom = ADungeonRoom::Construct(GetOwner(), GetRoomBPFromType(roomGrid[x][y].roomtype), spawnLoc, FIntVector(x, y, 0), roomGrid[x][y]);
-
 				spawnedRooms.Add(FIntVector(x, y, 0), spawnedRoom);
-				CheckConnectors(spawnedRoom, FIntVector(x, y, 0));
-
+				
 				++roomsPlaced;
 			}
 
@@ -137,34 +163,45 @@ void UDungeonGeneratorComponent::SpawnRooms() {
 	}
 }
 
-bool UDungeonGeneratorComponent::CheckConnectors(ADungeonRoom* cRoom, const FIntVector & gridPos) {
+void UDungeonGeneratorComponent::StartRoomBuilding(){
+	for (auto room : spawnedRooms) {
+		room.Value->BuildRoom(CheckConnectors(room.Key));
+	}
+}
+
+FConnectedRooms UDungeonGeneratorComponent::CheckConnectors(const FIntVector & gridPos) {
 	//UE_LOG(LogTemp, Warning, TEXT("checkGrid %s"), *gridPos.ToString());
+
+	FConnectedRooms connectedRooms;
 
 	ADungeonRoom** frontRoom = spawnedRooms.Find(gridPos + FGridDir::FRONT_VEC);
 	if (frontRoom) {
-		(*frontRoom)->AddConnector(FGridDir::BACK);
-		cRoom->AddConnector(FGridDir::FRONT);
+		UE_LOG(LogTemp, Warning, TEXT("check front"));
+
+		connectedRooms.front = *frontRoom;
 	}
 
 	ADungeonRoom** rightRoom = spawnedRooms.Find(gridPos + FGridDir::RIGHT_VEC);
 	if (rightRoom) {
-		(*rightRoom)->AddConnector(FGridDir::LEFT);
-		cRoom->AddConnector(FGridDir::RIGHT);
+		connectedRooms.right = *rightRoom;
 	}
 
 	ADungeonRoom** backRoom = spawnedRooms.Find(gridPos + FGridDir::BACK_VEC);
 	if (backRoom) {
-		(*backRoom)->AddConnector(FGridDir::FRONT);
-		cRoom->AddConnector(FGridDir::BACK);
+		connectedRooms.back = *backRoom;
 	}
 
 	ADungeonRoom** leftRoom = spawnedRooms.Find(gridPos + FGridDir::LEFT_VEC);
 	if (leftRoom) {
-		(*leftRoom)->AddConnector(FGridDir::RIGHT);
-		cRoom->AddConnector(FGridDir::LEFT);
+		connectedRooms.left = *leftRoom;
 	}
 
-	return false;
+	if (connectedRooms.front) {
+		UE_LOG(LogTemp, Warning, TEXT("Construct: cennector is set"));
+
+	}
+
+	return connectedRooms;
 }
 
 TSubclassOf<ADungeonRoom> UDungeonGeneratorComponent::GetRoomBPFromType(ERoomType roomType){

@@ -13,7 +13,21 @@ class ADungeon;
 class ADungeonGenerator;
 class ASpawningFloorActor;
 class UAdvancedGameInstance;
+class ARoomPartRoof;
+class ARoomPartWall;
+class ARoomPartPillar;
 
+
+
+USTRUCT()
+struct  BOWROGUE_API FRoomWalls {
+	GENERATED_BODY()
+
+	ARoomPartWall* front = nullptr;
+	ARoomPartWall* right = nullptr;
+	ARoomPartWall* back = nullptr;
+	ARoomPartWall* left = nullptr;
+};
 
 
 UCLASS()
@@ -29,60 +43,55 @@ public:
 protected:
 	
 	FDungeonRoomParams params;
+	FConnectedRooms connectedRooms;
 
 	UAdvancedGameInstance* gameInstance = nullptr;
 
 	//UPROPERTIES
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parts")
 	TSubclassOf<ASpawningFloorActor> spawningFloorBP;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
-	UStaticMesh* meshWall = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parts")
+	TSubclassOf<ARoomPartRoof> roofBP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parts")
+	TSubclassOf<ARoomPartWall> wallBP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parts")
+	TSubclassOf<ARoomPartPillar> pillarBP;
 
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
 	USceneComponent* sceneRootComp;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
-	UStaticMeshComponent* meshRoofComp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
-	UStaticMeshComponent* meshWall1Comp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
-	UStaticMeshComponent* meshWall2Comp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
-	UStaticMeshComponent* meshWall3Comp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
-	UStaticMeshComponent* meshWall4Comp;
-
-
-
 	ADungeonGenerator * dungeonGenerator;
 	FIntVector gridLoc;
 
+	FRoomWalls walls;
+	ARoomPartRoof* roof;
+	ASpawningFloorActor* floor;
+	TArray<ARoomPartPillar*> pillars;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 
-	void BuildRoom();
+	
 
 public:	
 
 
 	void Init(FIntVector _gridLoc, const FDungeonRoomParams &_params);
+
+	void BuildRoom(FConnectedRooms _connectedRooms);
+	void DestructRoom();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	//return spawned Room, returns nullptr if dungeonGenerator is nullptr
 	static ADungeonRoom* Construct(AActor* owner, TSubclassOf<ADungeonRoom> classBP, FVector location, FIntVector gridLoc, const FDungeonRoomParams &params = FDungeonRoomParams());
 
-	void AddConnector(const FGridDir &dir);
-
-	void AdjustRoomConnections();
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE ADungeon* TryGetDungeon();
