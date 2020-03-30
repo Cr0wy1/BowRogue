@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
-#include "ItemUpdateStructs.h"
+#include "Items/ItemUpdateStructs.h"
 #include "GameStructs.generated.h"
 
 

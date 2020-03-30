@@ -2,9 +2,9 @@
 
 
 #include "Entity.h"
-#include "EntityController.h"
-#include "AttributeComponent.h"
-#include "EntitySpawner.h"
+#include "Entity/EntityController.h"
+#include "Components/AttributeComponent.h"
+#include "Entity/EntitySpawner.h"
 #include "Engine/World.h"
 
 // Sets default values

@@ -4,7 +4,7 @@
 #include "Pickup.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
-#include "AdvancedCharacter.h"
+#include "Player/AdvancedCharacter.h"
 #include "Engine/World.h"
 
 // Sets default values

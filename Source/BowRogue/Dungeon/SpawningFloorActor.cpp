@@ -3,7 +3,7 @@
 
 #include "SpawningFloorActor.h"
 #include "DrawDebugHelpers.h"
-#include "GeometryPawn.h"
+#include "Entity/GeometryPawn.h"
 #include "Engine/World.h"
 
 // Sets default values

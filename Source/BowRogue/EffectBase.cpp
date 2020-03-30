@@ -2,7 +2,7 @@
 
 
 #include "EffectBase.h"
-#include "Projectile.h"
+#include "Projectiles/Projectile.h"
 
 void UProjectileEffectBase::Init(AProjectile * _projectile){
 	projectile = _projectile;

@@ -3,7 +3,7 @@
 
 #include "SpawnComponent.h"
 #include "DrawDebugHelpers.h"
-#include "GeometryPawn.h"
+#include "Entity/GeometryPawn.h"
 #include "Engine/World.h"
 
 // Sets default values for this component's properties

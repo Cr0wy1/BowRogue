@@ -3,7 +3,7 @@
 
 #include "AttributeComponent.h"
 #include "Engine/World.h"
-#include "AdvancedCharacter.h"
+#include "Player/AdvancedCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 

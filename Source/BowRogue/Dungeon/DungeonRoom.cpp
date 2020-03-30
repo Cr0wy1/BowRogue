@@ -1,18 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DungeonRoom.h"
-#include "DungeonGenerator.h"
+#include "Dungeon/DungeonRoom.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
-#include "StructureAsset.h"
+#include "Assets/StructureAsset.h"
 #include "AdvancedGameInstance.h"
 #include "Components/StaticMeshComponent.h"
-#include "SpawningFloorActor.h"
-#include "Dungeon.h"
-#include "RoomPartRoof.h"
-#include "RoomPartWall.h"
-#include "RoomPartPillar.h"
+#include "Dungeon/SpawningFloorActor.h"
+#include "Dungeon/Dungeon.h"
+#include "Dungeon/RoomPartRoof.h"
+#include "Dungeon/RoomPartWall.h"
+#include "Dungeon/RoomPartPillar.h"
 
 // Sets default values
 ADungeonRoom::ADungeonRoom(){

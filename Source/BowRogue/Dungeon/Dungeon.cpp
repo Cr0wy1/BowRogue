@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Dungeon.h"
-#include "DungeonRoomEnd.h"
-#include "PortalPlatform.h"
-#include "StageActor.h"
+#include "Dungeon/Dungeon.h"
+#include "Dungeon/DungeonRoomEnd.h"
+#include "Actors/PortalPlatform.h"
+#include "Dungeon/StageActor.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 

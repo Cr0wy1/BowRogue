@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "EffectBase.h"
-#include "ItemUpdateStructs.h"
+#include "Items/ItemUpdateStructs.h"
 #include "Projectile.generated.h"
 
 

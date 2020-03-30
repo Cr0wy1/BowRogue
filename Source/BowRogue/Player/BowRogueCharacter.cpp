@@ -1,11 +1,11 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
-#include "BowRogueCharacter.h"
+#include "Player/BowRogueCharacter.h"
 #include "Components/InputComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Weapon.h"
-#include "Pickup.h"
-#include "CrosshairTraceComponent.h"
+#include "Weapons/Weapon.h"
+#include "Actors/Pickup.h"
+#include "Components/CrosshairTraceComponent.h"
 
 
 ABowRogueCharacter::ABowRogueCharacter(){

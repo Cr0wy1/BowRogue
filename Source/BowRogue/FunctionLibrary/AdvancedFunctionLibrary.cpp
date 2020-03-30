@@ -3,8 +3,8 @@
 
 #include "AdvancedFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "AdvancedCharacter.h"
-#include "AdvancedPlayerController.h"
+#include "Player/AdvancedCharacter.h"
+#include "Player/AdvancedPlayerController.h"
 #include "AdvancedGameInstance.h"
 #include "UserWidget.h"
 

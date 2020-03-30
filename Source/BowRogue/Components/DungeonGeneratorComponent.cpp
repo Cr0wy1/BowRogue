@@ -2,10 +2,10 @@
 
 
 #include "DungeonGeneratorComponent.h"
-#include "DungeonRoomEnd.h"
-#include "Dungeon.h"
+#include "Dungeon/DungeonRoomEnd.h"
+#include "Dungeon/Dungeon.h"
 #include "AdvancedGameInstance.h"
-#include "DungeonDefaultsAsset.h"
+#include "Assets/DungeonDefaultsAsset.h"
 
 // Sets default values for this component's properties
 UDungeonGeneratorComponent::UDungeonGeneratorComponent(){

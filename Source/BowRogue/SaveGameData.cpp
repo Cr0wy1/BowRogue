@@ -3,9 +3,9 @@
 
 #include "SaveGameData.h"
 #include "Kismet/GameplayStatics.h"
-#include "AdvancedFunctionLibrary.h"
-#include "AdvancedCharacter.h"
-#include "HealthComponent.h"
+#include "FunctionLibrary\AdvancedFunctionLibrary.h"
+#include "Player/AdvancedCharacter.h"
+#include "Components/HealthComponent.h"
 
 void USaveGameData::SaveAll(const UObject* worldContextObject){
 

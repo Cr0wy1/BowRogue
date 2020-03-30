@@ -2,7 +2,7 @@
 
 
 #include "ItemObject.h"
-#include "BowRogueCharacter.h"
+#include "Player/BowRogueCharacter.h"
 
 UItemObject * UItemObject::Construct(UObject* owner, FItemData _itemData){
 

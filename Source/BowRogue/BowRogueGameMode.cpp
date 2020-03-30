@@ -2,10 +2,10 @@
 
 #include "BowRogueGameMode.h"
 #include "BowRogueHUD.h"
-#include "BowRogueCharacter.h"
+#include "Player/BowRogueCharacter.h"
 #include "UObject/ConstructorHelpers.h"
-#include "AdvancedPlayerController.h"
-#include "AdvancedPlayerState.h"
+#include "Player/AdvancedPlayerController.h"
+#include "Player/AdvancedPlayerState.h"
 
 ABowRogueGameMode::ABowRogueGameMode()
 	: Super()

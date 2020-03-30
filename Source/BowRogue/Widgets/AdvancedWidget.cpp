@@ -2,7 +2,7 @@
 
 
 #include "AdvancedWidget.h"
-#include "AdvancedCharacter.h"
-#include "AdvancedPlayerController.h"
+#include "Player/AdvancedCharacter.h"
+#include "Player/AdvancedPlayerController.h"
 //#include "WidgetBlueprintLibrary.h"
 

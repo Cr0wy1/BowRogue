@@ -2,11 +2,11 @@
 
 
 #include "ItemManagerComponent.h"
-#include "BowRogueCharacter.h"
-#include "HealthComponent.h"
-#include "Bow.h"
-#include "Arrow.h"
-#include "ItemObject.h"
+#include "Player/BowRogueCharacter.h"
+#include "Components/HealthComponent.h"
+#include "Weapons/Bow.h"
+#include "Projectiles/Arrow.h"
+#include "Items/ItemObject.h"
 
 // Sets default values for this component's properties
 UItemManagerComponent::UItemManagerComponent(){

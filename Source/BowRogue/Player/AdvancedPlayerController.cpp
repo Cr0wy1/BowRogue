@@ -3,13 +3,13 @@
 
 #include "AdvancedPlayerController.h"
 #include "AdvancedGameInstance.h"
-#include "AdvancedCharacter.h"
-#include "CrosshairTraceComponent.h"
-#include "Pickup.h"
-#include "WidgetAsset.h"
-#include "MapWidget.h"
-#include "PlayerHUDWidget.h"
-#include "AttributeComponent.h"
+#include "Player/AdvancedCharacter.h"
+#include "Components/CrosshairTraceComponent.h"
+#include "Actors/Pickup.h"
+#include "Assets/WidgetAsset.h"
+#include "Widgets/MapWidget.h"
+#include "Widgets/PlayerHUDWidget.h"
+#include "Components/AttributeComponent.h"
 
 void AAdvancedPlayerController::BeginPlay() {
 	Super::BeginPlay();

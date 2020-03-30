@@ -2,9 +2,9 @@
 
 
 #include "PlayerHUDWidget.h"
-#include "HealthWidget.h"
+#include "Widgets/HealthWidget.h"
 #include "TextBlock.h"
-#include "HealthComponent.h"
+#include "Components/HealthComponent.h"
 
 
 

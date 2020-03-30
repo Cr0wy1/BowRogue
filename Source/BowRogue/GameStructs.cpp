@@ -2,12 +2,12 @@
 
 
 #include "GameStructs.h"
-#include "Entity.h"
-#include "ItemObject.h"
+#include "Entity/Entity.h"
+#include "Items/ItemObject.h"
 #include "Engine/StaticMesh.h"
-#include "AttributeComponent.h"
+#include "Components/AttributeComponent.h"
 #include "EffectBase.h"
-#include "DungeonRoom.h"
+#include "Dungeon/DungeonRoom.h"
 
 //Init statics 
 FIntVector FGridDir::FRONT_VEC = FIntVector(1, 0, 0);

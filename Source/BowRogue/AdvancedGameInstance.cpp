@@ -2,9 +2,9 @@
 
 
 #include "AdvancedGameInstance.h"
-#include "WidgetAsset.h"
+#include "Assets/WidgetAsset.h"
 #include "Engine/World.h"
-#include "StructureAsset.h"
+#include "Assets/StructureAsset.h"
 
 void UAdvancedGameInstance::Init(){
 	Super::Init();

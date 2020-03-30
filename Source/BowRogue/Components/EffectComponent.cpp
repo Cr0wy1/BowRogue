@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EffectComponent.h"
+#include "Components/EffectComponent.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
-#include "AdvancedCharacter.h"
+#include "Player/AdvancedCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values for this component's properties

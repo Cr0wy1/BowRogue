@@ -2,9 +2,9 @@
 
 
 #include "DungeonRoomEnd.h"
-#include "PortalPlatform.h"
+#include "Actors/PortalPlatform.h"
 #include "Engine/World.h"
-#include "Dungeon.h"
+#include "Dungeon/Dungeon.h"
 
 void ADungeonRoomEnd::BeginPlay() {
 	Super::BeginPlay();
