@@ -13,11 +13,19 @@ ADungeon::ADungeon(){
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	int32 gridDel = (gridRadius * 2) + 1;
+	grid.Init(gridDel, gridDel);
 }
 
 // Called when the game starts or when spawned
 void ADungeon::BeginPlay(){
 	Super::BeginPlay();
+	
+	PrepareDungeon();
+	if (stageLevel == 0) {
+		OnEnterDungeon();
+	}
+
 	
 }
 
@@ -25,10 +33,14 @@ void ADungeon::Init(int32 _stageLevel){
 	stageLevel = _stageLevel;
 }
 
+void ADungeon::PrepareDungeon(){
+	OnPrepareDungeon.Broadcast();
+}
+
 void ADungeon::OnEnterDungeon(){
 	UE_LOG(LogTemp, Warning, TEXT("Enter Dungeon!"));
 
-	
+	BuildDungeon();
 }
 
 void ADungeon::OnLeaveDungeon(AActor * leavedActor, FVector destination){
@@ -37,6 +49,7 @@ void ADungeon::OnLeaveDungeon(AActor * leavedActor, FVector destination){
 
 	DestructDungeon();
 }
+
 
 ADungeon * ADungeon::Construct(AStageActor * _stageActor, FVector location, TSubclassOf<ADungeon> dungeonBP, int32 _stageLevel){
 
@@ -60,7 +73,29 @@ void ADungeon::Tick(float DeltaTime){
 }
 
 void ADungeon::BuildDungeon(){
+	for (int32 x = 0; x < grid.GetSizeX(); x++) {
+		for (int32 y = 0; y < grid.GetSizeY(); y++) {
 
+			if (grid[x][y].gridtype != EGridRoomType::EMPTY) {
+				FVector spawnLoc;
+				spawnLoc.X = roomSize * (x - gridRadius);
+				spawnLoc.Y = roomSize * (y - gridRadius);
+				//UE_LOG(LogTemp, Warning, TEXT("Spawn: %s, radius: %i"), *spawnLoc.ToString(), gridRadius);
+
+
+				spawnLoc.Z = GetActorLocation().Z;
+
+				ADungeonRoom* spawnedRoom = ADungeonRoom::Construct(this, spawnLoc, grid[x][y]);
+				grid[x][y].spawnedRoom = spawnedRoom;
+			}
+		}
+	}
+
+	roomSpawn->BuildRoom();
+	roomEnd->BuildRoom();
+	for (auto room : roomBase) {
+		room->BuildRoom();
+	}
 }
 
 void ADungeon::DestructDungeon(){
@@ -74,7 +109,7 @@ void ADungeon::DestructDungeon(){
 
 void ADungeon::AddSpawnedRoom(ADungeonRoom * spawnedRoom){
 	if (spawnedRoom) {
-		ERoomType roomType = spawnedRoom->GetDungeonRoomParams().roomtype;
+		ERoomType roomType = spawnedRoom->GetDungeonGridCell().roomtype;
 		
 			switch (roomType){
 				case ERoomType::SPAWN :

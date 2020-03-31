@@ -117,25 +117,100 @@ struct BOWROGUE_API FConnectedRooms {
 
 //DungeonRoom
 USTRUCT(BlueprintType)
-struct BOWROGUE_API FDungeonRoomParams {
+struct BOWROGUE_API FDungeonGridCell {
 	GENERATED_BODY()
 
+	FIntVector gridLoc;
 	bool bSpawnEntities = true;
 	EGridRoomType gridtype = EGridRoomType::EMPTY;
 	ERoomType roomtype = ERoomType::FIGHT;
+	TSubclassOf<ADungeonRoom> roomBP;
+	ADungeonRoom* spawnedRoom = nullptr;
+
+	FDungeonGridCell* front = nullptr;
+	FDungeonGridCell* right = nullptr;
+	FDungeonGridCell* back = nullptr;
+	FDungeonGridCell* left = nullptr;
 };
 
 
 
 USTRUCT()
-struct BOWROGUE_API FGridRoom : public FDungeonRoomParams {
+struct BOWROGUE_API FGridRoom : public FDungeonGridCell {
 	GENERATED_BODY()
 
 		int32 pathDistance = 0;
 };
 
 
+USTRUCT()
+struct BOWROGUE_API FDungeonGrid {
+	GENERATED_BODY()
 
+protected:
+	int32 xSize = 0;
+	int32 ySize = 0;
+	TArray<TArray<FGridRoom>> grid;
+
+public:
+	void Init(int32 _xSize, int32 _ySize) {
+		xSize = _xSize;
+		ySize = _ySize;
+		grid.Init(TArray<FGridRoom>(), xSize);
+		for (int32 i = 0; i < xSize; i++) {
+			grid[i].Init(FGridRoom(), ySize);
+		}
+
+		for (int32 x = 0; x < xSize; x++){
+			for (int32 y = 0; y < ySize; y++) {
+				grid[x][y].front = grid.IsValidIndex(x + 1) ? &grid[x + 1][y] : nullptr;
+				grid[x][y].right = grid[x].IsValidIndex(y + 1) ? &grid[x][y + 1] : nullptr;
+				grid[x][y].back = grid.IsValidIndex(x - 1) ? &grid[x - 1][y] : nullptr;
+				grid[x][y].left = grid[x].IsValidIndex(y - 1) ? &grid[x][y - 1] : nullptr; 
+			}
+		}
+	}
+
+	void Reset() {
+		for (int32 i = 0; i < xSize; i++) {
+			grid[i].Reset();
+		}
+		grid.Reset();
+
+		xSize = 0;
+		ySize = 0;
+	}
+
+	int32 GetSizeX() const { return xSize; }
+	int32 GetSizeY() const { return ySize; }
+	int32 GetSizeTotel() const { return xSize * ySize; }
+
+	bool IsValidIndex(int32 x, int32 y) const {
+		return grid.IsValidIndex(x) && grid[x].IsValidIndex(y);
+	}
+
+	TArray<FGridRoom>& operator[](int32 x) {return grid[x];}
+	const TArray<FGridRoom>& operator[](int32 x) const { return grid[x]; }
+	FGridRoom& operator[](FIntVector xyVec) { return grid[xyVec.X][xyVec.Y]; }
+	const FGridRoom& operator[](FIntVector xyVec) const { return grid[xyVec.X][xyVec.Y]; }
+
+	void Log() {
+		if (GetSizeTotel() < 1) return;
+
+		for (int32 x = xSize - 1; x >= 0; x--) {
+			FString row = "";
+			for (int32 y = 0; y < ySize; y++) {
+				if (grid[x][y].gridtype != EGridRoomType::EMPTY) {
+					row += FString::FromInt(grid[x][y].pathDistance);
+				}
+				else {
+					row += "#";
+				}
+			}
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *row);
+		}
+	}
+};
 
 
 

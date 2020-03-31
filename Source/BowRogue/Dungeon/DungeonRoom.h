@@ -9,6 +9,7 @@
 
 
 
+
 class ADungeon;
 class ADungeonGenerator;
 class ASpawningFloorActor;
@@ -37,12 +38,13 @@ class BOWROGUE_API ADungeonRoom : public AActor
 	
 public:	
 
+
 	// Sets default values for this actor's properties
 	ADungeonRoom();
 
 protected:
 	
-	FDungeonRoomParams params;
+	FDungeonGridCell gridCell;
 	FConnectedRooms connectedRooms;
 
 	UAdvancedGameInstance* gameInstance = nullptr;
@@ -65,7 +67,6 @@ protected:
 	USceneComponent* sceneRootComp;
 
 	ADungeonGenerator * dungeonGenerator;
-	FIntVector gridLoc;
 
 	FRoomWalls walls;
 	ARoomPartRoof* roof;
@@ -76,27 +77,25 @@ protected:
 	virtual void BeginPlay() override;
 
 
-	
-
 public:	
 
 
-	void Init(FIntVector _gridLoc, const FDungeonRoomParams &_params);
+	void Init(const FDungeonGridCell &_gridCell);
 
-	void BuildRoom(FConnectedRooms _connectedRooms);
+	void BuildRoom();
 	void DestructRoom();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	//return spawned Room, returns nullptr if dungeonGenerator is nullptr
-	static ADungeonRoom* Construct(AActor* owner, TSubclassOf<ADungeonRoom> classBP, FVector location, FIntVector gridLoc, const FDungeonRoomParams &params = FDungeonRoomParams());
+	static ADungeonRoom* Construct(AActor* owner, FVector location, const FDungeonGridCell &gridCell = FDungeonGridCell());
 
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE ADungeon* TryGetDungeon();
 
-	FORCEINLINE FIntVector GetGridLoc() const { return gridLoc; }
+	FORCEINLINE FIntVector GetGridLoc() const { return gridCell.gridLoc; }
 	FORCEINLINE ADungeonGenerator* GetDungeonGenerator() const { return dungeonGenerator; }
-	FORCEINLINE FDungeonRoomParams GetDungeonRoomParams() const { return params; }
+	FORCEINLINE FDungeonGridCell GetDungeonGridCell() const { return gridCell; }
 };

@@ -29,12 +29,9 @@ protected:
 
 	int32 longestPath = 0;
 	FIntVector longestGridLoc;
+	
+	ADungeon* dungeon;
 
-	TArray<TArray<FGridRoom>> roomGrid;
-	TMap<FIntVector, ADungeonRoom*> spawnedRooms;
-
-	int32 roomsPlaced = 0;
-	 
 	//UPROPERTIES
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dungeon")
 		int32 seed = 1;
@@ -57,23 +54,16 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void OnPrepareDungeon();
+
 	void StartRoomGeneration();
 	void PathMaker(FIntVector startPos, FIntVector dir, int32 length, int32 pathDistance, float accuracy = 1.0f);
 
 	//returns true if room is succesfully setted
 	bool SetGridRoom(const FIntVector &gridPos, int32 pathDistance, EGridRoomType gridtype = EGridRoomType::ROOM, ERoomType roomtype = ERoomType::FIGHT, bool bSpawnEntities = true);
 
-	//returns room if room spawned, else return nullptr
-	void SpawnRooms();
-
-	void StartRoomBuilding();
-
-	//returns true if connector spawned 
-	FConnectedRooms CheckConnectors(const FIntVector &gridPos);
-
 	TSubclassOf<ADungeonRoom> GetRoomBPFromType(ERoomType roomType);
-
-	void LogGrid();
 
 public:	
 	// Called every frame

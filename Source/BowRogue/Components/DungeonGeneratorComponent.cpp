@@ -43,16 +43,29 @@ void UDungeonGeneratorComponent::BeginPlay(){
 		}
 	}
 
-	ADungeon * dungeon = Cast<ADungeon>(GetOwner());
-	if (dungeon->GetStageActor()) {
-		roomGridRadius = dungeon->GetStageLevel() + 1;
+	dungeon = Cast<ADungeon>(GetOwner());
+	if (dungeon) {
+
+		dungeon->OnPrepareDungeon.AddDynamic(this, &UDungeonGeneratorComponent::OnPrepareDungeon);
+		///OnPrepareDungeon();
+
 	}
-	
+
+}
+
+void UDungeonGeneratorComponent::OnPrepareDungeon(){
+	if (dungeon->GetStageActor()) {
+
+		roomGridRadius = dungeon->GetStageLevel() + 1;
+
+	}
+
+	dungeon->gridRadius = roomGridRadius;
+
 
 	SetSeed(seed);
 	StartRoomGeneration();
-	SpawnRooms();
-	StartRoomBuilding();
+	dungeon->grid.Log();
 }
 
 
@@ -69,13 +82,11 @@ void UDungeonGeneratorComponent::StartRoomGeneration() {
 	}
 
 	int32 gridDel = (roomGridRadius * 2) + 1;
-	roomGrid.Init(TArray<FGridRoom>(), gridDel);
-	for (int32 i = 0; i < gridDel; i++) {
-		roomGrid[i].Init(FGridRoom(), gridDel);
-	}
+	dungeon->grid.Reset();
+	dungeon->grid.Init(gridDel, gridDel);
 
 	FIntVector cGridPos = FIntVector(roomGridRadius, roomGridRadius, 0);
-
+	 
 	SetGridRoom(cGridPos, 0, EGridRoomType::ROOM, ERoomType::SPAWN, false);
 
 
@@ -89,7 +100,9 @@ void UDungeonGeneratorComponent::StartRoomGeneration() {
 	}
 
 	//Set boss room at longest location
-	roomGrid[longestGridLoc.X][longestGridLoc.Y].roomtype = ERoomType::END;
+	//SetGridRoom(longestGridLoc, dungeon->grid[longestGridLoc.X][longestGridLoc.Y].pathDistance, EGridRoomType::ROOM, ERoomType::END, true);
+	dungeon->grid[longestGridLoc.X][longestGridLoc.Y].roomtype = ERoomType::END;
+	dungeon->grid[longestGridLoc.X][longestGridLoc.Y].roomBP = endRoomBP;
 
 
 
@@ -120,13 +133,17 @@ void UDungeonGeneratorComponent::PathMaker(FIntVector startPos, FIntVector dir, 
 }
 
 bool UDungeonGeneratorComponent::SetGridRoom(const FIntVector & gridPos, int32 pathDistance, EGridRoomType gridtype, ERoomType roomtype, bool bSpawnEntities) {
-	if (roomGrid.IsValidIndex(gridPos.X) && roomGrid[0].IsValidIndex(gridPos.Y)) {
-		if (roomGrid[gridPos.X][gridPos.Y].gridtype == EGridRoomType::EMPTY) {
+	//UE_LOG(LogTemp, Warning, TEXT("SetGridRoom"));
 
-			roomGrid[gridPos.X][gridPos.Y].pathDistance = pathDistance;
-			roomGrid[gridPos.X][gridPos.Y].gridtype = gridtype;
-			roomGrid[gridPos.X][gridPos.Y].roomtype = roomtype;
-			roomGrid[gridPos.X][gridPos.Y].bSpawnEntities = bSpawnEntities;
+	if (dungeon->grid.IsValidIndex(gridPos.X, gridPos.Y)) {
+		if (dungeon->grid[gridPos].gridtype == EGridRoomType::EMPTY) {
+
+			dungeon->grid[gridPos].gridLoc = gridPos;
+			dungeon->grid[gridPos].pathDistance = pathDistance;
+			dungeon->grid[gridPos].gridtype = gridtype;
+			dungeon->grid[gridPos].roomtype = roomtype;
+			dungeon->grid[gridPos].bSpawnEntities = bSpawnEntities;
+			dungeon->grid[gridPos].roomBP = GetRoomBPFromType(roomtype);
 
 			if (pathDistance > longestPath) {
 				longestPath = pathDistance;
@@ -140,69 +157,6 @@ bool UDungeonGeneratorComponent::SetGridRoom(const FIntVector & gridPos, int32 p
 	return false;
 }
 
-void UDungeonGeneratorComponent::SpawnRooms() {
-
-	for (int32 x = 0; x < roomGrid.Num(); x++) {
-		for (int32 y = 0; y < roomGrid[x].Num(); y++) {
-
-			if (roomGrid[x][y].gridtype != EGridRoomType::EMPTY) {
-				FVector spawnLoc;
-				spawnLoc.X = roomSize * (x - roomGridRadius);
-				spawnLoc.Y = roomSize * (y - roomGridRadius);
-				
-				spawnLoc.Z = GetOwner()->GetActorLocation().Z;
-
-				ADungeonRoom* spawnedRoom = ADungeonRoom::Construct(GetOwner(), GetRoomBPFromType(roomGrid[x][y].roomtype), spawnLoc, FIntVector(x, y, 0), roomGrid[x][y]);
-				spawnedRooms.Add(FIntVector(x, y, 0), spawnedRoom);
-				
-				++roomsPlaced;
-			}
-
-
-		}
-	}
-}
-
-void UDungeonGeneratorComponent::StartRoomBuilding(){
-	for (auto room : spawnedRooms) {
-		room.Value->BuildRoom(CheckConnectors(room.Key));
-	}
-}
-
-FConnectedRooms UDungeonGeneratorComponent::CheckConnectors(const FIntVector & gridPos) {
-	//UE_LOG(LogTemp, Warning, TEXT("checkGrid %s"), *gridPos.ToString());
-
-	FConnectedRooms connectedRooms;
-
-	ADungeonRoom** frontRoom = spawnedRooms.Find(gridPos + FGridDir::FRONT_VEC);
-	if (frontRoom) {
-		UE_LOG(LogTemp, Warning, TEXT("check front"));
-
-		connectedRooms.front = *frontRoom;
-	}
-
-	ADungeonRoom** rightRoom = spawnedRooms.Find(gridPos + FGridDir::RIGHT_VEC);
-	if (rightRoom) {
-		connectedRooms.right = *rightRoom;
-	}
-
-	ADungeonRoom** backRoom = spawnedRooms.Find(gridPos + FGridDir::BACK_VEC);
-	if (backRoom) {
-		connectedRooms.back = *backRoom;
-	}
-
-	ADungeonRoom** leftRoom = spawnedRooms.Find(gridPos + FGridDir::LEFT_VEC);
-	if (leftRoom) {
-		connectedRooms.left = *leftRoom;
-	}
-
-	if (connectedRooms.front) {
-		UE_LOG(LogTemp, Warning, TEXT("Construct: cennector is set"));
-
-	}
-
-	return connectedRooms;
-}
 
 TSubclassOf<ADungeonRoom> UDungeonGeneratorComponent::GetRoomBPFromType(ERoomType roomType){
 
@@ -218,28 +172,9 @@ TSubclassOf<ADungeonRoom> UDungeonGeneratorComponent::GetRoomBPFromType(ERoomTyp
 	return dungeonRoomBPs[iRandRoomBP];
 }
 
-void UDungeonGeneratorComponent::LogGrid() {
-	if (roomGrid.Num() < 1 && roomGrid[0].Num() < 1) return;
-
-	int32 gridSizeX = roomGrid.Num();
-	int32 gridSizeY = roomGrid[0].Num();
-
-	for (int32 x = gridSizeX - 1; x >= 0; x--) {
-		FString row = "";
-		for (int32 y = 0; y < gridSizeY; y++) {
-			if (roomGrid[x][y].gridtype != EGridRoomType::EMPTY) {
-				row += FString::FromInt(roomGrid[x][y].pathDistance);
-			}
-			else {
-				row += "O";
-			}
-		}
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *row);
-
-	}
-}
 
 void UDungeonGeneratorComponent::SetSeed(int32 seed) {
+	
 	FMath::RandInit(seed);
 }
 

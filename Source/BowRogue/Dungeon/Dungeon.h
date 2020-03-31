@@ -4,7 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameStructs.h"
 #include "Dungeon.generated.h"
+
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPrepareDungeon);
 
 
 
@@ -20,6 +25,10 @@ class BOWROGUE_API ADungeon : public AActor
 	GENERATED_BODY()
 	
 public:	
+
+	friend class UDungeonGeneratorComponent;
+
+	FOnPrepareDungeon OnPrepareDungeon;
 	// Sets default values for this actor's properties
 	ADungeon();
 
@@ -32,25 +41,36 @@ protected:
 	ADungeonRoomEnd* roomEnd;
 	TArray<ADungeonRoom*> roomBase;
 
+	FDungeonGrid grid;
+
+	UPROPERTY(EditAnywhere)
+	int32 gridRadius;
+
+	UPROPERTY(EditAnywhere)
+	float roomSize = 2000.0f;
+
 	UPROPERTY(EditAnywhere)
 	FVector spawnLocRelative;
 
 	UPROPERTY(EditAnywhere)
 	ADungeon* nextDungeon = nullptr;
 
-
+	 
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void Init(int32 _stageLevel);
 
+	void PrepareDungeon();
+	 
 	void OnEnterDungeon();
 
 	UFUNCTION()
 	void OnLeaveDungeon(AActor* leavedActor, FVector destination);
 
-public:	
+
+public:	 
 
 	static ADungeon* Construct(AStageActor* _stageActor, FVector location, TSubclassOf<ADungeon> dungeonBP, int32 _stageLevel);
 

@@ -31,15 +31,16 @@ void ADungeonRoom::BeginPlay(){
 	
 }
 
-void ADungeonRoom::Init(FIntVector _gridLoc, const FDungeonRoomParams &_params) {
-	gridLoc = _gridLoc;
-	params = _params;
-
+void ADungeonRoom::Init(const FDungeonGridCell &_gridCell) {
+	gridCell = _gridCell;
 }
 
-void ADungeonRoom::BuildRoom(FConnectedRooms _connectedRooms){
+void ADungeonRoom::BuildRoom(){
 
-	connectedRooms = _connectedRooms;
+	connectedRooms.front = gridCell.front ? gridCell.front->spawnedRoom : nullptr;
+	connectedRooms.right = gridCell.right ? gridCell.right->spawnedRoom : nullptr;
+	connectedRooms.back = gridCell.back ? gridCell.back->spawnedRoom : nullptr;
+	connectedRooms.left = gridCell.left ? gridCell.left->spawnedRoom : nullptr; 
 
 	if (spawningFloorBP) {
 		floor = GetWorld()->SpawnActor<ASpawningFloorActor>(spawningFloorBP, GetActorLocation(), FRotator::ZeroRotator);
@@ -156,20 +157,21 @@ void ADungeonRoom::Tick(float DeltaTime){
 
 }
 
-ADungeonRoom * ADungeonRoom::Construct(AActor* owner, TSubclassOf<ADungeonRoom> classBP, FVector location, FIntVector gridLoc, const FDungeonRoomParams &params){
+ADungeonRoom * ADungeonRoom::Construct(AActor* owner, FVector location, const FDungeonGridCell &gridCell){
 	
 	if (!owner) return nullptr;
-
+	 
 	UAdvancedGameInstance* gameInstance = owner->GetGameInstance<UAdvancedGameInstance>();
+	UE_LOG(LogTemp, Warning, TEXT("SPAWNING!"));
 
 	if (gameInstance) {
 		FTransform spawnTrans;
 		spawnTrans.SetLocation(location);
 		spawnTrans.SetRotation(FQuat::Identity);
 
-		ADungeonRoom* spawnedRoom = owner->GetWorld()->SpawnActorDeferred<ADungeonRoom>(classBP, spawnTrans, owner);
+		ADungeonRoom* spawnedRoom = owner->GetWorld()->SpawnActorDeferred<ADungeonRoom>(gridCell.roomBP, spawnTrans, owner);
 		//ADungeonRoom* spawnedRoom = owner->GetWorld()->SpawnActor<ADungeonRoom>(classBP, location, FRotator::ZeroRotator);
-		spawnedRoom->Init(gridLoc, params);
+		spawnedRoom->Init(gridCell);
 
 		UGameplayStatics::FinishSpawningActor(spawnedRoom, spawnTrans);
 
