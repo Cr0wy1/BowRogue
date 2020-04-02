@@ -15,7 +15,7 @@ void AAdvancedPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
 	character = GetAdvancedCharacter();
-	ensureMsgf(character, TEXT("character is nullptr"));
+	//ensureMsgf(character, TEXT("character is nullptr"));
 
 	if (character) {
 		UE_LOG(LogTemp, Warning, TEXT("character exists"));

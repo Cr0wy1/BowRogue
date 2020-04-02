@@ -127,13 +127,13 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 
 		// Only add impulse and destroy projectile if we hit a physics
 		if (OtherComp && OtherComp->IsSimulatingPhysics()) {
-
 			OtherComp->AddImpulseAtLocation(GetVelocity() * hitImpulse, GetActorLocation());
-			SetActorLocation(GetActorLocation() + (GetActorForwardVector() * 20));
-			AttachToActor(OtherActor, FAttachmentTransformRules::KeepWorldTransform);
 
 			//Destroy();
 		}
+
+		SetActorLocation(GetActorLocation() + (GetActorForwardVector() * 20));
+		AttachToActor(OtherActor, FAttachmentTransformRules::KeepWorldTransform);
 
 		OnImpact(Hit);
 

@@ -48,11 +48,17 @@ void UHealthComponent::UpdateStamina(const FPlayerAttributeUpdate & attributeUpd
 }
 
 void UHealthComponent::ApplyDamage(float damageAmount){
-	health.value -= damageAmount;
-	if (health.value <= 0) {
-		OnDeath.Broadcast();
+
+	if (GetWorld()->GetTimeSeconds() > lastDamageTime + damageDelay) {
+		health.value -= damageAmount;
+		if (health.value <= 0) {
+			OnDeath.Broadcast();
+		}
+		health.ClampValue();
+
+		lastDamageTime = GetWorld()->GetTimeSeconds();
 	}
-	health.ClampValue();
+
 }
 
 void UHealthComponent::ConsumeStamina(float amount){

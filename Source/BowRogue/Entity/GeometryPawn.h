@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "Entity/Entity.h"
 #include "GeometryPawn.generated.h"
 
 UCLASS()
-class BOWROGUE_API AGeometryPawn : public APawn
+class BOWROGUE_API AGeometryPawn : public AEntity
 {
 	GENERATED_BODY()
 
@@ -45,10 +45,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
-	
 	UFUNCTION(BlueprintCallable)
 	void AddRotateImpulse(float amount);
+
+	UFUNCTION(BlueprintCallable)
+	void RotateForward(float amount);
 
 	UFUNCTION(BlueprintCallable)
 	void JumpAtDirection(FVector direction, float impulseAmount, float heightAmount = 1.0f);

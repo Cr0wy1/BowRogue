@@ -49,6 +49,7 @@ class BOWROGUE_API UCrosshairTraceComponent : public UActorComponent
 public:
 
 	//Delegates
+	UPROPERTY(BlueprintAssignable)
 	FOnHitNewActor OnHitNewActor;
 
 	FCrosshairResult crosshairResult;

@@ -26,15 +26,17 @@ protected:
 
 	AEntitySpawner * spawner = nullptr;
 
-	//COMPONENTS
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attribute")
-	class UAttributeComponent* attributeComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Health")
+	class UHealthComponent* healthComponent;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
 	void OnDeath();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDeathEvent();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Entity")
 	void OnTakeDamage(float damageAmount);

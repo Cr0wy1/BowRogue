@@ -3,6 +3,7 @@
 
 #include "GeometryPawn.h"
 #include "Components/StaticMeshComponent.h"
+#include "DrawDebugHelpers.h"
 
 
 // Sets default values
@@ -51,24 +52,31 @@ void AGeometryPawn::Tick(float DeltaTime){
 	
 }
 
-float AGeometryPawn::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser){
-
-	UE_LOG(LogTemp, Warning, TEXT("%s: DamageTaken(%f)"), *GetName(), DamageAmount);
-
-	health -= DamageAmount;
-	if (health <= 0.0f) {
-		Destroy();
-	}
-
-	return DamageAmount;
-}
 
 void AGeometryPawn::AddRotateImpulse(float amount){
 	FVector min, max;
 	meshComp->GetLocalBounds(min, max);
+	
 
 	meshComp->AddImpulseAtLocation(FVector(amount, 0, 0), FVector(min.X, min.Y, 0) );
 	meshComp->AddImpulseAtLocation(FVector(-amount, 0, 0), FVector(max.X, max.Y, 0));
+
+	DrawDebugPoint(GetWorld(), GetActorLocation() + FVector(min.X, min.Y, 0), 4, FColor::Red, true, 20);
+	DrawDebugPoint(GetWorld(), GetActorLocation() + FVector(min.X, min.Y, 0), 4, FColor::Red, true, 20);
+}
+
+void AGeometryPawn::RotateForward(float amount){
+	FVector min, max;
+	meshComp->GetLocalBounds(min, max);
+
+	//meshComp->bounds
+	FVector origin;
+	FVector box;
+	GetActorBounds(true, origin, box);
+
+	meshComp->AddImpulseAtLocation(FVector(0, 0, amount), FVector(min.X, min.Y, min.Z));
+
+	DrawDebugPoint(GetWorld(), GetActorLocation() + FVector(min.X, min.Y, min.Z), 4, FColor::Red, true, 20);
 }
 
 void AGeometryPawn::JumpAtDirection(FVector direction, float impulseAmount, float heightAmount){

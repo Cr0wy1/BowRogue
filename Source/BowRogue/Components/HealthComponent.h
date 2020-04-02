@@ -24,11 +24,19 @@ public:
 
 protected:
 
+	float lastDamageTime = 0.0f;
+
 	UPROPERTY(EditAnywhere, Category = "Health")
 	FAttribute health;
 
+	//The invincible time after taking damage, before actor can be damage
+	UPROPERTY(EditAnywhere, Category = "Health")
+	float damageDelay = 0.1f;
+
 	UPROPERTY(EditAnywhere, Category = "Stamina")
 	FDynamicAttribute stamina;
+
+	
 
 	// Called when the game starts
 	virtual void BeginPlay() override;

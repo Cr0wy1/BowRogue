@@ -3,9 +3,9 @@
 
 #include "Entity.h"
 #include "Entity/EntityController.h"
-#include "Components/AttributeComponent.h"
 #include "Entity/EntitySpawner.h"
 #include "Engine/World.h"
+#include "Components/HealthComponent.h"
 
 // Sets default values
 AEntity::AEntity(){
@@ -14,8 +14,8 @@ AEntity::AEntity(){
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	attributeComp = CreateDefaultSubobject<UAttributeComponent>("Attributs");
-	attributeComp->OnDeath.AddDynamic(this, &AEntity::OnDeath);
+	healthComponent = CreateDefaultSubobject<UHealthComponent>("Health");
+	healthComponent->OnDeath.AddDynamic(this, &AEntity::OnDeath);
 
 	AIControllerClass = AEntityController::StaticClass();
 }
@@ -27,7 +27,9 @@ void AEntity::BeginPlay(){
 }
 
 void AEntity::OnDeath(){
-	UE_LOG(LogTemp, Warning, TEXT("i am Death"));
+	//UE_LOG(LogTemp, Warning, TEXT("i am Death"));
+
+	OnDeathEvent();
 
 	if (spawner) {
 		spawner->RemovedSpawnedEntity(this);
@@ -44,11 +46,11 @@ void AEntity::Tick(float DeltaTime){
 
 float AEntity::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser){
 
-	UE_LOG(LogTemp, Warning, TEXT("you Damage me!"));
+	//UE_LOG(LogTemp, Warning, TEXT("you Damage me!"));
 
 	OnTakeDamage(DamageAmount);
 
-	attributeComp->health->value -= DamageAmount;
+	healthComponent->ApplyDamage(DamageAmount);
 
 	return DamageAmount;
 }

@@ -14,8 +14,11 @@ APickup::APickup()
 	PrimaryActorTick.bCanEverTick = true;
 
 	sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("Detection Sphere"));
+	sphereComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	sphereComp->SetSimulatePhysics(true);
+	sphereComp->BodyInstance.bLockRotation = true;
+
 	RootComponent = sphereComp;
-	sphereComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Pickup Mesh"));
 	meshComp->SetupAttachment(sphereComp);
