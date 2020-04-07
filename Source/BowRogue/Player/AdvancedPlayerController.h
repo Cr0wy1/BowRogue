@@ -17,7 +17,6 @@ class BOWROGUE_API AAdvancedPlayerController : public APlayerController
 protected:
 
 	class AAdvancedCharacter* character = nullptr;
-	class UAdvancedGameInstance * gameInstance = nullptr;
 
 	//Widgets
 	class UMapWidget* mapWidget = nullptr;

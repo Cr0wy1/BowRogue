@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.23",
+	"EngineAssociation": "4.24",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -23,6 +23,10 @@
 		},
 		{
 			"Name": "Niagara",
+			"Enabled": true
+		},
+		{
+			"Name": "MeshEditor",
 			"Enabled": true
 		}
 	]

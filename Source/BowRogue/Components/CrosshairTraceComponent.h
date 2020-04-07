@@ -8,7 +8,8 @@
 
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHitNewActor, AActor*, actor);
+//DECLARE_EVENT_OneParam(UCrosshairTraceComponent, FOnHitNewActor, AActor*);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHitNewActorSignature, AActor*, actor);
 
 
 
@@ -40,17 +41,17 @@ struct BOWROGUE_API FCrosshairResult {
 
 
 
-
+ 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BOWROGUE_API UCrosshairTraceComponent : public UActorComponent
 {
-	GENERATED_BODY()
+	GENERATED_BODY() 
 
-public:
+public: 
 
 	//Delegates
 	UPROPERTY(BlueprintAssignable)
-	FOnHitNewActor OnHitNewActor;
+	FOnHitNewActorSignature OnHitNewActor;
 
 	FCrosshairResult crosshairResult;
 

@@ -56,8 +56,8 @@ AAdvancedCharacter::AAdvancedCharacter(){
 	movementComp->NavAgentProps.bCanCrouch = true;
 
 	//Crosshair Trace
-	crossTraceComp = CreateDefaultSubobject<UCrosshairTraceComponent>("CrosshairTrace");
-	crosshairResult = crossTraceComp->GetCrosshairResultPtr();  
+	crosshairTraceComp = CreateDefaultSubobject<UCrosshairTraceComponent>("Crosshair Trace Component");
+	crosshairResult = crosshairTraceComp->GetCrosshairResultPtr();
 	 
 	//Attributes
 	healthComp = CreateDefaultSubobject<UHealthComponent>("Health");

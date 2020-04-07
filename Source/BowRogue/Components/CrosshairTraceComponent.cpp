@@ -23,7 +23,7 @@ void UCrosshairTraceComponent::BeginPlay() {
 	if (bIgnoreOwner) {
 		traceParams.AddIgnoredActor(GetOwner());
 	}
-
+	
 }
 
 

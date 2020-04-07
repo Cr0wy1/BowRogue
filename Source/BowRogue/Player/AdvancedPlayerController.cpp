@@ -19,11 +19,11 @@ void AAdvancedPlayerController::BeginPlay() {
 
 	if (character) {
 		UE_LOG(LogTemp, Warning, TEXT("character exists"));
-
+		if (character->GetCrosshairTraceComp()) {
+			UE_LOG(LogTemp, Warning, TEXT("GetCrosshairTraceComp exists"));
+		}
 		character->GetCrosshairTraceComp()->OnHitNewActor.AddDynamic(this, &AAdvancedPlayerController::OnCrosshairHitNewActor);
 	}
-
-	gameInstance = GetGameInstance<UAdvancedGameInstance>();
 
 }
 
@@ -50,7 +50,7 @@ void AAdvancedPlayerController::OnCrosshairHitNewActor(AActor * actor){
 }
 
 void AAdvancedPlayerController::CreateWidgets(){
-	gameInstance = GetGameInstance<UAdvancedGameInstance>();
+	UAdvancedGameInstance* gameInstance = GetGameInstance<UAdvancedGameInstance>();
 	//ADungeonGenerator* dungeonGenerator = gameInstance->GetDungeonGenerator();
 	UWidgetAsset* widgetAsset_A = gameInstance->GetWidgetAsset();
 

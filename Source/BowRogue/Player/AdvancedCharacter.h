@@ -57,7 +57,7 @@ public:
 	class UCameraComponent* fpCameraComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CrosshairTrace")
-	UCrosshairTraceComponent* crossTraceComp;
+	UCrosshairTraceComponent* crosshairTraceComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Health")
 	UHealthComponent* healthComp;
@@ -72,7 +72,7 @@ protected:
 
 	bool bIsSprinting = false;
 
-
+	 
 	AAdvancedPlayerController* controllerAdv = nullptr;
 	UCharacterMovementComponent * movementComp = nullptr;
 
@@ -156,7 +156,7 @@ public:
 	void OnJump();
 	
 	FORCEINLINE AAdvancedPlayerController* GetController() const { return controllerAdv; }
-	FORCEINLINE class UCrosshairTraceComponent* GetCrosshairTraceComp() const { return crossTraceComp; }
+	FORCEINLINE class UCrosshairTraceComponent* GetCrosshairTraceComp() const { return crosshairTraceComp; }
 	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return meshFP; }
 	FORCEINLINE class UCameraComponent* GetFPCameraComp() const { return fpCameraComp; }
 
