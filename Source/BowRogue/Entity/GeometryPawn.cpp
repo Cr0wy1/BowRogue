@@ -4,6 +4,7 @@
 #include "GeometryPawn.h"
 #include "Components/StaticMeshComponent.h"
 #include "DrawDebugHelpers.h"
+#include "DirectionBoxActor.h"
 
 
 // Sets default values
@@ -23,6 +24,7 @@ void AGeometryPawn::BeginPlay(){
 	Super::BeginPlay();
 	
 	meshComp->OnComponentHit.AddDynamic(this, &AGeometryPawn::OnHit);
+	meshComp->OnComponentBeginOverlap.AddDynamic(this, &AGeometryPawn::OnOverlapBegin);
 }
 
 void AGeometryPawn::OnHit(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit){
@@ -31,6 +33,13 @@ void AGeometryPawn::OnHit(UPrimitiveComponent * HitComp, AActor * OtherActor, UP
 
 		FDamageEvent damageEvent;
 		OtherActor->TakeDamage(damage, damageEvent, nullptr, this);
+	}
+}
+
+void AGeometryPawn::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult){
+	ADirectionBoxActor* directionBox = Cast<ADirectionBoxActor>(OtherActor);
+	if (directionBox) {
+
 	}
 }
 
@@ -49,7 +58,7 @@ void AGeometryPawn::Tick(float DeltaTime){
 
 	//meshComp->AddForceAtLocationLocal(constantForce, min);
 	//meshComp->AddForceAtLocationLocal(-constantForce, max);
-	
+
 }
 
 
@@ -68,6 +77,8 @@ void AGeometryPawn::AddRotateImpulse(float amount){
 void AGeometryPawn::RotateForward(float amount){
 	FVector min, max;
 	meshComp->GetLocalBounds(min, max);
+
+	
 
 	//meshComp->bounds
 	FVector origin;

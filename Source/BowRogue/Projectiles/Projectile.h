@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "EffectBase.h"
 #include "Items/ItemUpdateStructs.h"
 #include "Projectile.generated.h"
 
@@ -19,8 +18,6 @@ class BOWROGUE_API AProjectile : public AActor
 
 protected:
 
-	UPROPERTY()
-	FProjectileEffectManager effectManager;
 
 	UPROPERTY(BlueprintReadOnly)
 	int32 bounceCounter;
@@ -50,16 +47,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	bool bDrawDebug = false;
 
-	//COMPONENTS
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Projectile")
-	//USceneComponent * sceneRootComp;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Projectile")
 	UStaticMeshComponent * collisionMeshComp;
 
 	/** Projectile movement component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-		class UProjectileMovementComponent* projectileMovement;
+	class UProjectileMovementComponent* projectileMovement;
 
 
 	virtual void BeginPlay() override;
@@ -101,8 +94,6 @@ public:
 	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return projectileMovement; }
 
 //Projectile Effects
-	UFUNCTION(BlueprintCallable)
-	UProjectileEffectBase* AddProjectileEffect(TSubclassOf<UProjectileEffectBase> newEffect);
 
 	UFUNCTION(BlueprintCallable)
 	void SplitProjectile(TSubclassOf<AProjectile> projectile_BP);

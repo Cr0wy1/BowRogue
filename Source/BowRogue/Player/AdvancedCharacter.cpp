@@ -35,7 +35,7 @@ AAdvancedCharacter::AAdvancedCharacter(){
 	// Create a CameraComponent	
 	fpCameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	fpCameraComp->SetupAttachment(GetCapsuleComponent());
-	fpCameraComp->RelativeLocation = FVector(0.0f, 0.0f, 64.f); // Position the camera 
+	fpCameraComp->SetRelativeLocation( FVector(0.0f, 0.0f, 64.f) ); // Position the camera 
 	fpCameraComp->bUsePawnControlRotation = true;
 	
 	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
@@ -44,8 +44,8 @@ AAdvancedCharacter::AAdvancedCharacter(){
 	meshFP->SetupAttachment(fpCameraComp);
 	meshFP->bCastDynamicShadow = false;
 	meshFP->CastShadow = false;
-	meshFP->RelativeRotation = FRotator(1.9f, -19.19f, 5.2f);
-	meshFP->RelativeLocation = FVector(-0.5f, -4.4f, -155.7f); 
+	meshFP->SetRelativeRotation( FRotator(1.9f, -19.19f, 5.2f) );
+	meshFP->SetRelativeLocation( FVector(-0.5f, -4.4f, -155.7f) ); 
 	 
 	//Movement
 	movementComp = GetCharacterMovement();
@@ -73,7 +73,7 @@ void AAdvancedCharacter::BeginPlay(){
 	//UE_LOG(LogTemp, Warning, TEXT("Character %s Start Player Health: %s"), *attributeComp->GetName(), *attributeComp->health.ToString());
 
 	capsuleBaseHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(); 
-	cameraBaseLocation = fpCameraComp->RelativeLocation;
+	cameraBaseLocation = fpCameraComp->GetRelativeLocation();
 	standingCapsuleShape = GetCapsuleComponent()->GetCollisionShape();
 	cRelativeCameraZOffset = 0.0f; 
 
@@ -275,8 +275,8 @@ void AAdvancedCharacter::AdjustCameraToCapsuleHeight(float deltaSeconds){
 	float deltaHeight = capsuleBaseHeight - cCapsuleHalfHeight;
 
 	float targetCamHeight = cameraBaseLocation.Z * crouchShrinkPercent;
-	float cCamHeight = fpCameraComp->RelativeLocation.Z;
-	FVector newCamLoc = fpCameraComp->RelativeLocation;
+	float cCamHeight = fpCameraComp->GetRelativeLocation().Z;
+	FVector newCamLoc = fpCameraComp->GetRelativeLocation();
 
 
 	float updateCamHeight = (targetCamHeight - cCamHeight) * crouchWalkSwitchSpeed * deltaSeconds;
