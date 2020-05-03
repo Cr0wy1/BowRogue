@@ -9,6 +9,13 @@
 
 
 
+UENUM(BlueprintType)
+enum class EFinalHitBehavior : uint8 {
+	STICK,
+	DESTROY,
+};
+
+
 
 UCLASS()
 class BOWROGUE_API AProjectile : public AActor
@@ -31,6 +38,10 @@ protected:
 
 public:
 	//UProperties
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	EFinalHitBehavior finalHitBehavior = EFinalHitBehavior::DESTROY;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	float impactDamage = 10.0f;
 
@@ -93,42 +104,4 @@ public:
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return projectileMovement; }
 
-//Projectile Effects
-
-	UFUNCTION(BlueprintCallable)
-	void SplitProjectile(TSubclassOf<AProjectile> projectile_BP);
-
-	UFUNCTION(BlueprintCallable)
-	void UpdateScaleByTraceDistance(float scalor = 0.0001f);
-};
-
-
-
-
-
-
-
-UCLASS()
-class BOWROGUE_API USplitEffectClass : public UProjectileEffectBase {
-	GENERATED_BODY()
-	
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AProjectile> splitProjectile_BP;
-
-public:
-	USplitEffectClass() {}
-	
-
-	//virtual void Tick(float deltaTime) {}
-	virtual void OnHit(const FHitResult& hitResult) override {
-		FTransform trans;
-		trans.SetLocation(projectile->GetActorLocation());
-		trans.SetRotation(projectile->GetActorRightVector().ToOrientationQuat());
-		trans.SetScale3D(projectile->GetActorScale3D() * 0.5f);
-
-		projectile->GetWorld()->SpawnActor<AProjectile>(splitProjectile_BP, trans);
-
-		trans.SetRotation((projectile->GetActorRightVector() * -1.0f).ToOrientationQuat());
-		projectile->GetWorld()->SpawnActor<AProjectile>(splitProjectile_BP, trans);
-	}
 };

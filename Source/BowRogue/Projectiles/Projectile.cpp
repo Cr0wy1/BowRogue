@@ -64,8 +64,6 @@ void AProjectile::BeginPlay(){
 		DrawDebugPoint(GetWorld(), startLoc, 10.0f, FColor::Green, true, 20);
 		DrawDebugDirectionalArrow(GetWorld(), startLoc, endLoc, 100.0f, FColor::Blue, true, 20.0f, 0, 1.0f);
 	}
-
-	effectManager.CallAllOnSpawn();
 }
 
 // Called every frame
@@ -78,14 +76,9 @@ void AProjectile::Tick(float DeltaTime) {
 
 		lastTickLocation = GetActorLocation();
 	}
-
-	effectManager.CallAllOnTick(DeltaTime);
 }
 
 void AProjectile::UpdateProjectile(const FProjectileUpdate & projectileUpdate){
-	for (auto effect : projectileUpdate.addEffects) {
-		AddProjectileEffect(effect);
-	}
 
 	for (auto attribute : projectileUpdate.attributeUpdates) {
 		UpdateAttribute(attribute);
@@ -132,13 +125,23 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 			//Destroy();
 		}
 
-		SetActorLocation(GetActorLocation() + (GetActorForwardVector() * 20));
-		AttachToActor(OtherActor, FAttachmentTransformRules::KeepWorldTransform);
+		switch (finalHitBehavior){
+			case EFinalHitBehavior::DESTROY :
+					Destroy();
+				break;
+
+			case EFinalHitBehavior::STICK :
+					SetActorLocation(GetActorLocation() + (GetActorForwardVector() * 20));
+					AttachToActor(OtherActor, FAttachmentTransformRules::KeepWorldTransform);
+				break;
+
+		default:
+			break;
+		}
+
+
 
 		OnImpact(Hit);
-
-		effectManager.CallAllOnHit(Hit);
-
 	}
 
 	//draw debug impact point
@@ -160,36 +163,4 @@ void AProjectile::SetDummy() {
 } 
 
 
-UProjectileEffectBase * AProjectile::AddProjectileEffect(TSubclassOf<UProjectileEffectBase> newEffect){
-	FName newEffectName = newEffect.GetDefaultObject()->GetNameId();
-	if (effectManager.HasEffect(newEffectName)) {
-		UE_LOG(LogTemp, Warning, TEXT("effect allready exists"));
-		return nullptr;
-	}
-
-	UProjectileEffectBase* addedEffect = NewObject<UProjectileEffectBase>(this, newEffect);
-	addedEffect->Init(this);
-	effectManager.effects.Add(addedEffect);
-
-	return addedEffect;
-}
-
-
-//Projectile Effects
-void AProjectile::SplitProjectile(TSubclassOf<AProjectile> projectile_BP){ 
-	FTransform trans;
-	trans.SetLocation( GetActorLocation() );
-	trans.SetRotation( GetActorRightVector().ToOrientationQuat() );
-	trans.SetScale3D(GetActorScale3D() * 0.5f);
-	 
-	GetWorld()->SpawnActor<AProjectile>(projectile_BP, trans);
-
-	trans.SetRotation((GetActorRightVector() * -1.0f).ToOrientationQuat());  
-	GetWorld()->SpawnActor<AProjectile>(projectile_BP, trans);
-}
-
-void AProjectile::UpdateScaleByTraceDistance(float scalor){
-	FVector newScale = spawnScale + (distanceTraveled * scalor);
-	SetActorScale3D(newScale);
-}
 

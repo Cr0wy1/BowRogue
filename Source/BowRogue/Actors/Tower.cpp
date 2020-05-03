@@ -6,6 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "Entity/Entity.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Engine/World.h"
 
 // Sets default values
 ATower::ATower(){
@@ -27,6 +28,10 @@ void ATower::BeginPlay(){
 	
 	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &ATower::OnOverlapBegin);
 	sphereComp->OnComponentEndOverlap.AddDynamic(this, &ATower::OnOverlapEnd);
+}
+
+void ATower::Fire(){
+	OnFire();
 }
 
 void ATower::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult){
@@ -68,6 +73,43 @@ void ATower::Tick(float DeltaTime){
 	}
 	
 
-	//
+	if (shouldRotate) {
+		FRotator lookAtRotation;
+		if (GetLookAtEntityRotation(lookAtRotation)) {
+			float deltaZRot = lookAtRotation.Yaw - GetActorRotation().Yaw;
+			float addZRot = deltaZRot * DeltaTime * rotationSpeed;
+			AddActorLocalRotation(FRotator(0, addZRot, 0));
+		}
+	}
+
+	if(shouldFire && HasTarget()){
+		if (GetWorld()->GetTimeSeconds() > lastFireTime + fireDelay) {
+			Fire();
+			lastFireTime = GetWorld()->GetTimeSeconds();
+		}
+	}
+
+}
+
+bool ATower::GetLookAtEntityRotation(FRotator &lookAtRotation, FVector relativeStartLocation) const{
+
+	if (currentTarget) {
+		lookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation() + relativeStartLocation, currentTarget->GetActorLocation());
+		return true;
+	}
+
+	return false;
+}
+
+bool ATower::GetUpdateRotationAmount(FRotator & updateRotation, float deltaTime, FRotator currentRotation, FVector relativeStartLocation) const{
+	FRotator lookAtRotation;
+	if (GetLookAtEntityRotation(lookAtRotation, relativeStartLocation)) {
+		FRotator deltaRot = lookAtRotation - currentRotation;
+		updateRotation = deltaRot * deltaTime * rotationSpeed;
+		
+		return true;
+	}
+
+	return false;
 }
 
