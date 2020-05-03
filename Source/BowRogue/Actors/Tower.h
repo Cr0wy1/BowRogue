@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Actors/PlaceableActor.h"
 #include "Tower.generated.h"
 
 
@@ -24,7 +24,7 @@ enum class ETowerTargetPrio : uint8 {
 
 
 UCLASS()
-class BOWROGUE_API ATower : public AActor{
+class BOWROGUE_API ATower : public APlaceableActor {
 	GENERATED_BODY()
 	
 public:	

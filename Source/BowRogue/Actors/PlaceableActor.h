@@ -6,6 +6,13 @@
 #include "GameFramework/Actor.h"
 #include "PlaceableActor.generated.h"
 
+
+
+class UMaterialInterface;
+class UMeshComponent;
+
+
+
 UCLASS()
 class BOWROGUE_API APlaceableActor : public AActor
 {
@@ -16,11 +23,27 @@ public:
 	APlaceableActor();
 
 protected:
+
+	TMap<UMeshComponent*, UMaterialInterface*> defaultMaterialMap;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void InitDefaultMaterialMap();
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable)
+	void SetMaterialToAllMeshes(UMaterialInterface* material);
+
+	UFUNCTION(BlueprintCallable)
+	void SetMaterialDefaultToAllMeshes();
+
+	UFUNCTION(BlueprintCallable, Category = "Placement")
+	void SetPreview();
+
+	UFUNCTION(BlueprintCallable)
+	TArray<UMeshComponent*> GetMeshComponents();
 };
