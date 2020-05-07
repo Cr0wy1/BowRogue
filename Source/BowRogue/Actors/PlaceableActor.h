@@ -42,7 +42,7 @@ public:
 	void SetMaterialDefaultToAllMeshes();
 
 	UFUNCTION(BlueprintCallable, Category = "Placement")
-	void SetPreview();
+	void SetPreview(bool isPreview = true);
 
 	UFUNCTION(BlueprintCallable)
 	TArray<UMeshComponent*> GetMeshComponents();

@@ -8,6 +8,7 @@
 #include "Components/AttributeComponent.h"
 #include "EffectBase.h"
 #include "Dungeon/DungeonRoom.h"
+#include "Actors/PlaceableActor.h"
 
 //Init statics 
 FIntVector FGridDir::FRONT_VEC = FIntVector(1, 0, 0);

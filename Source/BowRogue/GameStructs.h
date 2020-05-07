@@ -12,6 +12,7 @@
 
 class AEntity;
 class ADungeonRoom;
+class APlaceableActor;
 
 
 
@@ -316,6 +317,33 @@ struct BOWROGUE_API FItemData : public FTableRowBase {
 
 
 	static FItemData* FromId(UDataTable* datatable, FName id);
+};
+
+USTRUCT(BlueprintType)
+struct BOWROGUE_API FPlaceableData : public FTableRowBase {
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 id = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName name = "NAME";
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float damage = 10.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float fireRate = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float range = 1000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* texture;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<APlaceableActor> placeableActorBP;
+
 };
 
 /**

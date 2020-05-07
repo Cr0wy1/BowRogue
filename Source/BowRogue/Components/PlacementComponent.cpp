@@ -69,6 +69,7 @@ void UPlacementComponent::DestroyPreviewActor(){
 
 void UPlacementComponent::PlaceActor(){
 	if (currentPreviewActor) {
+		currentPreviewActor->SetPreview(false);
 		currentPreviewActor->SetMaterialDefaultToAllMeshes();
 		currentPreviewActor = nullptr;
 	}

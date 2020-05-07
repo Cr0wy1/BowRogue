@@ -56,8 +56,8 @@ void APlaceableActor::SetMaterialToAllMeshes(UMaterialInterface * material){
 	}
 }
 
-void APlaceableActor::SetPreview(){
-	SetActorEnableCollision(false);
+void APlaceableActor::SetPreview(bool isPreview){
+	SetActorEnableCollision(!isPreview);
 }
 
 TArray<UMeshComponent*> APlaceableActor::GetMeshComponents(){
