@@ -3,10 +3,13 @@
 
 #include "Tower.h"
 #include "Components/StaticMeshComponent.h"
+#include "Engine/StaticMesh.h"
 #include "Components/SphereComponent.h"
 #include "Entity/Entity.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine/World.h"
+#include "DrawDebugHelpers.h"
+#include "Components/PlaneTraceComponent.h"
 
 // Sets default values
 ATower::ATower(){
@@ -19,8 +22,16 @@ ATower::ATower(){
 	sphereComp = CreateDefaultSubobject<USphereComponent>("Detection Sphere");
 	sphereComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	sphereComp->SetupAttachment(meshComp);
-	
+
+	placeShapeMeshComp = CreateDefaultSubobject<UStaticMeshComponent>("Place Shape Collision Mesh");
+	sphereComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	placeShapeMeshComp->SetupAttachment(meshComp);
+
+	planeTraceComp = CreateDefaultSubobject<UPlaneTraceComponent>("PlaneTraceComp");
+	planeTraceComp->SetupAttachment(RootComponent);
 }
+
+
 
 // Called when the game starts or when spawned
 void ATower::BeginPlay(){
@@ -28,6 +39,10 @@ void ATower::BeginPlay(){
 	
 	sphereComp->OnComponentBeginOverlap.AddDynamic(this, &ATower::OnOverlapBegin);
 	sphereComp->OnComponentEndOverlap.AddDynamic(this, &ATower::OnOverlapEnd);
+}
+
+void ATower::OnSetPreview(){
+	placeShapeMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void ATower::Fire(){
@@ -56,6 +71,8 @@ void ATower::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor * OtherAc
 	}
 
 }
+
+
 
 // Called every frame
 void ATower::Tick(float DeltaTime){
@@ -89,6 +106,49 @@ void ATower::Tick(float DeltaTime){
 		}
 	}
 
+}
+
+void ATower::OnPlace(){
+	Super::OnPlace();
+
+	//float checkedDiffrence;
+	//planeTraceComp->TraceCheck(checkedDiffrence);
+}
+
+bool ATower::CanBePlaced(){
+	
+	if (Super::CanBePlaced()) {
+		if (planeTraceComp) {
+			float checkedDifference;
+			if (planeTraceComp->TraceCheck(checkedDifference, 200)) {
+
+				TArray<AActor*> overlappedActors;
+				placeShapeMeshComp->GetOverlappingActors(overlappedActors);
+
+				if (overlappedActors.Num() < 1) {
+
+					return true;
+				}
+			}
+		}
+	}
+	
+	return false;
+}
+
+AEntity * ATower::GetNearestEntitiy() const{
+	AEntity* nearestEntitiy = nullptr;
+	float nearestLength = 10000000.0f;
+
+	for (AEntity* entitiy : overlappedEntities) {
+		float length = (entitiy->GetActorLocation() - GetActorLocation()).Size();
+		if (length < nearestLength) {
+			nearestLength = length;
+			nearestEntitiy = entitiy;
+		}
+	}
+
+	return nearestEntitiy;
 }
 
 bool ATower::GetLookAtEntityRotation(FRotator &lookAtRotation, FVector relativeStartLocation) const{

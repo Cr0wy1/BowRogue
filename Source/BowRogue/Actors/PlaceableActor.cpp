@@ -41,6 +41,25 @@ void APlaceableActor::Tick(float DeltaTime){
 
 }
 
+void APlaceableActor::OnPlace(){
+	OnPlaceEvent();
+}
+
+void APlaceableActor::OnPreviewUpdate(){
+	OnPreviewUpdateEvent();
+}
+
+bool APlaceableActor::CanBePlaced(){
+
+
+
+	return true;
+}
+
+void APlaceableActor::OnSetPreview()
+{
+}
+
 void APlaceableActor::SetMaterialToAllMeshes(UMaterialInterface * material){
 	if (material) {
 
@@ -57,7 +76,11 @@ void APlaceableActor::SetMaterialToAllMeshes(UMaterialInterface * material){
 }
 
 void APlaceableActor::SetPreview(bool isPreview){
-	SetActorEnableCollision(!isPreview);
+	for (auto meshComp : GetMeshComponents()) {
+		meshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	//SetActorEnableCollision(!isPreview);
+	OnSetPreview();
 }
 
 TArray<UMeshComponent*> APlaceableActor::GetMeshComponents(){
@@ -69,8 +92,37 @@ TArray<UMeshComponent*> APlaceableActor::GetMeshComponents(){
 		if (meshComp) {
 			result.Add(meshComp);
 		}
+		
 	}
 	
 	return result;
+}
+
+TArray<UStaticMeshComponent*> APlaceableActor::GetStaticMeshComponents(){
+	TArray<UStaticMeshComponent*> result;
+	TArray<UActorComponent*> actorComps = GetComponentsByClass(UStaticMeshComponent::StaticClass());
+	for (auto comp : actorComps) {
+
+		UStaticMeshComponent* meshComp = Cast<UStaticMeshComponent>(comp);
+		if (meshComp) {
+			result.Add(meshComp);
+		}
+
+	}
+
+	return result;
+}
+
+FPlaceableData APlaceableActor::GetPlaceableData() const{
+
+	if (placeableRowHandle.DataTable) {
+		FString context;
+		FPlaceableData* placeableData = placeableRowHandle.DataTable->FindRow<FPlaceableData>(placeableRowHandle.RowName, context);
+		if (placeableData) {
+			return *placeableData;
+		}
+	}
+
+	return FPlaceableData();
 }
 

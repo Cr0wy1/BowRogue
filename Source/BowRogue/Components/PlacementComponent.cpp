@@ -24,6 +24,8 @@ void UPlacementComponent::BeginPlay(){
 	if (advCharacter) {
 		crosshairResult = advCharacter->GetCrosshairTraceComp()->GetCrosshairResultPtr();
 	}
+
+	
 }
 
 
@@ -38,6 +40,9 @@ void UPlacementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 		else {
 			SpawnPreviewActor();
 		}
+	}
+	else if (currentPreviewActor) {
+		DestroyPreviewActor();
 	}
 }
 
@@ -58,12 +63,21 @@ void UPlacementComponent::SpawnPreviewActor(){
 void UPlacementComponent::UpdatePreviewActor(){
 	if (currentPreviewActor && crosshairResult) {
 		currentPreviewActor->SetActorLocation(crosshairResult->hitResult.Location);
+		
+		if (currentPreviewActor->CanBePlaced()) {
+			currentPreviewActor->SetMaterialDefaultToAllMeshes();
+		} 
+		else {
+			currentPreviewActor->SetMaterialToAllMeshes(cannotPlaceMaterial);
+		}
+		currentPreviewActor->OnPreviewUpdate();
 	}
 }
 
 void UPlacementComponent::DestroyPreviewActor(){
 	if (currentPreviewActor) {
 		currentPreviewActor->Destroy();
+		currentPreviewActor = nullptr;
 	}
 }
 
@@ -71,6 +85,7 @@ void UPlacementComponent::PlaceActor(){
 	if (currentPreviewActor) {
 		currentPreviewActor->SetPreview(false);
 		currentPreviewActor->SetMaterialDefaultToAllMeshes();
+		currentPreviewActor->OnPlace();
 		currentPreviewActor = nullptr;
 	}
 }

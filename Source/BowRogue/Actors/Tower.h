@@ -11,6 +11,7 @@
 class USphereComponent;
 class UStaticMeshComponent;
 class AEntity;
+class UPlaneTraceComponent;
 
 
 
@@ -50,15 +51,26 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float rotationSpeed = 1.0f;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
+	float groundCheckRadius = 100.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* meshComp;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USphereComponent* sphereComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* placeShapeMeshComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPlaneTraceComponent* planeTraceComp;
 
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual void OnSetPreview() override;
 
 	void Fire();
 
@@ -78,9 +90,16 @@ protected:
 	FORCEINLINE TArray<AEntity*> GetAllInRange() const { return overlappedEntities; }
 
 public:	
+	 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void OnPlace() override;
+
+	virtual bool CanBePlaced() override;
+
+	UFUNCTION(BlueprintCallable, Category = "Tower")
+	AEntity* GetNearestEntitiy() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Tower")
 	bool GetLookAtEntityRotation(FRotator &lookAtRotation, FVector relativeStartLocation = FVector(0,0,0)) const;
